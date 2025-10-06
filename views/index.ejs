@@ -1,22 +1,29 @@
-<%- include('partials/head', { title: 'Room Guide - 프리미엄 유흥 업소 가이드' }) %>
+<%- include('partials/head', { title: 'Room Guide - 프리미엄 유흥 업소 가이드', seoKeywords }) %>
   <section class="hero">
     <div class="hero__overlay"></div>
     <div class="container hero__container">
       <div class="hero__text">
-        <span class="badge">서울 · 경기 프리미엄 라운지 큐레이션</span>
+        <span class="badge">서울 · 부산 프리미엄 라운지 큐레이션</span>
         <h1>검증된 룸과 클럽을 한곳에서, Room Guide</h1>
         <p>
-          지역과 업종을 선택하면 맞춤형 제휴업체를 바로 확인할 수 있습니다. 모든 파트너는 직접 검수한 신뢰도 높은 공간입니다.
+          지역 → 구 → 업종 순으로 정교하게 나뉜 필터를 활용하면 맞춤형 제휴업체를 바로 확인할 수 있습니다.
+          모든 파트너는 직접 검수한 신뢰도 높은 공간입니다.
         </p>
         <div class="hero__search">
           <div class="hero__filters">
             <label class="input-group">
               <span>지역</span>
-              <select id="area-filter">
+              <select id="region-filter">
                 <option value="all">전체</option>
-                <% areas.forEach(function(area) { %>
-                  <option value="<%= area %>"><%= area %></option>
+                <% regions.forEach(function(region) { %>
+                  <option value="<%= region %>"><%= region %></option>
                 <% }) %>
+              </select>
+            </label>
+            <label class="input-group">
+              <span>구 / 군</span>
+              <select id="district-filter" disabled>
+                <option value="all">전체</option>
               </select>
             </label>
             <label class="input-group">
@@ -84,20 +91,26 @@
       <div class="section__header">
         <div>
           <h2 class="section__title">추천 지역별 라운지 &amp; 클럽</h2>
-          <p class="section__subtitle">지역과 업종 필터를 조합해 원하는 매장을 빠르게 찾아보세요.</p>
+          <p class="section__subtitle">지역 → 구 → 업종 필터를 조합해 원하는 매장을 빠르게 찾아보세요.</p>
         </div>
         <a class="btn btn--ghost" href="#consult">제휴 문의하기</a>
       </div>
       <div class="shop-grid" data-grid>
         <% shops.forEach(function(shop) { %>
-          <article class="shop-card" data-area="<%= shop.area %>" data-category="<%= shop.category %>">
+          <article
+            class="shop-card"
+            data-region="<%= shop.region %>"
+            data-district="<%= shop.district %>"
+            data-category="<%= shop.category %>"
+          >
             <div class="shop-card__image">
               <img src="<%= shop.image %>" alt="<%= shop.name %>" />
             </div>
             <div class="shop-card__body">
-              <span class="shop-card__meta"><%= shop.area %> · <%= shop.category %></span>
+              <span class="shop-card__meta"><%= shop.region %> · <%= shop.district %> · <%= shop.category %></span>
               <h3><%= shop.name %></h3>
               <p><%= shop.description %></p>
+              <p class="shop-card__contact">담당 <strong><%= shop.manager.name %></strong> · <a href="tel:<%= shop.manager.phone %>"><%= shop.manager.phone %></a></p>
               <a class="shop-card__link" href="/shops/<%= shop.id %>">자세히 보기</a>
             </div>
           </article>
@@ -150,4 +163,11 @@
       <a class="btn btn--primary btn--large" href="tel:01000000000">제휴 상담 바로 연결</a>
     </div>
   </section>
+
+  <script id="region-district-data" type="application/json">
+    <%- JSON.stringify(districtMap) %>
+  </script>
+  <div class="seo-keywords" aria-hidden="true">
+    <%- seoKeywords.join(', ') %>
+  </div>
 <%- include('partials/footer', { scripts: ['/scripts/filters.js'] }) %>

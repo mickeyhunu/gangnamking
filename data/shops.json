@@ -1,50 +1,167 @@
 [
   {
-    "id": "gangnam-lounge-101",
+    "id": "seoul-gangnam-lounge-101",
     "name": "강남 라운지 101",
-    "area": "강남",
+    "region": "서울",
+    "district": "강남구",
     "category": "라운지바",
-    "address": "서울 강남구 테헤란로 101",
+    "address": "서울특별시 강남구 테헤란로 101",
     "phone": "02-000-0101",
     "hours": "매일 18:00 - 04:00",
-    "description": "감각적인 인테리어와 전문 바텐더가 있는 프리미엄 라운지입니다.",
+    "description": "감각적인 무드와 전문 바텐더가 선사하는 시그니처 칵테일이 돋보이는 프리미엄 라운지입니다.",
     "highlights": [
-      "수제 칵테일",
-      "DJ 라운지",
-      "프라이빗 룸"
+      "수제 시그니처 칵테일",
+      "DJ 라운지 퍼포먼스",
+      "프라이빗 VIP 룸"
+    ],
+    "pricing": {
+      "base": "주중 50만 원대~, 주말 60만 원대~",
+      "tc": "TC 12만 원부터",
+      "rt": "RT 40만 원부터"
+    },
+    "manager": {
+      "name": "김매니저",
+      "phone": "010-1234-5678",
+      "kakao": "@gangnam101"
+    },
+    "seoKeywords": [
+      "강남 라운지",
+      "강남 프리미엄 바",
+      "강남 VIP 룸",
+      "서울 라운지 추천"
     ],
     "image": "/images/gangnam-lounge-101.svg"
   },
   {
-    "id": "cheongdam-vip",
-    "name": "청담 VIP 클럽",
-    "area": "강남",
-    "category": "클럽",
-    "address": "서울 강남구 청담동 12-3",
-    "phone": "02-000-0202",
-    "hours": "목-토 21:00 - 06:00",
-    "description": "최신 사운드 시스템과 화려한 라이브 퍼포먼스가 있는 하이엔드 클럽.",
+    "id": "seoul-gwanak-premium-room",
+    "name": "관악 프리미엄 룸",
+    "region": "서울",
+    "district": "관악구",
+    "category": "룸살롱",
+    "address": "서울특별시 관악구 봉천로 325",
+    "phone": "02-000-0404",
+    "hours": "월-토 18:00 - 03:00",
+    "description": "단골 비즈니스 고객에게 최적화된 프라이빗 룸과 맞춤 테이블 세팅을 제공하는 하이엔드 룸살롱입니다.",
     "highlights": [
-      "주말 라이브 공연",
-      "VIP 전용 라운지",
-      "발렛 파킹"
+      "전담 매니저 상주",
+      "비즈니스 맞춤 코스",
+      "주차 대행 서비스"
     ],
-    "image": "/images/cheongdam-vip.svg"
+    "pricing": {
+      "base": "주중 45만 원대~, 주말 55만 원대~",
+      "tc": "TC 10만 원부터",
+      "rt": "RT 35만 원부터"
+    },
+    "manager": {
+      "name": "이매니저",
+      "phone": "010-9876-5432",
+      "kakao": "@gwanakroom"
+    },
+    "seoKeywords": [
+      "관악 룸살롱",
+      "서울 관악 유흥",
+      "관악 주대 정보",
+      "비즈니스 접대 장소"
+    ],
+    "image": "/images/gwanak-premium-room.svg"
   },
   {
-    "id": "sinsa-whisky-house",
-    "name": "신사 위스키 하우스",
-    "area": "강남",
-    "category": "위스키바",
-    "address": "서울 강남구 신사동 45-7",
-    "phone": "02-000-0303",
-    "hours": "월-토 17:00 - 02:00",
-    "description": "세계 각국의 위스키 컬렉션과 시그니처 안주를 즐길 수 있는 바.",
+    "id": "seoul-gangseo-night-suite",
+    "name": "강서 나이트 스위트",
+    "region": "서울",
+    "district": "강서구",
+    "category": "하이엔드바",
+    "address": "서울특별시 강서구 마곡동 512",
+    "phone": "02-000-0505",
+    "hours": "매일 19:00 - 05:00",
+    "description": "루프탑과 연계된 이중 공간으로 사계절 내내 색다른 무드를 즐길 수 있는 하이엔드 바입니다.",
     "highlights": [
-      "위스키 시음 프로그램",
-      "예약제 프라이빗 테이블",
-      "소믈리에 추천 페어링"
+      "사계절 루프탑",
+      "프리미엄 위스키 셀렉션",
+      "아티스트 라이브 세션"
     ],
-    "image": "/images/sinsa-whisky-house.svg"
+    "pricing": {
+      "base": "주중 40만 원대~, 주말 50만 원대~",
+      "tc": "TC 9만 원부터",
+      "rt": "RT 32만 원부터"
+    },
+    "manager": {
+      "name": "박매니저",
+      "phone": "010-3333-2222",
+      "kakao": "@gangseoelite"
+    },
+    "seoKeywords": [
+      "강서 하이엔드바",
+      "마곡 루프탑 바",
+      "서울 강서 유흥",
+      "강서 나이트 예약"
+    ],
+    "image": "/images/gangseo-night-suite.svg"
+  },
+  {
+    "id": "busan-haeundae-ocean-lounge",
+    "name": "해운대 오션 라운지",
+    "region": "부산",
+    "district": "해운대구",
+    "category": "오션뷰 라운지",
+    "address": "부산광역시 해운대구 달맞이길 72",
+    "phone": "051-000-0707",
+    "hours": "매일 17:00 - 03:00",
+    "description": "부산 바다 전망과 함께 와인과 위스키 페어링을 즐길 수 있는 오션뷰 라운지입니다.",
+    "highlights": [
+      "전 객실 오션뷰",
+      "소믈리에 페어링",
+      "실시간 요트 연계"
+    ],
+    "pricing": {
+      "base": "주중 35만 원대~, 주말 45만 원대~",
+      "tc": "TC 8만 원부터",
+      "rt": "RT 28만 원부터"
+    },
+    "manager": {
+      "name": "최매니저",
+      "phone": "010-5555-4444",
+      "kakao": "@oceanlounge"
+    },
+    "seoKeywords": [
+      "해운대 라운지",
+      "부산 오션뷰 바",
+      "해운대 주대",
+      "부산 프리미엄 라운지"
+    ],
+    "image": "/images/haeundae-ocean-lounge.svg"
+  },
+  {
+    "id": "busan-seomyeon-velvet-club",
+    "name": "서면 벨벳 클럽",
+    "region": "부산",
+    "district": "부산진구",
+    "category": "클럽",
+    "address": "부산광역시 부산진구 중앙대로 686",
+    "phone": "051-000-0909",
+    "hours": "금-일 20:00 - 06:00",
+    "description": "최신 EDM 사운드와 고급 조명 연출로 유명한 부산 대표 프리미엄 클럽입니다.",
+    "highlights": [
+      "유명 DJ 레지던트",
+      "VIP 전용 부스",
+      "생일 파티 패키지"
+    ],
+    "pricing": {
+      "base": "주말 55만 원대~",
+      "tc": "TC 11만 원부터",
+      "rt": "RT 36만 원부터"
+    },
+    "manager": {
+      "name": "정매니저",
+      "phone": "010-7777-6666",
+      "kakao": "@velvetclub"
+    },
+    "seoKeywords": [
+      "부산 서면 클럽",
+      "서면 프리미엄 클럽",
+      "부산 클럽 주대",
+      "부산 EDM 클럽"
+    ],
+    "image": "/images/seomyeon-velvet-club.svg"
   }
 ]

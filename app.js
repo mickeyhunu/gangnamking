@@ -32,13 +32,27 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-  const areas = [...new Set(shops.map((shop) => shop.area))];
+  const regions = [...new Set(shops.map((shop) => shop.region))];
   const categories = [...new Set(shops.map((shop) => shop.category))];
+  const districtMap = regions.reduce((acc, region) => {
+    const districts = shops
+      .filter((shop) => shop.region === region)
+      .map((shop) => shop.district);
+    acc[region] = [...new Set(districts)];
+    return acc;
+  }, {});
+  const seoKeywords = [
+    ...new Set(
+      shops.flatMap((shop) => Array.isArray(shop.seoKeywords) ? shop.seoKeywords : [])
+    )
+  ];
 
   res.render('index', {
     shops,
-    areas,
-    categories
+    regions,
+    categories,
+    districtMap,
+    seoKeywords
   });
 });
 
@@ -50,7 +64,8 @@ app.get('/shops/:id', (req, res, next) => {
   }
 
   res.render('shop', {
-    shop
+    shop,
+    seoKeywords: Array.isArray(shop.seoKeywords) ? shop.seoKeywords : []
   });
 });
 
