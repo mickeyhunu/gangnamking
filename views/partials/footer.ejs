@@ -2,30 +2,44 @@
     <footer class="site-footer" id="consult">
       <div class="container site-footer__content">
         <div>
-          <h3>룸빵일번지</h3>
-          <p>강남 · 수도권 · 부산의 프리미엄 룸과 라운지를 연결하는 원스톱 컨시어지 플랫폼입니다.</p>
+          <h3><%= (t.footer && t.footer.title) || (t.meta && t.meta.siteName) || '룸빵일번지' %></h3>
+          <p><%= (t.footer && t.footer.description) || '' %></p>
         </div>
         <div>
-          <h4>상담 안내</h4>
+          <h4><%= t.footer && t.footer.contactTitle ? t.footer.contactTitle : '' %></h4>
           <ul>
-            <li>제휴 문의: <a href="tel:01000000000">010-0000-0000</a></li>
-            <li>운영 시간: 12:00 ~ 03:00</li>
-            <li>카카오톡: @roombbang1st</li>
+            <li>
+              <%= t.footer && t.footer.contact ? t.footer.contact.partner : '' %>:
+              <a href="tel:01000000000">010-0000-0000</a>
+            </li>
+            <li>
+              <%= t.footer && t.footer.contact ? t.footer.contact.hours : '' %>:
+              <span><%= t.footer && t.footer.contactHours ? t.footer.contactHours : '' %></span>
+            </li>
+            <li>
+              <%= t.footer && t.footer.contact ? t.footer.contact.kakao : '' %>:
+              <span><%= t.footer && t.footer.kakaoId ? t.footer.kakaoId : '' %></span>
+            </li>
           </ul>
         </div>
         <div>
-          <h4>바로가기</h4>
+          <h4><%= t.footer && t.footer.quickLinksTitle ? t.footer.quickLinksTitle : '' %></h4>
           <ul>
-            <li><a href="#areas">추천 지역</a></li>
-            <li><a href="#categories">업종별 찾기</a></li>
-            <li><a href="#process">이용 방법</a></li>
+            <li><a href="#areas"><%= t.footer && t.footer.links ? t.footer.links.areas : '' %></a></li>
+            <li><a href="#categories"><%= t.footer && t.footer.links ? t.footer.links.categories : '' %></a></li>
+            <li><a href="#process"><%= t.footer && t.footer.links ? t.footer.links.process : '' %></a></li>
           </ul>
         </div>
       </div>
       <div class="site-footer__bottom">
-        <p>© <%= new Date().getFullYear() %> 룸빵일번지. All rights reserved.</p>
+        <p>
+          <%= t.footer && t.footer.copyright
+            ? t.footer.copyright.replace('{year}', new Date().getFullYear())
+            : `© ${new Date().getFullYear()} 룸빵일번지. All rights reserved.` %>
+        </p>
       </div>
     </footer>
+    <script src="/scripts/language-switcher.js"></script>
     <% if (scripts) { %>
       <% scripts.forEach(function (script) { %>
         <script src="<%= script %>"></script>

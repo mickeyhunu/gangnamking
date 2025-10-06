@@ -12,7 +12,8 @@
       return;
     }
 
-    const options = ['<option value="all">전체</option>'];
+    const allLabel = (districtFilter.dataset && districtFilter.dataset.allLabel) || 'All';
+    const options = [`<option value="all">${allLabel}</option>`];
 
     if (region !== 'all' && districtMap[region]) {
       districtMap[region].forEach((district) => {

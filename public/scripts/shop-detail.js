@@ -6,8 +6,13 @@
     const prev = slider.querySelector('[data-slider-prev]');
     const next = slider.querySelector('[data-slider-next]');
     const dotsHost = slider.querySelector('[data-slider-dots]');
+    const dotLabelTemplate = slider.dataset.dotLabel || 'View image {{index}}';
     let index = 0;
     let timer;
+
+    function getDotLabel(dotIndex) {
+      return dotLabelTemplate.replace('{{index}}', dotIndex + 1);
+    }
 
     function updateTransform() {
       track.style.transform = `translateX(-${index * 100}%)`;
@@ -50,7 +55,7 @@
         const dot = document.createElement('button');
         dot.type = 'button';
         dot.className = 'detail-gallery__dot';
-        dot.setAttribute('aria-label', `${dotIndex + 1}번 이미지 보기`);
+        dot.setAttribute('aria-label', getDotLabel(dotIndex));
         dot.addEventListener('click', () => {
           goToSlide(dotIndex);
           stopAuto();
@@ -92,6 +97,8 @@
     const copyButton = seoEditor.querySelector('[data-action="copy"]');
     const status = seoEditor.querySelector('[data-status]');
     const metaKeywords = document.querySelector('meta[name="keywords"]');
+    const successMessage = seoEditor.dataset.successMessage || 'Copied keywords.';
+    const errorMessage = seoEditor.dataset.errorMessage || 'Copy failed. Please try again.';
     let statusTimer;
 
     if (!textarea) {
@@ -126,10 +133,10 @@
       copyButton.addEventListener('click', async () => {
         try {
           await navigator.clipboard.writeText(textarea.value);
-          setStatus('키워드를 복사했습니다. 운영팀에 전달해 반영해주세요.', true);
+          setStatus(successMessage, true);
         } catch (error) {
           console.warn('Clipboard copy failed:', error);
-          setStatus('복사에 실패했습니다. 직접 복사해주세요.', false);
+          setStatus(errorMessage, false);
         }
       });
     }
