@@ -24,6 +24,20 @@
       "phone": "010-1234-5678",
       "kakao": "@gangnam101"
     },
+    "gallery": [
+      {
+        "src": "/images/gangnam-lounge-101.svg",
+        "alt": "강남 라운지 101 메인 홀"
+      },
+      {
+        "src": "/images/gallery-neon-1.svg",
+        "alt": "강남 라운지 101 네온 바 카운터"
+      },
+      {
+        "src": "/images/gallery-neon-3.svg",
+        "alt": "강남 라운지 101 프라이빗 룸"
+      }
+    ],
     "seoKeywords": [
       "강남 라운지",
       "강남 프리미엄 바",
@@ -57,6 +71,20 @@
       "phone": "010-9876-5432",
       "kakao": "@gwanakroom"
     },
+    "gallery": [
+      {
+        "src": "/images/gwanak-premium-room.svg",
+        "alt": "관악 프리미엄 룸 리셉션"
+      },
+      {
+        "src": "/images/gallery-neon-2.svg",
+        "alt": "관악 프리미엄 룸 라운지 존"
+      },
+      {
+        "src": "/images/gallery-neon-4.svg",
+        "alt": "관악 프리미엄 룸 프라이빗 테이블"
+      }
+    ],
     "seoKeywords": [
       "관악 룸살롱",
       "서울 관악 유흥",
@@ -90,6 +118,20 @@
       "phone": "010-3333-2222",
       "kakao": "@gangseoelite"
     },
+    "gallery": [
+      {
+        "src": "/images/gangseo-night-suite.svg",
+        "alt": "강서 나이트 스위트 라운지"
+      },
+      {
+        "src": "/images/gallery-neon-5.svg",
+        "alt": "강서 나이트 스위트 루프탑 바"
+      },
+      {
+        "src": "/images/gallery-neon-2.svg",
+        "alt": "강서 나이트 스위트 시그니처 좌석"
+      }
+    ],
     "seoKeywords": [
       "강서 하이엔드바",
       "마곡 루프탑 바",
@@ -123,6 +165,20 @@
       "phone": "010-5555-4444",
       "kakao": "@oceanlounge"
     },
+    "gallery": [
+      {
+        "src": "/images/haeundae-ocean-lounge.svg",
+        "alt": "해운대 오션 라운지 전경"
+      },
+      {
+        "src": "/images/gallery-neon-3.svg",
+        "alt": "해운대 오션 라운지 오션뷰 좌석"
+      },
+      {
+        "src": "/images/gallery-neon-1.svg",
+        "alt": "해운대 오션 라운지 바 존"
+      }
+    ],
     "seoKeywords": [
       "해운대 라운지",
       "부산 오션뷰 바",
@@ -156,6 +212,20 @@
       "phone": "010-7777-6666",
       "kakao": "@velvetclub"
     },
+    "gallery": [
+      {
+        "src": "/images/seomyeon-velvet-club.svg",
+        "alt": "서면 벨벳 클럽 메인 스테이지"
+      },
+      {
+        "src": "/images/gallery-neon-4.svg",
+        "alt": "서면 벨벳 클럽 DJ 부스"
+      },
+      {
+        "src": "/images/gallery-neon-5.svg",
+        "alt": "서면 벨벳 클럽 VIP 존"
+      }
+    ],
     "seoKeywords": [
       "부산 서면 클럽",
       "서면 프리미엄 클럽",
