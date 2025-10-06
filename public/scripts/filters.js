@@ -2,6 +2,7 @@
   const areaFilter = document.getElementById('area-filter');
   const categoryFilter = document.getElementById('category-filter');
   const cards = document.querySelectorAll('[data-grid] .shop-card');
+  const searchButton = document.getElementById('search-button');
 
   function applyFilters() {
     const areaValue = areaFilter ? areaFilter.value : 'all';
@@ -21,5 +22,15 @@
 
   if (categoryFilter) {
     categoryFilter.addEventListener('change', applyFilters);
+  }
+
+  if (searchButton) {
+    searchButton.addEventListener('click', () => {
+      applyFilters();
+      const grid = document.querySelector('[data-grid]');
+      if (grid) {
+        grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
   }
 })();
