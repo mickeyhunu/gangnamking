@@ -3,11 +3,12 @@ const fs = require('fs');
 const express = require('express');
 const { URLSearchParams } = require('url');
 
-const SUPPORTED_LANGUAGES = ['ko', 'en', 'zh'];
+const SUPPORTED_LANGUAGES = ['ko', 'en', 'zh', 'ja'];
 const LANGUAGE_FLAGS = {
-  ko: '🇰🇷',
-  en: '🇺🇸',
-  zh: '🇨🇳',
+  ko: { src: '/images/flags/flag-ko.svg', alt: '한국어' },
+  en: { src: '/images/flags/flag-us.svg', alt: 'English' },
+  zh: { src: '/images/flags/flag-cn.svg', alt: '中文' },
+  ja: { src: '/images/flags/flag-jp.svg', alt: '日本語' },
 };
 const DEFAULT_LANGUAGE = 'ko';
 
@@ -145,10 +146,14 @@ app.use((req, res, next) => {
     const relativeUrl = `${req.path}${queryString ? `?${queryString}` : ''}`;
     const absoluteUrl = `${req.protocol}://${req.get('host')}${relativeUrl}`;
 
+    const flag = LANGUAGE_FLAGS[code] || {};
+
     return {
       code,
       label: translations[code]?.languageName || code.toUpperCase(),
-      flag: LANGUAGE_FLAGS[code] || '',
+      flagSrc: flag.src || '',
+      flagAlt:
+        flag.alt || translations[code]?.languageName || code.toUpperCase(),
       url: relativeUrl,
       absoluteUrl,
       isCurrent: code === activeLang,

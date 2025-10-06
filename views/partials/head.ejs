@@ -50,31 +50,55 @@
             src="/images/logo-roompang.png"
             alt="<%= (t.meta && t.meta.siteName) || '룸빵일번지' %>"
           />
-          <span class="branding__text"><%= (t.meta && t.meta.siteName) || '룸빵일번지' %></span>
         </a>
-        <nav class="nav">
-          <a href="#areas"><%= t.header && t.header.nav ? t.header.nav.areas : '' %></a>
-          <a href="#categories"><%= t.header && t.header.nav ? t.header.nav.categories : '' %></a>
-          <a href="#process"><%= t.header && t.header.nav ? t.header.nav.process : '' %></a>
-          <a href="#consult"><%= t.header && t.header.nav ? t.header.nav.consult : '' %></a>
-        </nav>
-        <div class="header-actions">
-          <div class="language-switcher">
-            <select
-              class="language-switcher__select"
+        <% const currentLanguageOption = (languageOptions || []).find(function(option) { return option.isCurrent; }) || (languageOptions || [])[0]; %>
+        <% if (currentLanguageOption) { %>
+          <div class="language-switcher" data-language-switcher>
+            <button
+              type="button"
+              class="language-switcher__button"
+              aria-haspopup="listbox"
+              aria-expanded="false"
               aria-label="<%= t.header && t.header.languageLabel ? t.header.languageLabel : 'Language' %>"
-              data-language-switcher
+            >
+              <% if (currentLanguageOption.flagSrc) { %>
+                <img
+                  class="language-switcher__flag"
+                  src="<%= currentLanguageOption.flagSrc %>"
+                  alt="<%= currentLanguageOption.flagAlt || currentLanguageOption.label %>"
+                />
+              <% } %>
+              <span class="sr-only"><%= currentLanguageOption.label %></span>
+            </button>
+            <ul
+              class="language-switcher__list"
+              role="listbox"
+              aria-label="<%= t.header && t.header.languageLabel ? t.header.languageLabel : 'Language' %>"
             >
               <% (languageOptions || []).forEach(function(option) { %>
-                <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
-                  <%= option.flag ? option.flag + ' ' : '' %><%= option.label %>
-                </option>
+                <li>
+                  <button
+                    type="button"
+                    class="language-switcher__option <%= option.isCurrent ? 'is-active' : '' %>"
+                    data-language-option
+                    data-url="<%= option.url %>"
+                    role="option"
+                    aria-selected="<%= option.isCurrent %>"
+                  >
+                    <% if (option.flagSrc) { %>
+                      <img
+                        class="language-switcher__flag"
+                        src="<%= option.flagSrc %>"
+                        alt="<%= option.flagAlt || option.label %>"
+                      />
+                    <% } %>
+                    <span class="sr-only"><%= option.label %></span>
+                  </button>
+                </li>
               <% }) %>
-            </select>
+            </ul>
           </div>
-          <a class="btn btn--ghost" href="#areas"><%= t.header && t.header.browseCta ? t.header.browseCta : '' %></a>
-          <a class="btn btn--primary" href="#consult"><%= t.header && t.header.consultCta ? t.header.consultCta : '' %></a>
-        </div>
+        <% } %>
       </div>
     </header>
     <main class="site-main">
