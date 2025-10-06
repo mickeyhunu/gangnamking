@@ -1,61 +1,64 @@
-<%- include('partials/head', { title: '룸빵일번지 - 프리미엄 유흥 공간 가이드', seoKeywords }) %>
+<%- include('partials/head', { title: pageTitle, description: metaDescription, seoKeywords }) %>
   <section class="hero">
     <div class="hero__overlay"></div>
     <div class="container hero__container">
       <div class="hero__text">
-        <span class="badge">서울 · 수도권 · 부산 프리미엄 큐레이션</span>
-        <h1>강남부터 해운대까지, 룸빵일번지가 추천하는 야간 핫플</h1>
-        <p>
-          지역 → 구 → 업종 순으로 세분화된 필터를 활용해 원하는 무드의 공간을 바로 찾아보세요.
-          모든 파트너는 룸빵일번지 전문 매칭팀이 직접 검증한 곳만 소개합니다.
-        </p>
+        <span class="badge"><%= t.hero && t.hero.badge ? t.hero.badge : '' %></span>
+        <h1><%= t.hero && t.hero.headline ? t.hero.headline : '' %></h1>
+        <p><%= t.hero && t.hero.description ? t.hero.description : '' %></p>
         <div class="hero__search">
           <div class="hero__filters">
             <label class="input-group">
-              <span>지역</span>
+              <span><%= t.hero && t.hero.filters ? t.hero.filters.region : '' %></span>
               <select id="region-filter">
-                <option value="all">전체</option>
+                <option value="all"><%= t.hero && t.hero.filters ? t.hero.filters.all : 'All' %></option>
                 <% regions.forEach(function(region) { %>
                   <option value="<%= region %>"><%= region %></option>
                 <% }) %>
               </select>
             </label>
             <label class="input-group">
-              <span>구 / 군</span>
-              <select id="district-filter" disabled>
-                <option value="all">전체</option>
+              <span><%= t.hero && t.hero.filters ? t.hero.filters.district : '' %></span>
+              <select
+                id="district-filter"
+                data-all-label="<%= t.hero && t.hero.filters ? t.hero.filters.all : 'All' %>"
+                disabled
+              >
+                <option value="all"><%= t.hero && t.hero.filters ? t.hero.filters.all : 'All' %></option>
               </select>
             </label>
             <label class="input-group">
-              <span>업종</span>
+              <span><%= t.hero && t.hero.filters ? t.hero.filters.category : '' %></span>
               <select id="category-filter">
-                <option value="all">전체</option>
+                <option value="all"><%= t.hero && t.hero.filters ? t.hero.filters.all : 'All' %></option>
                 <% categories.forEach(function(category) { %>
                   <option value="<%= category %>"><%= category %></option>
                 <% }) %>
               </select>
             </label>
           </div>
-          <button class="btn btn--primary btn--large" id="search-button" type="button">검색하기</button>
+          <button class="btn btn--primary btn--large" id="search-button" type="button">
+            <%= t.hero && t.hero.filters ? t.hero.filters.action : '' %>
+          </button>
         </div>
         <ul class="hero__highlights">
-          <li>실시간 예약 문의 연계</li>
-          <li>전담 컨시어지 배정</li>
-          <li>VIP 맞춤 코스 추천</li>
+          <% (t.hero && Array.isArray(t.hero.highlights) ? t.hero.highlights : []).forEach(function(item) { %>
+            <li><%= item %></li>
+          <% }) %>
         </ul>
       </div>
       <div class="hero__stats">
         <div class="stat-card">
           <span class="stat-card__number"><%= shops.length %>+</span>
-          <span class="stat-card__label">제휴된 프리미엄 매장</span>
+          <span class="stat-card__label"><%= t.hero && t.hero.stats ? t.hero.stats.shops : '' %></span>
         </div>
         <div class="stat-card">
           <span class="stat-card__number">24h</span>
-          <span class="stat-card__label">365일 빠른 응대</span>
+          <span class="stat-card__label"><%= t.hero && t.hero.stats ? t.hero.stats.response : '' %></span>
         </div>
         <div class="stat-card">
           <span class="stat-card__number">1:1</span>
-          <span class="stat-card__label">맞춤형 예약 컨시어지</span>
+          <span class="stat-card__label"><%= t.hero && t.hero.stats ? t.hero.stats.concierge : '' %></span>
         </div>
       </div>
     </div>
@@ -64,24 +67,16 @@
   <section class="section section--intro">
     <div class="container section__container">
       <div>
-        <h2 class="section__title">룸빵일번지와 함께 즐기는 하이엔드 나이트 라이프</h2>
-        <p class="section__subtitle">
-          트렌디한 라운지부터 하이엔드 클럽까지, 취향에 맞춘 업소를 전문가가 직접 추천해드립니다.
-        </p>
+        <h2 class="section__title"><%= t.intro && t.intro.title ? t.intro.title : '' %></h2>
+        <p class="section__subtitle"><%= t.intro && t.intro.subtitle ? t.intro.subtitle : '' %></p>
       </div>
       <div class="feature-grid">
-        <div class="feature-card">
-          <h3>믿을 수 있는 검수</h3>
-          <p>모든 제휴 파트너는 2단계 현장 검증을 거쳐 등록되며, 예약 품질을 상시 모니터링합니다.</p>
-        </div>
-        <div class="feature-card">
-          <h3>실시간 상담</h3>
-          <p>카카오톡 · 전화 상담으로 원하는 시간과 인원에 맞춘 맞춤 코스를 제안합니다.</p>
-        </div>
-        <div class="feature-card">
-          <h3>다양한 혜택</h3>
-          <p>룸빵일번지 회원만을 위한 특별 할인과 전용 룸 업그레이드 혜택을 제공해드립니다.</p>
-        </div>
+        <% (t.intro && Array.isArray(t.intro.features) ? t.intro.features : []).forEach(function(feature) { %>
+          <div class="feature-card">
+            <h3><%= feature.title %></h3>
+            <p><%= feature.description %></p>
+          </div>
+        <% }) %>
       </div>
     </div>
   </section>
@@ -90,10 +85,10 @@
     <div class="container">
       <div class="section__header">
         <div>
-          <h2 class="section__title">추천 지역별 라운지 &amp; 클럽</h2>
-          <p class="section__subtitle">지역 → 구 → 업종 필터를 조합해 원하는 매장을 빠르게 찾아보세요.</p>
+          <h2 class="section__title"><%= t.areas && t.areas.title ? t.areas.title : '' %></h2>
+          <p class="section__subtitle"><%= t.areas && t.areas.subtitle ? t.areas.subtitle : '' %></p>
         </div>
-        <a class="btn btn--ghost" href="#consult">제휴 문의하기</a>
+        <a class="btn btn--ghost" href="#consult"><%= t.areas && t.areas.cta ? t.areas.cta : '' %></a>
       </div>
       <div class="shop-grid" data-grid>
         <% shops.forEach(function(shop) { %>
@@ -110,8 +105,12 @@
               <span class="shop-card__meta"><%= shop.region %> · <%= shop.district %> · <%= shop.category %></span>
               <h3><%= shop.name %></h3>
               <p><%= shop.description %></p>
-              <p class="shop-card__contact">담당 <strong><%= shop.manager.name %></strong> · <a href="tel:<%= shop.manager.phone %>"><%= shop.manager.phone %></a></p>
-              <a class="shop-card__link" href="/shops/<%= shop.id %>">자세히 보기</a>
+              <p class="shop-card__contact">
+                <%= t.shop && t.shop.manager ? t.shop.manager + ': ' : '' %>
+                <strong><%= shop.manager.name %></strong>
+                · <a href="tel:<%= shop.manager.phone %>"><%= shop.manager.phone %></a>
+              </p>
+              <a class="shop-card__link" href="/shops/<%= shop.id %>"><%= t.shop && t.shop.viewDetails ? t.shop.viewDetails : '' %></a>
             </div>
           </article>
         <% }) %>
@@ -121,8 +120,8 @@
 
   <section class="section section--muted" id="categories">
     <div class="container">
-      <h2 class="section__title">업종별 빠른 찾기</h2>
-      <p class="section__subtitle">필터에서 원하는 업종을 선택하면 해당 업소만 모아볼 수 있습니다.</p>
+      <h2 class="section__title"><%= t.categories && t.categories.title ? t.categories.title : '' %></h2>
+      <p class="section__subtitle"><%= t.categories && t.categories.subtitle ? t.categories.subtitle : '' %></p>
       <div class="category-chips">
         <% categories.forEach(function(category) { %>
           <span class="category-chip"><%= category %></span>
@@ -133,23 +132,15 @@
 
   <section class="section" id="process">
     <div class="container">
-      <h2 class="section__title">이용 방법</h2>
+      <h2 class="section__title"><%= t.process && t.process.title ? t.process.title : '' %></h2>
       <div class="step-grid">
-        <div class="step-card">
-          <span class="step-card__number">01</span>
-          <h3>필터로 원하는 조건 선택</h3>
-          <p>지역과 업종을 지정하면 가장 잘 맞는 파트너 업소를 추천합니다.</p>
-        </div>
-        <div class="step-card">
-          <span class="step-card__number">02</span>
-          <h3>전담 컨시어지 연결</h3>
-          <p>상담 버튼으로 연결되는 전담 컨시어지가 일정과 혜택을 세심하게 안내합니다.</p>
-        </div>
-        <div class="step-card">
-          <span class="step-card__number">03</span>
-          <h3>예약 및 방문</h3>
-          <p>예약이 확정되면 전용 혜택과 함께 완벽한 밤을 즐길 수 있도록 안내합니다.</p>
-        </div>
+        <% (t.process && Array.isArray(t.process.steps) ? t.process.steps : []).forEach(function(step) { %>
+          <div class="step-card">
+            <span class="step-card__number"><%= step.number %></span>
+            <h3><%= step.title %></h3>
+            <p><%= step.description %></p>
+          </div>
+        <% }) %>
       </div>
     </div>
   </section>
@@ -157,10 +148,10 @@
   <section class="section section--cta">
     <div class="container section--cta__content">
       <div>
-        <h2 class="section__title">제휴 파트너가 되어보세요</h2>
-        <p class="section__subtitle">룸빵일번지 네트워크에 합류하여 더 많은 프리미엄 고객을 만나보세요.</p>
+        <h2 class="section__title"><%= t.cta && t.cta.title ? t.cta.title : '' %></h2>
+        <p class="section__subtitle"><%= t.cta && t.cta.subtitle ? t.cta.subtitle : '' %></p>
       </div>
-      <a class="btn btn--primary btn--large" href="tel:01000000000">제휴 상담 바로 연결</a>
+      <a class="btn btn--primary btn--large" href="tel:01000000000"><%= t.cta && t.cta.button ? t.cta.button : '' %></a>
     </div>
   </section>
 

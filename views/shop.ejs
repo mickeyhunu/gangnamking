@@ -1,12 +1,23 @@
-<% const galleryImages = Array.isArray(shop.gallery) && shop.gallery.length ? shop.gallery : [{ src: shop.image, alt: shop.name + ' 분위기' }]; %>
-<%- include('partials/head', { title: shop.name + ' - 룸빵일번지', seoKeywords }) %>
+<%
+  const fallbackAltSuffix = (t.shop && t.shop.galleryAltFallback) || '분위기';
+  const galleryImages = Array.isArray(shop.gallery) && shop.gallery.length
+    ? shop.gallery
+    : [{ src: shop.image, alt: `${shop.name} ${fallbackAltSuffix}` }];
+%>
+<%- include('partials/head', { title: pageTitle, description: metaDescription, seoKeywords }) %>
   <section class="detail-hero">
     <div class="container detail-hero__grid">
-      <div class="detail-gallery" data-slider>
+      <div
+        class="detail-gallery"
+        data-slider
+        data-dot-label="<%= t.shop && t.shop.gallery ? t.shop.gallery.dotLabel : 'View image {{index}}' %>"
+      >
         <div class="detail-gallery__track" data-slider-track>
           <% galleryImages.forEach(function(image) {
                const source = typeof image === 'string' ? image : image.src;
-               const altText = typeof image === 'string' ? shop.name + ' 분위기' : (image.alt || shop.name + ' 분위기');
+               const altText = typeof image === 'string'
+                 ? `${shop.name} ${fallbackAltSuffix}`
+                 : (image.alt || `${shop.name} ${fallbackAltSuffix}`);
           %>
             <figure class="detail-gallery__slide">
               <img src="<%= source %>" alt="<%= altText %>" />
@@ -17,13 +28,13 @@
           <button
             class="detail-gallery__control detail-gallery__control--prev"
             type="button"
-            aria-label="이전 이미지"
+            aria-label="<%= t.shop && t.shop.gallery ? t.shop.gallery.prev : 'Previous image' %>"
             data-slider-prev
           ></button>
           <button
             class="detail-gallery__control detail-gallery__control--next"
             type="button"
-            aria-label="다음 이미지"
+            aria-label="<%= t.shop && t.shop.gallery ? t.shop.gallery.next : 'Next image' %>"
             data-slider-next
           ></button>
           <div class="detail-gallery__dots" data-slider-dots></div>
@@ -35,33 +46,33 @@
         <p class="detail-hero__description"><%= shop.description %></p>
         <dl class="detail-hero__list">
           <div>
-            <dt>주소</dt>
+            <dt><%= t.shop && t.shop.address ? t.shop.address : 'Address' %></dt>
             <dd><%= shop.address %></dd>
           </div>
           <div>
-            <dt>대표 전화</dt>
+            <dt><%= t.shop && t.shop.phone ? t.shop.phone : 'Phone' %></dt>
             <dd><a href="tel:<%= shop.phone %>"><%= shop.phone %></a></dd>
           </div>
           <div>
-            <dt>담당 매니저</dt>
+            <dt><%= t.shop && t.shop.manager ? t.shop.manager : 'Manager' %></dt>
             <dd>
               <strong><%= shop.manager.name %></strong>
               <span class="detail-hero__manager-contact">
                 <a href="tel:<%= shop.manager.phone %>"><%= shop.manager.phone %></a>
                 <% if (shop.manager.kakao) { %>
-                  · 카카오톡 <%= shop.manager.kakao %>
+                  · <%= t.shop && t.shop.contact ? t.shop.contact.kakao : 'KakaoTalk' %> <%= shop.manager.kakao %>
                 <% } %>
               </span>
             </dd>
           </div>
           <div>
-            <dt>영업시간</dt>
+            <dt><%= t.shop && t.shop.hours ? t.shop.hours : 'Hours' %></dt>
             <dd><%= shop.hours %></dd>
           </div>
         </dl>
         <div class="detail-hero__actions">
-          <a class="btn btn--primary" href="tel:<%= shop.manager.phone %>">즉시 전화 상담</a>
-          <a class="back-link" href="/">메인으로 돌아가기</a>
+          <a class="btn btn--primary" href="tel:<%= shop.manager.phone %>"><%= t.shop && t.shop.call ? t.shop.call : 'Call now' %></a>
+          <a class="back-link" href="/"><%= t.shop && t.shop.back ? t.shop.back : 'Back to home' %></a>
         </div>
       </div>
     </div>
@@ -70,37 +81,40 @@
   <section class="section detail-section">
     <div class="container detail-section__grid">
       <div class="detail-card">
-        <h2>요금 안내</h2>
+        <h2><%= t.shop && t.shop.pricing ? t.shop.pricing.title : 'Pricing' %></h2>
         <div class="pricing-grid">
           <div class="pricing-card">
-            <h3>주대</h3>
+            <h3><%= t.shop && t.shop.pricing ? t.shop.pricing.base : 'Table' %></h3>
             <p><%= shop.pricing.base %></p>
           </div>
           <div class="pricing-card">
-            <h3>TC</h3>
+            <h3><%= t.shop && t.shop.pricing ? t.shop.pricing.tc : 'TC' %></h3>
             <p><%= shop.pricing.tc %></p>
           </div>
           <div class="pricing-card">
-            <h3>RT</h3>
+            <h3><%= t.shop && t.shop.pricing ? t.shop.pricing.rt : 'RT' %></h3>
             <p><%= shop.pricing.rt %></p>
           </div>
         </div>
       </div>
       <div class="detail-card">
-        <h2>담당자 상담 채널</h2>
+        <h2><%= t.shop && t.shop.contact ? t.shop.contact.title : 'Concierge contact' %></h2>
         <div class="contact-card">
-          <p>전담 매니저가 예약, 혜택, 행사 문의를 실시간으로 응대해드립니다.</p>
+          <p><%= t.shop && t.shop.managerContact ? t.shop.managerContact : '' %></p>
           <ul>
-            <li><strong>담당자</strong> <%= shop.manager.name %></li>
-            <li><strong>연락처</strong> <a href="tel:<%= shop.manager.phone %>"><%= shop.manager.phone %></a></li>
+            <li><strong><%= t.shop && t.shop.contact ? t.shop.contact.manager : 'Manager' %></strong> <%= shop.manager.name %></li>
+            <li>
+              <strong><%= t.shop && t.shop.contact ? t.shop.contact.phone : 'Phone' %></strong>
+              <a href="tel:<%= shop.manager.phone %>"><%= shop.manager.phone %></a>
+            </li>
             <% if (shop.manager.kakao) { %>
-              <li><strong>카카오톡</strong> <%= shop.manager.kakao %></li>
+              <li><strong><%= t.shop && t.shop.contact ? t.shop.contact.kakao : 'KakaoTalk' %></strong> <%= shop.manager.kakao %></li>
             <% } %>
           </ul>
         </div>
       </div>
       <div class="detail-card">
-        <h2>핵심 포인트</h2>
+        <h2><%= t.shop && t.shop.highlights ? t.shop.highlights : 'Highlights' %></h2>
         <ul class="detail-tags">
           <% shop.highlights.forEach(function(item) { %>
             <li><%= item %></li>
@@ -113,22 +127,24 @@
   <section class="section section--muted detail-seo">
     <div class="container detail-seo__grid">
       <div>
-        <h2>SEO 키워드 프리셋</h2>
-        <p class="detail-seo__description">
-          현재 등록된 키워드는 검색 노출 향상을 위해 메타 태그로 자동 반영됩니다. 필요에 따라 아래
-          편집기를 활용해 키워드를 다듬고, 저장을 위해 운영팀에 전달하세요.
-        </p>
+        <h2><%= t.shop && t.shop.seo ? t.shop.seo.title : 'SEO keywords' %></h2>
+        <p class="detail-seo__description"><%= t.shop && t.shop.seo ? t.shop.seo.description : '' %></p>
         <ul class="seo-chip-list">
           <% (seoKeywords || []).forEach(function(keyword) { %>
             <li><%= keyword %></li>
           <% }) %>
         </ul>
       </div>
-      <form class="seo-editor" data-seo-editor>
-        <label for="seo-keywords-input">키워드 작성</label>
+      <form
+        class="seo-editor"
+        data-seo-editor
+        data-success-message="<%= t.shop && t.shop.seo ? t.shop.seo.copySuccess : '' %>"
+        data-error-message="<%= t.shop && t.shop.seo ? t.shop.seo.copyError : '' %>"
+      >
+        <label for="seo-keywords-input"><%= t.shop && t.shop.seo ? t.shop.seo.editorLabel : 'Keywords' %></label>
         <textarea id="seo-keywords-input" rows="6"><%= (seoKeywords || []).join(', ') %></textarea>
         <div class="seo-editor__actions">
-          <button type="button" class="btn btn--ghost" data-action="copy">키워드 복사</button>
+          <button type="button" class="btn btn--ghost" data-action="copy"><%= t.shop && t.shop.seo ? t.shop.seo.copy : 'Copy' %></button>
           <span class="seo-editor__status" data-status role="status" aria-live="polite"></span>
         </div>
       </form>

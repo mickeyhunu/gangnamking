@@ -1,13 +1,35 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<%= lang || 'ko' %>">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %></title>
-    <link rel="icon" type="image/svg+xml" href="/images/favicon-roompang.png" />
-    <link rel="apple-touch-icon" href="/images/favicon-roompang.png" />
+    <title><%= title || (t.meta && t.meta.defaultTitle) || 'Gangnam King' %></title>
+    <meta
+      name="description"
+      content="<%= (typeof description === 'string' && description.length) ? description : ((t.meta && t.meta.description) || '') %>"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
     <% if (seoKeywords && seoKeywords.length) { %>
       <meta name="keywords" content="<%= seoKeywords.join(', ') %>" />
+    <% } %>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="<%= title || (t.meta && t.meta.defaultTitle) || 'Gangnam King' %>" />
+    <meta
+      property="og:description"
+      content="<%= (typeof description === 'string' && description.length) ? description : ((t.meta && t.meta.description) || '') %>"
+    />
+    <meta property="og:site_name" content="<%= (t.meta && t.meta.siteName) || 'Gangnam King' %>" />
+    <meta property="og:url" content="<%= canonicalUrl %>" />
+    <link rel="canonical" href="<%= canonicalUrl %>" />
+    <% if (languageOptions && languageOptions.length) { %>
+      <% languageOptions.forEach(function(option) { %>
+        <link rel="alternate" hreflang="<%= option.code %>" href="<%= option.absoluteUrl %>" />
+      <% }) %>
+      <% const defaultOption = languageOptions.find(function(option) { return option.code === defaultLanguage; }) || languageOptions[0]; %>
+      <% if (defaultOption) { %>
+        <link rel="alternate" hreflang="x-default" href="<%= defaultOption.absoluteUrl %>" />
+      <% } %>
     <% } %>
     <link rel="stylesheet" href="/styles/main.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,27 +43,36 @@
     <header class="site-header">
       <div class="site-header__topbar">
         <div class="container">
-          <span>프리미엄 룸 · 라운지 컨시어지 플랫폼</span>
+          <span><%= t.header && t.header.tagline ? t.header.tagline : '' %></span>
           <div class="topbar__links">
-            <a href="#consult">제휴 문의</a>
-            <a href="tel:01000000000">고객센터 010-0000-0000</a>
+            <a href="#consult"><%= t.header && t.header.affiliate ? t.header.affiliate : '' %></a>
+            <a href="tel:01000000000"><%= t.header && t.header.support ? t.header.support : '' %></a>
           </div>
         </div>
       </div>
       <div class="container site-header__main">
-        <a class="branding" href="/">
-          <img src="/images/logo-roompang.png" alt="룸빵일번지 로고" />
-          <span class="sr-only">룸빵일번지 홈으로 이동</span>
-        </a>
+        <a class="branding" href="/"><%= (t.meta && t.meta.siteName) || '룸빵일번지' %></a>
         <nav class="nav">
-          <a href="#areas">추천 지역</a>
-          <a href="#categories">업종별 찾기</a>
-          <a href="#process">진행 절차</a>
-          <a href="#consult">제휴 안내</a>
+          <a href="#areas"><%= t.header && t.header.nav ? t.header.nav.areas : '' %></a>
+          <a href="#categories"><%= t.header && t.header.nav ? t.header.nav.categories : '' %></a>
+          <a href="#process"><%= t.header && t.header.nav ? t.header.nav.process : '' %></a>
+          <a href="#consult"><%= t.header && t.header.nav ? t.header.nav.consult : '' %></a>
         </nav>
         <div class="header-actions">
-          <a class="btn btn--ghost" href="#areas">바로 둘러보기</a>
-          <a class="btn btn--primary" href="#consult">빠른 상담</a>
+          <div class="language-switcher">
+            <select
+              aria-label="<%= t.header && t.header.languageLabel ? t.header.languageLabel : 'Language' %>"
+              data-language-switcher
+            >
+              <% (languageOptions || []).forEach(function(option) { %>
+                <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+          <a class="btn btn--ghost" href="#areas"><%= t.header && t.header.browseCta ? t.header.browseCta : '' %></a>
+          <a class="btn btn--primary" href="#consult"><%= t.header && t.header.consultCta ? t.header.consultCta : '' %></a>
         </div>
       </div>
     </header>
