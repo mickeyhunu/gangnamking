@@ -1,0 +1,40 @@
+<%- include('partials/head', { title: shop.name + ' - Gangnam King' }) %>
+  <section class="detail-hero">
+    <div class="container detail-hero__content">
+      <div class="detail-hero__image">
+        <img src="<%= shop.image %>" alt="<%= shop.name %>" />
+      </div>
+      <div class="detail-hero__info">
+        <p class="detail-hero__meta"><%= shop.area %> · <%= shop.category %></p>
+        <h1><%= shop.name %></h1>
+        <p class="detail-hero__description"><%= shop.description %></p>
+        <dl class="detail-hero__list">
+          <div>
+            <dt>주소</dt>
+            <dd><%= shop.address %></dd>
+          </div>
+          <div>
+            <dt>전화번호</dt>
+            <dd><a href="tel:<%= shop.phone %>"><%= shop.phone %></a></dd>
+          </div>
+          <div>
+            <dt>영업시간</dt>
+            <dd><%= shop.hours %></dd>
+          </div>
+        </dl>
+        <a class="back-link" href="/">← 메인으로 돌아가기</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>핵심 포인트</h2>
+      <ul class="highlight-list">
+        <% shop.highlights.forEach(function(item) { %>
+          <li><%= item %></li>
+        <% }) %>
+      </ul>
+    </div>
+  </section>
+<%- include('partials/footer') %>
