@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360">
+  <defs>
+    <linearGradient id="grad3" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffb347" />
+      <stop offset="100%" stop-color="#ffcc33" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="360" fill="#141018" />
+  <rect x="70" y="70" width="460" height="220" rx="32" fill="#1e1524" />
+  <path d="M200 280 L230 120 L370 120 L400 280 Z" fill="url(#grad3)" opacity="0.9" />
+  <text x="300" y="210" text-anchor="middle" font-size="42" font-family="'Pretendard', sans-serif" fill="#fff">
+    WHISKY HOUSE
+  </text>
+</svg>

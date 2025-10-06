@@ -1,0 +1,61 @@
+<%- include('partials/head', { title: 'Gangnam King - 프리미엄 유흥 업소 가이드' }) %>
+  <section class="hero">
+    <div class="container hero__content">
+      <h1>강남 최고의 프리미엄 라운지 & 클럽 가이드</h1>
+      <p>지역과 업종을 선택해 원하는 스타일의 업소를 한 번에 찾아보세요.</p>
+      <div class="hero__filters">
+        <div class="filter-group">
+          <label for="area-filter">지역</label>
+          <select id="area-filter">
+            <option value="all">전체</option>
+            <% areas.forEach(function(area) { %>
+              <option value="<%= area %>"><%= area %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="category-filter">업종</label>
+          <select id="category-filter">
+            <option value="all">전체</option>
+            <% categories.forEach(function(category) { %>
+              <option value="<%= category %>"><%= category %></option>
+            <% }) %>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="areas">
+    <div class="container">
+      <h2>지역별 추천</h2>
+      <div class="shop-grid" data-grid>
+        <% shops.forEach(function(shop) { %>
+          <article class="shop-card" data-area="<%= shop.area %>" data-category="<%= shop.category %>">
+            <div class="shop-card__image">
+              <img src="<%= shop.image %>" alt="<%= shop.name %>" />
+            </div>
+            <div class="shop-card__body">
+              <p class="shop-card__area"><%= shop.area %> · <%= shop.category %></p>
+              <h3 class="shop-card__title"><%= shop.name %></h3>
+              <p class="shop-card__desc"><%= shop.description %></p>
+              <a class="shop-card__link" href="/shops/<%= shop.id %>">자세히 보기</a>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="categories">
+    <div class="container">
+      <h2>업종별 큐레이션</h2>
+      <div class="category-list">
+        <% categories.forEach(function(category) { %>
+          <span class="category-pill"><%= category %></span>
+        <% }) %>
+      </div>
+      <p class="section__hint">새로운 업소를 <code>data/shops.json</code>에 추가하면 메인 페이지와 상세 페이지가 자동으로 생성됩니다.</p>
+    </div>
+  </section>
+<%- include('partials/footer', { scripts: ['/scripts/filters.js'] }) %>
