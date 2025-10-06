@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">룸빵일번지 파비콘</title>
+  <desc id="desc">빨간색 미소를 띤 병 모양 아이콘</desc>
+  <rect width="256" height="256" rx="56" fill="#ffffff" />
+  <g fill="#f24b2c">
+    <path d="M88 36a12 12 0 0 1 12-12h56a12 12 0 0 1 12 12v48h8a20 20 0 0 1 20 20v96c0 35.35-28.65 64-64 64h-8c-35.35 0-64-28.65-64-64v-96a20 20 0 0 1 20-20h8z" />
+    <circle cx="112" cy="140" r="12" fill="#ffffff" />
+    <circle cx="144" cy="140" r="12" fill="#ffffff" />
+    <path d="M96 188c16 20 48 20 64 0" stroke="#ffffff" stroke-width="12" stroke-linecap="round" fill="none" />
+  </g>
+</svg>

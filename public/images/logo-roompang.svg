@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">룸빵일번지 로고</title>
+  <desc id="desc">빨강, 파랑, 초록의 문자로 구성된 No.1 roompang 텍스트 로고</desc>
+  <rect width="512" height="512" fill="#ffffff" rx="56" />
+  <g font-family="'Pretendard', 'Noto Sans KR', 'Segoe UI', sans-serif" font-weight="700">
+    <text x="50%" y="212" font-size="164" text-anchor="middle" fill="#d13c25">No</text>
+    <text x="270" y="212" font-size="164" fill="#0092ff">.1</text>
+    <text x="50%" y="356" font-size="124" text-anchor="middle" letter-spacing="4" fill="#4c1f1f">room</text>
+    <text x="352" y="356" font-size="124" fill="#1fa04c">pang</text>
+  </g>
+</svg>
