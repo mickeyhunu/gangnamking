@@ -31,6 +31,8 @@
         <link rel="alternate" hreflang="x-default" href="<%= defaultOption.absoluteUrl %>" />
       <% } %>
     <% } %>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-roompang.png" />
+    <link rel="apple-touch-icon" href="/images/favicon-roompang.png" />
     <link rel="stylesheet" href="/styles/main.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -41,17 +43,15 @@
   </head>
   <body>
     <header class="site-header">
-      <div class="site-header__topbar">
-        <div class="container">
-          <span><%= t.header && t.header.tagline ? t.header.tagline : '' %></span>
-          <div class="topbar__links">
-            <a href="#consult"><%= t.header && t.header.affiliate ? t.header.affiliate : '' %></a>
-            <a href="tel:01000000000"><%= t.header && t.header.support ? t.header.support : '' %></a>
-          </div>
-        </div>
-      </div>
       <div class="container site-header__main">
-        <a class="branding" href="/"><%= (t.meta && t.meta.siteName) || '룸빵일번지' %></a>
+        <a class="branding" href="/">
+          <img
+            class="branding__logo"
+            src="/images/logo-roompang.png"
+            alt="<%= (t.meta && t.meta.siteName) || '룸빵일번지' %>"
+          />
+          <span class="branding__text"><%= (t.meta && t.meta.siteName) || '룸빵일번지' %></span>
+        </a>
         <nav class="nav">
           <a href="#areas"><%= t.header && t.header.nav ? t.header.nav.areas : '' %></a>
           <a href="#categories"><%= t.header && t.header.nav ? t.header.nav.categories : '' %></a>
@@ -61,12 +61,13 @@
         <div class="header-actions">
           <div class="language-switcher">
             <select
+              class="language-switcher__select"
               aria-label="<%= t.header && t.header.languageLabel ? t.header.languageLabel : 'Language' %>"
               data-language-switcher
             >
               <% (languageOptions || []).forEach(function(option) { %>
                 <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
-                  <%= option.label %>
+                  <%= option.flag ? option.flag + ' ' : '' %><%= option.label %>
                 </option>
               <% }) %>
             </select>

@@ -4,6 +4,11 @@ const express = require('express');
 const { URLSearchParams } = require('url');
 
 const SUPPORTED_LANGUAGES = ['ko', 'en', 'zh'];
+const LANGUAGE_FLAGS = {
+  ko: '🇰🇷',
+  en: '🇺🇸',
+  zh: '🇨🇳',
+};
 const DEFAULT_LANGUAGE = 'ko';
 
 const app = express();
@@ -143,6 +148,7 @@ app.use((req, res, next) => {
     return {
       code,
       label: translations[code]?.languageName || code.toUpperCase(),
+      flag: LANGUAGE_FLAGS[code] || '',
       url: relativeUrl,
       absoluteUrl,
       isCurrent: code === activeLang,
