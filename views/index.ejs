@@ -112,43 +112,6 @@
     </div>
   </section>
 
-  <section class="section section--muted" id="categories">
-    <div class="container">
-      <h2 class="section__title"><%= t.categories && t.categories.title ? t.categories.title : '' %></h2>
-      <p class="section__subtitle"><%= t.categories && t.categories.subtitle ? t.categories.subtitle : '' %></p>
-      <div class="category-chips">
-        <% categories.forEach(function(category) { %>
-          <span class="category-chip"><%= category %></span>
-        <% }) %>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="process">
-    <div class="container">
-      <h2 class="section__title"><%= t.process && t.process.title ? t.process.title : '' %></h2>
-      <div class="step-grid">
-        <% (t.process && Array.isArray(t.process.steps) ? t.process.steps : []).forEach(function(step) { %>
-          <div class="step-card">
-            <span class="step-card__number"><%= step.number %></span>
-            <h3><%= step.title %></h3>
-            <p><%= step.description %></p>
-          </div>
-        <% }) %>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--cta">
-    <div class="container section--cta__content">
-      <div>
-        <h2 class="section__title"><%= t.cta && t.cta.title ? t.cta.title : '' %></h2>
-        <p class="section__subtitle"><%= t.cta && t.cta.subtitle ? t.cta.subtitle : '' %></p>
-      </div>
-      <a class="btn btn--primary btn--large" href="tel:01000000000"><%= t.cta && t.cta.button ? t.cta.button : '' %></a>
-    </div>
-  </section>
-
   <script id="region-district-data" type="application/json">
     <%- JSON.stringify(districtMap) %>
   </script>
