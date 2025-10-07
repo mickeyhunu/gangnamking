@@ -50,53 +50,31 @@
             src="/images/logo-roompang.png"
             alt="<%= (t.meta && t.meta.siteName) || '룸빵일번지' %>"
           />
+          <span class="branding__text">룸빵일번지</span>
         </a>
         <% const currentLanguageOption = (languageOptions || []).find(function(option) { return option.isCurrent; }) || (languageOptions || [])[0]; %>
+        <% const languageSelectId = 'language-select'; %>
         <% if (currentLanguageOption) { %>
-          <div class="language-switcher" data-language-switcher>
-            <button
-              type="button"
-              class="language-switcher__button"
-              aria-haspopup="listbox"
-              aria-expanded="false"
-              aria-label="<%= t.header && t.header.languageLabel ? t.header.languageLabel : 'Language' %>"
-            >
-              <% if (currentLanguageOption.flagSrc) { %>
-                <img
-                  class="language-switcher__flag"
-                  src="<%= currentLanguageOption.flagSrc %>"
-                  alt="<%= currentLanguageOption.flagAlt || currentLanguageOption.label %>"
-                />
-              <% } %>
-              <span class="sr-only"><%= currentLanguageOption.label %></span>
-            </button>
-            <ul
-              class="language-switcher__list"
-              role="listbox"
-              aria-label="<%= t.header && t.header.languageLabel ? t.header.languageLabel : 'Language' %>"
+          <div class="language-select">
+            <% if (currentLanguageOption.flagSrc) { %>
+              <img
+                class="language-select__flag"
+                src="<%= currentLanguageOption.flagSrc %>"
+                alt="<%= currentLanguageOption.flagAlt || currentLanguageOption.label %>"
+              />
+            <% } %>
+            <label class="language-select__label" for="<%= languageSelectId %>">Language</label>
+            <select
+              class="language-select__dropdown"
+              id="<%= languageSelectId %>"
+              data-language-select
             >
               <% (languageOptions || []).forEach(function(option) { %>
-                <li>
-                  <button
-                    type="button"
-                    class="language-switcher__option <%= option.isCurrent ? 'is-active' : '' %>"
-                    data-language-option
-                    data-url="<%= option.url %>"
-                    role="option"
-                    aria-selected="<%= option.isCurrent %>"
-                  >
-                    <% if (option.flagSrc) { %>
-                      <img
-                        class="language-switcher__flag"
-                        src="<%= option.flagSrc %>"
-                        alt="<%= option.flagAlt || option.label %>"
-                      />
-                    <% } %>
-                    <span class="sr-only"><%= option.label %></span>
-                  </button>
-                </li>
+                <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
+                  <%= option.label %>
+                </option>
               <% }) %>
-            </ul>
+            </select>
           </div>
         <% } %>
       </div>
