@@ -57,14 +57,18 @@
         <% const languageSelectId = 'language-select'; %>
         <% if (currentLanguageOption) { %>
           <div class="language-select">
-            <% if (currentLanguageOption.flagSrc) { %>
-              <img
-                class="language-select__flag"
-                src="<%= currentLanguageOption.flagSrc %>"
-                alt="<%= currentLanguageOption.flagAlt || currentLanguageOption.label %>"
-              />
-            <% } %>
-            <label class="language-select__label" for="<%= languageSelectId %>">Language</label>
+            <div class="language-select__top">
+              <% if (currentLanguageOption.flagSrc) { %>
+                <img
+                  class="language-select__flag"
+                  src="<%= currentLanguageOption.flagSrc %>"
+                  alt="<%= currentLanguageOption.flagAlt || currentLanguageOption.label %>"
+                />
+              <% } %>
+              <label class="language-select__label" for="<%= languageSelectId %>">
+                Language
+              </label>
+            </div>
             <select
               class="language-select__dropdown"
               id="<%= languageSelectId %>"
