@@ -130,6 +130,32 @@
         "tc": "TC",
         "rt": "RT"
       },
+      "pricingTable": [
+        {
+          "label": "오후 9시 이전",
+          "meta": "주대 10 · TC 12 · RT 5",
+          "prices": [
+            { "label": "1인", "amount": "27만" },
+            { "label": "2인", "amount": "39만" },
+            { "label": "3인", "amount": "51만" },
+            { "label": "4인", "amount": "63만" }
+          ]
+        },
+        {
+          "label": "오후 9시 이후",
+          "meta": "주대 13 · TC 12 · RT 5",
+          "prices": [
+            { "label": "1인", "amount": "30만" },
+            { "label": "2인", "amount": "42만" },
+            { "label": "3인", "amount": "54만" },
+            { "label": "4인", "amount": "67만" }
+          ]
+        }
+      ],
+      "services": [
+        "강남권 픽업 서비스",
+        "발렛파킹 서비스"
+      ],
       "contact": {
         "title": "담당자 상담 채널",
         "manager": "담당자",
@@ -290,6 +316,32 @@
         "tc": "TC",
         "rt": "RT"
       },
+      "pricingTable": [
+        {
+          "label": "Before 9 PM",
+          "meta": "Cover 10 · TC 12 · RT 5",
+          "prices": [
+            { "label": "1 guest", "amount": "270K KRW" },
+            { "label": "2 guests", "amount": "390K KRW" },
+            { "label": "3 guests", "amount": "510K KRW" },
+            { "label": "4 guests", "amount": "630K KRW" }
+          ]
+        },
+        {
+          "label": "After 9 PM",
+          "meta": "Cover 13 · TC 12 · RT 5",
+          "prices": [
+            { "label": "1 guest", "amount": "300K KRW" },
+            { "label": "2 guests", "amount": "420K KRW" },
+            { "label": "3 guests", "amount": "540K KRW" },
+            { "label": "4 guests", "amount": "670K KRW" }
+          ]
+        }
+      ],
+      "services": [
+        "Gangnam pickup service",
+        "Valet parking service"
+      ],
       "contact": {
         "title": "Concierge contact",
         "manager": "Manager",
@@ -450,6 +502,32 @@
         "tc": "TC",
         "rt": "RT"
       },
+      "pricingTable": [
+        {
+          "label": "晚9點前",
+          "meta": "包廂費 10 · TC 12 · RT 5",
+          "prices": [
+            { "label": "1人", "amount": "27萬韓元" },
+            { "label": "2人", "amount": "39萬韓元" },
+            { "label": "3人", "amount": "51萬韓元" },
+            { "label": "4人", "amount": "63萬韓元" }
+          ]
+        },
+        {
+          "label": "晚9點後",
+          "meta": "包廂費 13 · TC 12 · RT 5",
+          "prices": [
+            { "label": "1人", "amount": "30萬韓元" },
+            { "label": "2人", "amount": "42萬韓元" },
+            { "label": "3人", "amount": "54萬韓元" },
+            { "label": "4人", "amount": "67萬韓元" }
+          ]
+        }
+      ],
+      "services": [
+        "江南地區接送服務",
+        "代客泊車服務"
+      ],
       "contact": {
         "title": "管家聯絡方式",
         "manager": "管家",
@@ -610,6 +688,32 @@
         "tc": "TC",
         "rt": "RT"
       },
+      "pricingTable": [
+        {
+          "label": "21時前",
+          "meta": "基本料金 10 ・ TC 12 ・ RT 5",
+          "prices": [
+            { "label": "1名", "amount": "27万ウォン" },
+            { "label": "2名", "amount": "39万ウォン" },
+            { "label": "3名", "amount": "51万ウォン" },
+            { "label": "4名", "amount": "63万ウォン" }
+          ]
+        },
+        {
+          "label": "21時以降",
+          "meta": "基本料金 13 ・ TC 12 ・ RT 5",
+          "prices": [
+            { "label": "1名", "amount": "30万ウォン" },
+            { "label": "2名", "amount": "42万ウォン" },
+            { "label": "3名", "amount": "54万ウォン" },
+            { "label": "4名", "amount": "67万ウォン" }
+          ]
+        }
+      ],
+      "services": [
+        "江南エリア送迎サービス",
+        "バレーパーキングサービス"
+      ],
       "contact": {
         "title": "担当者への連絡手段",
         "manager": "担当者",
