@@ -3,16 +3,16 @@
     "languageCode": "ko",
     "languageName": "한국어",
     "meta": {
-      "siteName": "룸빵일번지",
-      "defaultTitle": "룸빵일번지",
-      "indexTitle": "룸빵일번지 - 강남 최저가 유흥 컨시어지",
+      "siteName": "룸빵1번지",
+      "defaultTitle": "룸빵1번지",
+      "indexTitle": "룸빵1번지 - 강남 최저가 유흥 컨시어지",
       "description": "강남 핵심 업소만 선별해 최저가로 연결해드립니다. 예약부터 혜택까지 검증된 컨시어지가 책임집니다.",
-      "shopTitleSuffix": " - 룸빵일번지"
+      "shopTitleSuffix": " - 룸빵1번지"
     },
     "header": {
       "tagline": "강남 최저가 룸 · 라운지 컨시어지",
       "affiliate": "제휴 문의",
-      "support": "고객센터 010-0000-0000",
+      "support": "고객센터 010-5733-8710",
       "nav": {
         "areas": "추천 지역",
         "categories": "업종별 찾기",
@@ -25,7 +25,7 @@
     },
     "hero": {
       "badge": "강남 전역 최저가 보장 큐레이션",
-      "headline": "강남에서 가장 저렴한 단독 특가, 룸빵일번지가 책임집니다",
+      "headline": "강남에서 가장 저렴한 단독 특가, 룸빵1번지가 책임집니다",
       "description": "강남 핵심 상권을 지역 → 구 → 업종으로 나눠 최저가 조건을 즉시 비교하세요. 모든 파트너는 직접 검증하고 가격 협상을 완료한 곳만 소개합니다.",
       "filters": {
         "region": "지역",
@@ -46,7 +46,7 @@
       }
     },
     "intro": {
-      "title": "강남 최저가 예약, 룸빵일번지가 제일 잘합니다",
+      "title": "강남 최저가 예약, 룸빵1번지가 제일 잘합니다",
       "subtitle": "강남 전 지역 룸 · 라운지를 최저가로 비교하고, 숨은 특가 혜택까지 놓치지 마세요.",
       "features": [
         {
@@ -59,7 +59,7 @@
         },
         {
           "title": "추가 할인 혜택",
-          "description": "룸빵일번지 회원 전용 추가 할인과 단독 프로모션으로 더 저렴하게 이용하세요."
+          "description": "룸빵1번지 회원 전용 추가 할인과 단독 프로모션으로 더 저렴하게 이용하세요."
         }
       ]
     },
@@ -94,11 +94,11 @@
     },
     "cta": {
       "title": "강남 최저가 파트너 합류하기",
-      "subtitle": "룸빵일번지와 함께 강남 최저가 프로모션을 진행하고 더 많은 고객을 만나보세요.",
+      "subtitle": "룸빵1번지와 함께 강남 최저가 프로모션을 진행하고 더 많은 고객을 만나보세요.",
       "button": "최저가 제휴 상담"
     },
     "footer": {
-      "title": "룸빵일번지",
+      "title": "룸빵1번지",
       "description": "강남 핵심 상권의 룸과 라운지를 최저가로 연결하는 원스톱 컨시어지 플랫폼입니다.",
       "contactTitle": "상담 안내",
       "contact": {
@@ -106,15 +106,9 @@
         "hours": "운영 시간",
         "kakao": "카카오톡"
       },
-      "contactHours": "12:00 ~ 03:00",
+      "contactHours": "24시",
       "kakaoId": "@roombbang1st",
-      "quickLinksTitle": "바로가기",
-      "links": {
-        "areas": "추천 지역",
-        "categories": "업종별 찾기",
-        "process": "이용 방법"
-      },
-      "copyright": "© {year} 룸빵일번지. All rights reserved."
+      "copyright": "© {year} 룸빵1번지. All rights reserved."
     },
     "shop": {
       "back": "메인으로 돌아가기",
@@ -198,7 +192,7 @@
     "header": {
       "tagline": "Premium room & lounge concierge platform",
       "affiliate": "Partnership Inquiry",
-      "support": "Support 010-0000-0000",
+      "support": "Support 010-5733-8710",
       "nav": {
         "areas": "Featured Areas",
         "categories": "Browse by Category",
@@ -384,7 +378,7 @@
     "header": {
       "tagline": "精品包廂・酒廊專屬管家平台",
       "affiliate": "合作洽詢",
-      "support": "客服 010-0000-0000",
+      "support": "客服 010-5733-8710",
       "nav": {
         "areas": "推薦地區",
         "categories": "依類型搜尋",
@@ -570,7 +564,7 @@
     "header": {
       "tagline": "プレミアム ルーム＆ラウンジのコンシェルジュプラットフォーム",
       "affiliate": "提携のお問い合わせ",
-      "support": "サポート 010-0000-0000",
+      "support": "サポート 010-5733-8710",
       "nav": {
         "areas": "おすすめエリア",
         "categories": "業種で探す",

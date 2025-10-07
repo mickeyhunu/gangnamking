@@ -2,7 +2,7 @@
     <footer class="site-footer" id="consult">
       <div class="container site-footer__content">
         <div>
-          <h3><%= (t.footer && t.footer.title) || (t.meta && t.meta.siteName) || '룸빵일번지' %></h3>
+          <h3><%= (t.footer && t.footer.title) || (t.meta && t.meta.siteName) || '룸빵1번지' %></h3>
           <p><%= (t.footer && t.footer.description) || '' %></p>
         </div>
         <div>
@@ -10,7 +10,7 @@
           <ul>
             <li>
               <%= t.footer && t.footer.contact ? t.footer.contact.partner : '' %>:
-              <a href="tel:01000000000">010-0000-0000</a>
+              <a href="tel:01057338710">010-5733-8710</a>
             </li>
             <li>
               <%= t.footer && t.footer.contact ? t.footer.contact.hours : '' %>:
@@ -33,7 +33,7 @@
         <p>
           <%= t.footer && t.footer.copyright
             ? t.footer.copyright.replace('{year}', new Date().getFullYear())
-            : `© ${new Date().getFullYear()} 룸빵일번지. All rights reserved.` %>
+            : `© ${new Date().getFullYear()} 룸빵1번지. All rights reserved.` %>
         </p>
       </div>
     </footer>
