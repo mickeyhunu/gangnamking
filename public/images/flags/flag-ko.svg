@@ -1,37 +1,33 @@
 <svg width="48" height="32" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="48" height="32" rx="4" fill="#FFFFFF" />
-  <g fill="#0C0C0C">
-    <g transform="rotate(-45 10 8)">
-      <rect x="4" y="3" width="12" height="1.7" rx="0.85" />
-      <rect x="4" y="7" width="12" height="1.7" rx="0.85" />
-      <rect x="4" y="11" width="12" height="1.7" rx="0.85" />
+  <rect width="48" height="32" rx="4" fill="#FFFFFF"/>
+  <g fill="#111111">
+    <g transform="matrix(.94 -.34 .34 .94 2.4 2.6)">
+      <rect x="2" y="3" width="14" height="1.6" rx="0.8"/>
+      <rect x="2" y="7" width="14" height="1.6" rx="0.8"/>
+      <rect x="2" y="11" width="14" height="1.6" rx="0.8"/>
     </g>
-    <g transform="rotate(45 38 8)">
-      <rect x="32" y="3" width="12" height="1.7" rx="0.85" />
-      <rect x="32" y="11" width="12" height="1.7" rx="0.85" />
-      <rect x="32" y="7" width="5.2" height="1.7" rx="0.85" />
-      <rect x="38.8" y="7" width="5.2" height="1.7" rx="0.85" />
+    <g transform="matrix(.94 .34 -.34 .94 26.4 -2.2)">
+      <rect x="4" y="3" width="14" height="1.6" rx="0.8"/>
+      <rect x="4" y="11" width="14" height="1.6" rx="0.8"/>
+      <rect x="4" y="7" width="5.5" height="1.6" rx="0.8"/>
+      <rect x="12.5" y="7" width="5.5" height="1.6" rx="0.8"/>
     </g>
-    <g transform="rotate(45 38 24)">
-      <rect x="32" y="19" width="12" height="1.7" rx="0.85" />
-      <rect x="32" y="23" width="5.2" height="1.7" rx="0.85" />
-      <rect x="38.8" y="23" width="5.2" height="1.7" rx="0.85" />
-      <rect x="32" y="27" width="12" height="1.7" rx="0.85" />
+    <g transform="matrix(.94 .34 -.34 .94 26.4 9.4)">
+      <rect x="4" y="3" width="14" height="1.6" rx="0.8"/>
+      <rect x="4" y="7" width="5.5" height="1.6" rx="0.8"/>
+      <rect x="12.5" y="7" width="5.5" height="1.6" rx="0.8"/>
+      <rect x="4" y="11" width="14" height="1.6" rx="0.8"/>
     </g>
-    <g transform="rotate(-45 10 24)">
-      <rect x="4" y="19" width="5.2" height="1.7" rx="0.85" />
-      <rect x="10.8" y="19" width="5.2" height="1.7" rx="0.85" />
-      <rect x="4" y="23" width="12" height="1.7" rx="0.85" />
-      <rect x="4" y="27" width="5.2" height="1.7" rx="0.85" />
-      <rect x="10.8" y="27" width="5.2" height="1.7" rx="0.85" />
+    <g transform="matrix(.94 -.34 .34 .94 2.4 14.2)">
+      <rect x="2" y="3" width="5.5" height="1.6" rx="0.8"/>
+      <rect x="9" y="3" width="5.5" height="1.6" rx="0.8"/>
+      <rect x="2" y="7" width="14" height="1.6" rx="0.8"/>
+      <rect x="2" y="11" width="5.5" height="1.6" rx="0.8"/>
+      <rect x="9" y="11" width="5.5" height="1.6" rx="0.8"/>
     </g>
   </g>
-  <path
-    fill="#CD2E3A"
-    d="M24 8.2c-4.02 0-7.28 3.26-7.28 7.28 0 1.94.78 3.7 2.05 4.96a4.68 4.68 0 0 1 4.73-4.35 4.55 4.55 0 0 1 4.55 4.55c0 1.36-.6 2.6-1.58 3.45A7.28 7.28 0 1 0 24 8.2Z"
-  />
-  <path
-    fill="#0047A0"
-    d="M24 23.8c4.02 0 7.28-3.26 7.28-7.28 0-1.94-.78-3.7-2.05-4.96a4.68 4.68 0 0 1-4.73 4.35 4.55 4.55 0 0 1-4.55-4.55c0-1.36.6-2.6 1.58-3.45A7.28 7.28 0 1 0 24 23.8Z"
-  />
+  <path d="M24 8.1c-4.15 0-7.52 3.37-7.52 7.52 0 1.74.59 3.34 1.58 4.62a4.9 4.9 0 0 1 4.8-4.07c2.6 0 4.71 2.11 4.71 4.71 0 1.75-.93 3.29-2.33 4.15A7.52 7.52 0 1 0 24 8.1Z" fill="#CD2E3A"/>
+  <path d="M24 23.9c4.15 0 7.52-3.37 7.52-7.52 0-1.74-.59-3.34-1.58-4.62a4.9 4.9 0 0 1-4.8 4.07c-2.6 0-4.71-2.11-4.71-4.71 0-1.75.93-3.29 2.33-4.15A7.52 7.52 0 1 0 24 23.9Z" fill="#0047A0"/>
+  <path d="M27.46 15.79c1.56 0 2.83 1.26 2.83 2.82 0 1.57-1.27 2.84-2.83 2.84-1.55 0-2.82-1.27-2.82-2.84 0-1.56 1.27-2.82 2.82-2.82Z" fill="#CD2E3A"/>
+  <path d="M20.54 16.21c-1.56 0-2.83-1.26-2.83-2.82s1.27-2.83 2.83-2.83 2.82 1.27 2.82 2.83-1.27 2.82-2.82 2.82Z" fill="#0047A0"/>
 </svg>
