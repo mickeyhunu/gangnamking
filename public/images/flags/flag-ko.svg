@@ -1,46 +1,41 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3 2" role="img" aria-label="Flag of South Korea">
-  <path fill="#fff" d="M0 0h3v2H0z" />
+  <rect width="3" height="2" fill="#fff" />
   <g transform="translate(1.5 1)">
-    <circle r="0.6" fill="#cd2e3a" />
     <path
-      d="M0.6 0A0.6 0.6 0 1 1-0.6 0C-0.6-0.331-0.331-0.6 0-0.6S0.6-0.331 0.6 0z"
-      fill="#0047a0"
-    />
-    <path
-      d="M0.6 0A0.6 0.6 0 0 0 0-0.6 0.3 0.3 0 0 0 0 0 0.3 0.3 0 0 1 0.6 0z"
       fill="#cd2e3a"
+      d="M0 0.72a0.72 0.72 0 1 1 0-1.44 0.36 0.36 0 0 1 0 0.72 0.36 0.36 0 0 0 0 0.72"
     />
     <path
-      d="M-0.6 0A0.6 0.6 0 0 1 0 0.6 0.3 0.3 0 0 1 0 0 0.3 0.3 0 0 0-0.6 0z"
       fill="#0047a0"
+      d="M0-0.72a0.72 0.72 0 1 1 0 1.44 0.36 0.36 0 0 1 0-0.72 0.36 0.36 0 0 0 0-0.72"
     />
   </g>
   <g fill="#000">
-    <g transform="translate(0.5 0.5) rotate(-30)">
-      <rect width="0.9" height="0.12" rx="0.06" y="-0.06" x="-0.45" />
-      <rect width="0.9" height="0.12" rx="0.06" y="0.18" x="-0.45" />
-      <rect width="0.9" height="0.12" rx="0.06" y="0.42" x="-0.45" />
+    <g transform="translate(0.6 0.6) rotate(-30)">
+      <rect x="-0.48" y="-0.06" width="0.96" height="0.12" rx="0.06" />
+      <rect x="-0.48" y="0.18" width="0.96" height="0.12" rx="0.06" />
+      <rect x="-0.48" y="0.42" width="0.96" height="0.12" rx="0.06" />
     </g>
-    <g transform="translate(2.5 0.5) rotate(30)">
-      <rect width="0.9" height="0.12" rx="0.06" y="-0.06" x="-0.45" />
-      <rect width="0.9" height="0.12" rx="0.06" y="0.18" x="-0.45" />
-      <rect width="0.9" height="0.12" rx="0.06" y="0.42" x="-0.45" />
-      <rect width="0.36" height="0.12" rx="0.06" y="0.18" x="-0.18" fill="#fff" />
-      <rect width="0.36" height="0.12" rx="0.06" y="0.42" x="-0.18" fill="#fff" />
+    <g transform="translate(2.4 0.6) rotate(30)">
+      <rect x="-0.48" y="-0.06" width="0.96" height="0.12" rx="0.06" />
+      <rect x="-0.48" y="0.18" width="0.96" height="0.12" rx="0.06" />
+      <rect x="-0.48" y="0.42" width="0.96" height="0.12" rx="0.06" />
+      <rect x="-0.18" y="0.18" width="0.36" height="0.12" rx="0.06" fill="#fff" />
+      <rect x="-0.18" y="0.42" width="0.36" height="0.12" rx="0.06" fill="#fff" />
     </g>
-    <g transform="translate(0.5 1.5) rotate(30)">
-      <rect width="0.9" height="0.12" rx="0.06" y="-0.06" x="-0.45" />
-      <rect width="0.36" height="0.12" rx="0.06" y="-0.06" x="-0.18" fill="#fff" />
-      <rect width="0.9" height="0.12" rx="0.06" y="0.18" x="-0.45" />
-      <rect width="0.36" height="0.12" rx="0.06" y="0.18" x="-0.18" fill="#fff" />
-      <rect width="0.9" height="0.12" rx="0.06" y="0.42" x="-0.45" />
+    <g transform="translate(0.6 1.4) rotate(30)">
+      <rect x="-0.48" y="-0.06" width="0.96" height="0.12" rx="0.06" />
+      <rect x="-0.18" y="-0.06" width="0.36" height="0.12" rx="0.06" fill="#fff" />
+      <rect x="-0.48" y="0.18" width="0.96" height="0.12" rx="0.06" />
+      <rect x="-0.18" y="0.18" width="0.36" height="0.12" rx="0.06" fill="#fff" />
+      <rect x="-0.48" y="0.42" width="0.96" height="0.12" rx="0.06" />
     </g>
-    <g transform="translate(2.5 1.5) rotate(-30)">
-      <rect width="0.9" height="0.12" rx="0.06" y="-0.06" x="-0.45" />
-      <rect width="0.9" height="0.12" rx="0.06" y="0.18" x="-0.45" />
-      <rect width="0.9" height="0.12" rx="0.06" y="0.42" x="-0.45" />
-      <rect width="0.36" height="0.12" rx="0.06" y="-0.06" x="-0.18" fill="#fff" />
-      <rect width="0.36" height="0.12" rx="0.06" y="0.42" x="-0.18" fill="#fff" />
+    <g transform="translate(2.4 1.4) rotate(-30)">
+      <rect x="-0.48" y="-0.06" width="0.96" height="0.12" rx="0.06" />
+      <rect x="-0.48" y="0.18" width="0.96" height="0.12" rx="0.06" />
+      <rect x="-0.48" y="0.42" width="0.96" height="0.12" rx="0.06" />
+      <rect x="-0.18" y="-0.06" width="0.36" height="0.12" rx="0.06" fill="#fff" />
+      <rect x="-0.18" y="0.42" width="0.36" height="0.12" rx="0.06" fill="#fff" />
     </g>
   </g>
 </svg>
