@@ -964,7 +964,7 @@ img {
   }
 
   .language-select {
-    width: min(100%, 220px);
+    width: min(84vw, 220px);
     padding: 0.75rem 0.9rem;
   }
 
@@ -1002,27 +1002,29 @@ img {
   .language-select--floating {
     left: clamp(0.85rem, 6vw, 1.5rem);
     bottom: clamp(0.85rem, 5vw, 1.75rem);
-    width: calc(100% - 2 * clamp(0.85rem, 6vw, 1.5rem));
+    width: min(76vw, 200px);
   }
 
   .language-select {
     gap: 0.45rem;
-    padding: 0.65rem 0.85rem;
+    padding: 0.65rem 0.8rem;
+    border-radius: 16px;
   }
 
   .language-select__flag {
-    width: 32px;
-    height: 22px;
+    width: 30px;
+    height: 21px;
   }
 
   .language-select__label {
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     letter-spacing: 0.18em;
   }
 
   .language-select__dropdown {
-    font-size: 0.8rem;
-    padding-right: 2rem;
+    font-size: 0.78rem;
+    padding-right: 1.8rem;
+    border-radius: 12px;
   }
 }
 
