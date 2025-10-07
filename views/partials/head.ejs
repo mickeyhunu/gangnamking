@@ -44,7 +44,6 @@
   <body>
     <header class="site-header">
       <div class="container site-header__main">
-        <div class="site-header__spacer" aria-hidden="true"></div>
         <a class="branding" href="/">
           <img
             class="branding__logo"
@@ -53,35 +52,35 @@
           />
           <span class="branding__text">룸빵일번지</span>
         </a>
-        <% const currentLanguageOption = (languageOptions || []).find(function(option) { return option.isCurrent; }) || (languageOptions || [])[0]; %>
-        <% const languageSelectId = 'language-select'; %>
-        <% if (currentLanguageOption) { %>
-          <div class="language-select">
-            <div class="language-select__top">
-              <% if (currentLanguageOption.flagSrc) { %>
-                <img
-                  class="language-select__flag"
-                  src="<%= currentLanguageOption.flagSrc %>"
-                  alt="<%= currentLanguageOption.flagAlt || currentLanguageOption.label %>"
-                />
-              <% } %>
-              <label class="language-select__label" for="<%= languageSelectId %>">
-                Language
-              </label>
-            </div>
-            <select
-              class="language-select__dropdown"
-              id="<%= languageSelectId %>"
-              data-language-select
-            >
-              <% (languageOptions || []).forEach(function(option) { %>
-                <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
-                  <%= option.label %>
-                </option>
-              <% }) %>
-            </select>
-          </div>
-        <% } %>
       </div>
     </header>
+    <% const currentLanguageOption = (languageOptions || []).find(function(option) { return option.isCurrent; }) || (languageOptions || [])[0]; %>
+    <% const languageSelectId = 'language-select'; %>
+    <% if (currentLanguageOption) { %>
+      <div class="language-select language-select--floating">
+        <div class="language-select__top">
+          <% if (currentLanguageOption.flagSrc) { %>
+            <img
+              class="language-select__flag"
+              src="<%= currentLanguageOption.flagSrc %>"
+              alt="<%= currentLanguageOption.flagAlt || currentLanguageOption.label %>"
+            />
+          <% } %>
+          <label class="language-select__label" for="<%= languageSelectId %>">
+            <%= (t.header && t.header.languageLabel) || 'Language' %>
+          </label>
+        </div>
+        <select
+          class="language-select__dropdown"
+          id="<%= languageSelectId %>"
+          data-language-select
+        >
+          <% (languageOptions || []).forEach(function(option) { %>
+            <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
+              <%= option.label %>
+            </option>
+          <% }) %>
+        </select>
+      </div>
+    <% } %>
     <main class="site-main">

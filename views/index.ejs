@@ -104,12 +104,6 @@
             <div class="shop-card__body">
               <span class="shop-card__meta"><%= shop.region %> · <%= shop.district %> · <%= shop.category %></span>
               <h3><%= shop.name %></h3>
-              <p><%= shop.description %></p>
-              <p class="shop-card__contact">
-                <%= t.shop && t.shop.manager ? t.shop.manager + ': ' : '' %>
-                <strong><%= shop.manager.name %></strong>
-                · <a href="tel:<%= shop.manager.phone %>"><%= shop.manager.phone %></a>
-              </p>
               <a class="shop-card__link" href="/shops/<%= shop.id %>"><%= t.shop && t.shop.viewDetails ? t.shop.viewDetails : '' %></a>
             </div>
           </article>

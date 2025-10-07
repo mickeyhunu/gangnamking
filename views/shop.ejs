@@ -43,27 +43,19 @@
       <div class="detail-hero__info">
         <p class="detail-hero__meta"><%= shop.region %> · <%= shop.district %> · <%= shop.category %></p>
         <h1><%= shop.name %></h1>
-        <p class="detail-hero__description"><%= shop.description %></p>
+        <% const defaultServices = ['강남권 픽업 서비스', '발렛파킹 서비스']; %>
+        <% const serviceBadges = Array.isArray(t.shop && t.shop.services) && (t.shop.services.length ? t.shop.services : defaultServices) || defaultServices; %>
+        <% if (serviceBadges.length) { %>
+          <div class="detail-hero__services">
+            <% serviceBadges.forEach(function(service) { %>
+              <span class="detail-hero__service"><%= service %></span>
+            <% }) %>
+          </div>
+        <% } %>
         <dl class="detail-hero__list">
           <div>
             <dt><%= t.shop && t.shop.address ? t.shop.address : 'Address' %></dt>
             <dd><%= shop.address %></dd>
-          </div>
-          <div>
-            <dt><%= t.shop && t.shop.phone ? t.shop.phone : 'Phone' %></dt>
-            <dd><a href="tel:<%= shop.phone %>"><%= shop.phone %></a></dd>
-          </div>
-          <div>
-            <dt><%= t.shop && t.shop.manager ? t.shop.manager : 'Manager' %></dt>
-            <dd>
-              <strong><%= shop.manager.name %></strong>
-              <span class="detail-hero__manager-contact">
-                <a href="tel:<%= shop.manager.phone %>"><%= shop.manager.phone %></a>
-                <% if (shop.manager.kakao) { %>
-                  · <%= t.shop && t.shop.contact ? t.shop.contact.kakao : 'KakaoTalk' %> <%= shop.manager.kakao %>
-                <% } %>
-              </span>
-            </dd>
           </div>
           <div>
             <dt><%= t.shop && t.shop.hours ? t.shop.hours : 'Hours' %></dt>
@@ -71,7 +63,6 @@
           </div>
         </dl>
         <div class="detail-hero__actions">
-          <a class="btn btn--primary" href="tel:<%= shop.manager.phone %>"><%= t.shop && t.shop.call ? t.shop.call : 'Call now' %></a>
           <a class="back-link" href="/"><%= t.shop && t.shop.back ? t.shop.back : 'Back to home' %></a>
         </div>
       </div>
@@ -80,46 +71,51 @@
 
   <section class="section detail-section">
     <div class="container detail-section__grid">
-      <div class="detail-card">
+      <% const defaultPricingTable = [
+           {
+             label: '오후 9시 이전',
+             meta: '주대 10 · TC 12 · RT 5',
+             prices: [
+               { label: '1인', amount: '27만' },
+               { label: '2인', amount: '39만' },
+               { label: '3인', amount: '51만' },
+               { label: '4인', amount: '63만' },
+             ],
+           },
+           {
+             label: '오후 9시 이후',
+             meta: '주대 13 · TC 12 · RT 5',
+             prices: [
+               { label: '1인', amount: '30만' },
+               { label: '2인', amount: '42만' },
+               { label: '3인', amount: '54만' },
+               { label: '4인', amount: '67만' },
+             ],
+           },
+         ]; %>
+      <% const pricingTable = Array.isArray(t.shop && t.shop.pricingTable) && (t.shop.pricingTable.length ? t.shop.pricingTable : defaultPricingTable) || defaultPricingTable; %>
+      <div class="detail-card detail-card--full">
         <h2><%= t.shop && t.shop.pricing ? t.shop.pricing.title : 'Pricing' %></h2>
-        <div class="pricing-grid">
-          <div class="pricing-card">
-            <h3><%= t.shop && t.shop.pricing ? t.shop.pricing.base : 'Table' %></h3>
-            <p><%= shop.pricing.base %></p>
-          </div>
-          <div class="pricing-card">
-            <h3><%= t.shop && t.shop.pricing ? t.shop.pricing.tc : 'TC' %></h3>
-            <p><%= shop.pricing.tc %></p>
-          </div>
-          <div class="pricing-card">
-            <h3><%= t.shop && t.shop.pricing ? t.shop.pricing.rt : 'RT' %></h3>
-            <p><%= shop.pricing.rt %></p>
-          </div>
-        </div>
-      </div>
-      <div class="detail-card">
-        <h2><%= t.shop && t.shop.contact ? t.shop.contact.title : 'Concierge contact' %></h2>
-        <div class="contact-card">
-          <p><%= t.shop && t.shop.managerContact ? t.shop.managerContact : '' %></p>
-          <ul>
-            <li><strong><%= t.shop && t.shop.contact ? t.shop.contact.manager : 'Manager' %></strong> <%= shop.manager.name %></li>
-            <li>
-              <strong><%= t.shop && t.shop.contact ? t.shop.contact.phone : 'Phone' %></strong>
-              <a href="tel:<%= shop.manager.phone %>"><%= shop.manager.phone %></a>
-            </li>
-            <% if (shop.manager.kakao) { %>
-              <li><strong><%= t.shop && t.shop.contact ? t.shop.contact.kakao : 'KakaoTalk' %></strong> <%= shop.manager.kakao %></li>
-            <% } %>
-          </ul>
-        </div>
-      </div>
-      <div class="detail-card">
-        <h2><%= t.shop && t.shop.highlights ? t.shop.highlights : 'Highlights' %></h2>
-        <ul class="detail-tags">
-          <% shop.highlights.forEach(function(item) { %>
-            <li><%= item %></li>
+        <div class="rate-table">
+          <% pricingTable.forEach(function(block) { %>
+            <div class="rate-table__block">
+              <div class="rate-table__header">
+                <h3><%= block.label %></h3>
+                <% if (block.meta) { %>
+                  <span class="rate-table__meta"><%= block.meta %></span>
+                <% } %>
+              </div>
+              <ul class="rate-table__list">
+                <% (block.prices || []).forEach(function(item) { %>
+                  <li>
+                    <span class="rate-table__person"><%= item.label %></span>
+                    <strong class="rate-table__amount"><%= item.amount %></strong>
+                  </li>
+                <% }) %>
+              </ul>
+            </div>
           <% }) %>
-        </ul>
+        </div>
       </div>
     </div>
   </section>
