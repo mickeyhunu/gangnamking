@@ -5,7 +5,7 @@ const { URLSearchParams } = require('url');
 
 const SUPPORTED_LANGUAGES = ['ko', 'en', 'zh', 'ja'];
 const LANGUAGE_FLAGS = {
-  ko: { src: '/images/flags/flag-ko.svg', alt: '한국어' },
+  ko: { src: '/images/flags/flag-ko.png', alt: '한국어' },
   en: { src: '/images/flags/flag-us.svg', alt: 'English' },
   zh: { src: '/images/flags/flag-cn.svg', alt: '中文' },
   ja: { src: '/images/flags/flag-jp.svg', alt: '日本語' },
