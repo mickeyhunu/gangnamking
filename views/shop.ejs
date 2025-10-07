@@ -120,33 +120,6 @@
     </div>
   </section>
 
-  <section class="section section--muted detail-seo">
-    <div class="container detail-seo__grid">
-      <div>
-        <h2><%= t.shop && t.shop.seo ? t.shop.seo.title : 'SEO keywords' %></h2>
-        <p class="detail-seo__description"><%= t.shop && t.shop.seo ? t.shop.seo.description : '' %></p>
-        <ul class="seo-chip-list">
-          <% (seoKeywords || []).forEach(function(keyword) { %>
-            <li><%= keyword %></li>
-          <% }) %>
-        </ul>
-      </div>
-      <form
-        class="seo-editor"
-        data-seo-editor
-        data-success-message="<%= t.shop && t.shop.seo ? t.shop.seo.copySuccess : '' %>"
-        data-error-message="<%= t.shop && t.shop.seo ? t.shop.seo.copyError : '' %>"
-      >
-        <label for="seo-keywords-input"><%= t.shop && t.shop.seo ? t.shop.seo.editorLabel : 'Keywords' %></label>
-        <textarea id="seo-keywords-input" rows="6"><%= (seoKeywords || []).join(', ') %></textarea>
-        <div class="seo-editor__actions">
-          <button type="button" class="btn btn--ghost" data-action="copy"><%= t.shop && t.shop.seo ? t.shop.seo.copy : 'Copy' %></button>
-          <span class="seo-editor__status" data-status role="status" aria-live="polite"></span>
-        </div>
-      </form>
-    </div>
-  </section>
-
   <div class="seo-keywords" aria-hidden="true">
     <%- (seoKeywords || []).join(', ') %>
   </div>
