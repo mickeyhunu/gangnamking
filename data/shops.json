@@ -14,6 +14,25 @@
       "tc": "TC 12만",
       "rt": "RT 5만"
     },
+    "pricingSchedule": {
+      "unitSuffix": "만",
+      "tc": 12,
+      "rt": 5,
+      "guestCounts": [1, 2, 3, 4],
+      "defaultSegmentId": "after-9pm",
+      "segments": [
+        {
+          "id": "before-9pm",
+          "label": "오후 9시 이전",
+          "base": 10
+        },
+        {
+          "id": "after-9pm",
+          "label": "오후 9시 이후",
+          "base": 13
+        }
+      ]
+    },
     "manager": {
       "name": "강동원 대표",
       "phone": "010-5733-8710",
