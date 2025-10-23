@@ -476,44 +476,6 @@ app.get('/', (req, res) => {
     acc[region] = [...new Set(districts)];
     return acc;
   }, {});
-  const areaHierarchy = localizedShops.reduce((acc, shop) => {
-    const { region, district, address } = shop;
-
-    if (!region || !district) {
-      return acc;
-    }
-
-    if (!acc[region]) {
-      acc[region] = {};
-    }
-
-    if (!acc[region][district]) {
-      acc[region][district] = new Set();
-    }
-
-    const dong = (address || '')
-      .split(/\s+/)
-      .map((part) => part.trim())
-      .find((part) => part && /동$/.test(part));
-
-    if (dong) {
-      acc[region][district].add(dong.replace(/[^\p{L}\p{N}]/gu, ''));
-    }
-
-    return acc;
-  }, {});
-
-  const serializableAreaHierarchy = Object.fromEntries(
-    Object.entries(areaHierarchy).map(([region, districts]) => [
-      region,
-      Object.fromEntries(
-        Object.entries(districts).map(([district, dongs]) => [
-          district,
-          [...dongs].filter(Boolean).sort((a, b) => a.localeCompare(b, 'ko-KR')),
-        ])
-      ),
-    ])
-  );
   const seoKeywords = [
     ...new Set(
       localizedShops.flatMap((shop) => (Array.isArray(shop.seoKeywords) ? shop.seoKeywords : []))
@@ -525,7 +487,6 @@ app.get('/', (req, res) => {
     regions,
     categories,
     districtMap,
-    areaHierarchy: serializableAreaHierarchy,
     seoKeywords,
     pageTitle: (res.locals.t.meta && res.locals.t.meta.indexTitle) || 'Gangnam King',
     metaDescription: (res.locals.t.meta && res.locals.t.meta.description) || '',
