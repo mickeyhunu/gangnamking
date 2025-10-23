@@ -10,6 +10,12 @@ const LANGUAGE_FLAGS = {
   zh: { src: '/images/flags/flag-cn.svg', alt: '中文' },
   ja: { src: '/images/flags/flag-jp.svg', alt: '日本語' },
 };
+const LANGUAGE_LOCALES = {
+  ko: 'ko-KR',
+  en: 'en-US',
+  zh: 'zh-CN',
+  ja: 'ja-JP',
+};
 const DEFAULT_LANGUAGE = 'ko';
 
 const app = express();
@@ -20,8 +26,6 @@ const GANGNAM_KEYWORD = /강남/i;
 const AREA_FILTER_DEFAULTS = {
   label: '지역 선택',
   all: '전체',
-  gangnam: '강남',
-  nonGangnam: '비강남',
 };
 
 // Load shop data
@@ -68,33 +72,53 @@ function determineAreaGroup(shop) {
   return 'nonGangnam';
 }
 
-function buildAreaFilterConfig(translation) {
-  const config = translation?.quickRegions || {};
+function buildAreaFilterConfig(translation, lang) {
+  const locale = LANGUAGE_LOCALES[lang] || LANGUAGE_LOCALES[DEFAULT_LANGUAGE];
+  const collator = new Intl.Collator(locale, { sensitivity: 'base' });
+  const cityMap = shops.reduce((acc, shop) => {
+    if (!shop || typeof shop !== 'object') {
+      return acc;
+    }
+
+    const region = typeof shop.region === 'string' ? shop.region.trim() : '';
+    const district = typeof shop.district === 'string' ? shop.district.trim() : '';
+
+    if (!region) {
+      return acc;
+    }
+
+    if (!acc[region]) {
+      acc[region] = new Set();
+    }
+
+    if (district) {
+      acc[region].add(district);
+    }
+
+    return acc;
+  }, {});
+
+  const cities = Object.entries(cityMap)
+    .map(([city, districts]) => ({
+      value: city,
+      label: city,
+      districts: [...districts].sort((a, b) => collator.compare(a, b)),
+    }))
+    .sort((a, b) => collator.compare(a.label, b.label));
+
+  const config = (translation && translation.quickRegions) || {};
+  const heroFilters = translation && translation.hero && translation.hero.filters;
+  const allLabelFromTranslation =
+    heroFilters && typeof heroFilters.all === 'string'
+      ? heroFilters.all.trim()
+      : '';
 
   return {
     label: typeof config.label === 'string' && config.label.trim()
       ? config.label.trim()
       : AREA_FILTER_DEFAULTS.label,
-    options: [
-      {
-        value: 'all',
-        label: typeof config.all === 'string' && config.all.trim()
-          ? config.all.trim()
-          : AREA_FILTER_DEFAULTS.all,
-      },
-      {
-        value: 'gangnam',
-        label: typeof config.gangnam === 'string' && config.gangnam.trim()
-          ? config.gangnam.trim()
-          : AREA_FILTER_DEFAULTS.gangnam,
-      },
-      {
-        value: 'nonGangnam',
-        label: typeof config.nonGangnam === 'string' && config.nonGangnam.trim()
-          ? config.nonGangnam.trim()
-          : AREA_FILTER_DEFAULTS.nonGangnam,
-      },
-    ],
+    allLabel: allLabelFromTranslation || AREA_FILTER_DEFAULTS.all,
+    cities,
   };
 }
 
@@ -434,7 +458,7 @@ app.use((req, res, next) => {
   res.locals.t = translation;
   res.locals.languageOptions = languageOptions;
   res.locals.defaultLanguage = DEFAULT_LANGUAGE;
-  res.locals.areaFilterConfig = buildAreaFilterConfig(translation);
+  res.locals.areaFilterConfig = buildAreaFilterConfig(translation, activeLang);
   res.locals.canonicalUrl = currentLanguageOption ? currentLanguageOption.absoluteUrl : `${req.protocol}://${req.get('host')}${req.originalUrl}`;
 
   next();
@@ -452,6 +476,44 @@ app.get('/', (req, res) => {
     acc[region] = [...new Set(districts)];
     return acc;
   }, {});
+  const areaHierarchy = localizedShops.reduce((acc, shop) => {
+    const { region, district, address } = shop;
+
+    if (!region || !district) {
+      return acc;
+    }
+
+    if (!acc[region]) {
+      acc[region] = {};
+    }
+
+    if (!acc[region][district]) {
+      acc[region][district] = new Set();
+    }
+
+    const dong = (address || '')
+      .split(/\s+/)
+      .map((part) => part.trim())
+      .find((part) => part && /동$/.test(part));
+
+    if (dong) {
+      acc[region][district].add(dong.replace(/[^\p{L}\p{N}]/gu, ''));
+    }
+
+    return acc;
+  }, {});
+
+  const serializableAreaHierarchy = Object.fromEntries(
+    Object.entries(areaHierarchy).map(([region, districts]) => [
+      region,
+      Object.fromEntries(
+        Object.entries(districts).map(([district, dongs]) => [
+          district,
+          [...dongs].filter(Boolean).sort((a, b) => a.localeCompare(b, 'ko-KR')),
+        ])
+      ),
+    ])
+  );
   const seoKeywords = [
     ...new Set(
       localizedShops.flatMap((shop) => (Array.isArray(shop.seoKeywords) ? shop.seoKeywords : []))
@@ -463,6 +525,7 @@ app.get('/', (req, res) => {
     regions,
     categories,
     districtMap,
+    areaHierarchy: serializableAreaHierarchy,
     seoKeywords,
     pageTitle: (res.locals.t.meta && res.locals.t.meta.indexTitle) || 'Gangnam King',
     metaDescription: (res.locals.t.meta && res.locals.t.meta.description) || '',

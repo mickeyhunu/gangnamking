@@ -5,33 +5,35 @@
   const cards = document.querySelectorAll('[data-grid] .shop-card');
   const searchButton = document.getElementById('search-button');
   const mappingElement = document.getElementById('region-district-data');
-  const districtMap = mappingElement ? JSON.parse(mappingElement.textContent || '{}') : {};
-  const areaFilterContainer = document.querySelector('[data-area-filter]');
-  let areaFilterValue = 'all';
+  const cityDataElement = document.getElementById('city-district-data');
+  const cityFilterContainer = document.querySelector('[data-area-filter]');
+  const districtBar = document.querySelector('[data-city-district-bar]');
 
-  if (areaFilterContainer) {
-    const activeButton = areaFilterContainer.querySelector('.is-active[data-area-option]');
-    if (activeButton && activeButton.dataset.areaOption) {
-      areaFilterValue = activeButton.dataset.areaOption;
+  let districtMap = {};
+  let cityDistrictMap = {};
+
+  if (mappingElement) {
+    try {
+      districtMap = JSON.parse(mappingElement.textContent || '{}');
+    } catch (error) {
+      districtMap = {};
     }
   }
 
-  function setActiveAreaOption(value) {
-    if (!areaFilterContainer) {
-      return;
+  if (cityDataElement) {
+    try {
+      cityDistrictMap = JSON.parse(cityDataElement.textContent || '{}');
+    } catch (error) {
+      cityDistrictMap = {};
     }
-
-    const buttons = areaFilterContainer.querySelectorAll('[data-area-option]');
-    buttons.forEach((button) => {
-      if (button.dataset.areaOption === value) {
-        button.classList.add('is-active');
-      } else {
-        button.classList.remove('is-active');
-      }
-    });
-
-    areaFilterValue = value;
   }
+
+  const districtAllLabel = cityFilterContainer
+    ? cityFilterContainer.getAttribute('data-all-label') || '전체'
+    : '전체';
+
+  let activeCity = null;
+  let activeDistrict = 'all';
 
   function populateDistricts(region) {
     if (!districtFilter) {
@@ -59,50 +61,180 @@
     const regionValue = regionFilter ? regionFilter.value : 'all';
     const districtValue = districtFilter && !districtFilter.disabled ? districtFilter.value : 'all';
     const categoryValue = categoryFilter ? categoryFilter.value : 'all';
-    const areaValue = areaFilterValue || 'all';
 
     cards.forEach((card) => {
       const matchesRegion = regionValue === 'all' || card.dataset.region === regionValue;
       const matchesDistrict = districtValue === 'all' || card.dataset.district === districtValue;
       const matchesCategory = categoryValue === 'all' || card.dataset.category === categoryValue;
-      const matchesArea = areaValue === 'all' || card.dataset.areaGroup === areaValue;
 
-      card.style.display = matchesRegion && matchesDistrict && matchesCategory && matchesArea ? 'flex' : 'none';
+      card.style.display = matchesRegion && matchesDistrict && matchesCategory ? 'flex' : 'none';
+    });
+  }
+
+  function setActiveCity(city) {
+    activeCity = city;
+
+    if (!cityFilterContainer) {
+      return;
+    }
+
+    const buttons = cityFilterContainer.querySelectorAll('[data-city-option]');
+    buttons.forEach((button) => {
+      if (button.dataset.cityOption === city) {
+        button.classList.add('is-active');
+      } else {
+        button.classList.remove('is-active');
+      }
+    });
+  }
+
+  function renderDistrictBar(city) {
+    if (!districtBar) {
+      return;
+    }
+
+    districtBar.innerHTML = '';
+
+    const districts = city ? cityDistrictMap[city] : null;
+
+    if (!city || !Array.isArray(districts) || districts.length === 0) {
+      districtBar.setAttribute('hidden', '');
+      activeDistrict = 'all';
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    function createButton(label, value) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'area-filter__button area-filter__button--district';
+      button.setAttribute('data-district-option', value);
+      button.textContent = label;
+      fragment.appendChild(button);
+    }
+
+    createButton(districtAllLabel, 'all');
+    districts.forEach((district) => createButton(district, district));
+
+    districtBar.appendChild(fragment);
+    districtBar.removeAttribute('hidden');
+  }
+
+  function setActiveDistrict(value, options = {}) {
+    const { syncDropdown = true } = options;
+
+    activeDistrict = value;
+
+    if (districtBar) {
+      const buttons = districtBar.querySelectorAll('[data-district-option]');
+      buttons.forEach((button) => {
+        if (districtBar.hasAttribute('hidden')) {
+          button.classList.remove('is-active');
+          return;
+        }
+
+        if (button.dataset.districtOption === value) {
+          button.classList.add('is-active');
+        } else {
+          button.classList.remove('is-active');
+        }
+      });
+    }
+
+    if (syncDropdown && districtFilter) {
+      if (value === 'all' || districtFilter.disabled) {
+        districtFilter.value = 'all';
+      } else {
+        districtFilter.value = value;
+      }
+    }
+  }
+
+  function activateCity(city) {
+    const normalizedCity = typeof city === 'string' && city.length ? city : null;
+
+    setActiveCity(normalizedCity);
+
+    if (regionFilter) {
+      regionFilter.value = normalizedCity || 'all';
+      populateDistricts(regionFilter.value);
+    }
+
+    renderDistrictBar(normalizedCity);
+    setActiveDistrict('all');
+    applyFilters();
+  }
+
+  function syncCityFromRegion(regionValue) {
+    const normalizedCity = regionValue === 'all' ? null : regionValue;
+
+    setActiveCity(normalizedCity);
+    renderDistrictBar(normalizedCity);
+
+    const currentDistrict =
+      districtFilter && !districtFilter.disabled ? districtFilter.value : 'all';
+
+    setActiveDistrict(currentDistrict, { syncDropdown: false });
+  }
+
+  if (cityFilterContainer) {
+    cityFilterContainer.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-city-option]');
+
+      if (!button || !cityFilterContainer.contains(button)) {
+        return;
+      }
+
+      const value = button.dataset.cityOption || '';
+
+      if (value === activeCity) {
+        activateCity(null);
+        return;
+      }
+
+      activateCity(value);
+    });
+  }
+
+  if (districtBar) {
+    districtBar.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-district-option]');
+
+      if (!button || districtBar.hasAttribute('hidden')) {
+        return;
+      }
+
+      const value = button.dataset.districtOption || 'all';
+
+      if (value === activeDistrict) {
+        return;
+      }
+
+      setActiveDistrict(value);
+      applyFilters();
     });
   }
 
   if (regionFilter) {
     regionFilter.addEventListener('change', (event) => {
-      populateDistricts(event.target.value);
+      const value = event.target.value;
+      populateDistricts(value);
+      syncCityFromRegion(value);
       applyFilters();
     });
   }
 
   if (districtFilter) {
-    districtFilter.addEventListener('change', applyFilters);
+    districtFilter.addEventListener('change', () => {
+      const value = districtFilter && !districtFilter.disabled ? districtFilter.value : 'all';
+      setActiveDistrict(value, { syncDropdown: false });
+      applyFilters();
+    });
   }
 
   if (categoryFilter) {
     categoryFilter.addEventListener('change', applyFilters);
-  }
-
-  if (areaFilterContainer) {
-    areaFilterContainer.addEventListener('click', (event) => {
-      const button = event.target.closest('[data-area-option]');
-
-      if (!button || !areaFilterContainer.contains(button)) {
-        return;
-      }
-
-      const value = button.dataset.areaOption || 'all';
-
-      if (value === areaFilterValue) {
-        return;
-      }
-
-      setActiveAreaOption(value);
-      applyFilters();
-    });
   }
 
   if (searchButton) {
@@ -116,6 +248,14 @@
   }
 
   populateDistricts(regionFilter ? regionFilter.value : 'all');
-  setActiveAreaOption(areaFilterValue);
+
+  if (regionFilter && regionFilter.value && regionFilter.value !== 'all') {
+    syncCityFromRegion(regionFilter.value);
+  } else {
+    setActiveCity(null);
+    renderDistrictBar(null);
+    setActiveDistrict('all');
+  }
+
   applyFilters();
 })();

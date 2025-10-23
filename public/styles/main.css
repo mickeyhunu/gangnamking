@@ -73,18 +73,22 @@ img {
 
 .site-subheader__container {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
   padding: 0.75rem clamp(1.25rem, 5vw, 2.25rem);
 }
 
-.site-subheader__label {
-  font-size: 0.8rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
-  white-space: nowrap;
+.site-subheader__top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.site-subheader__top-row .language-select--header {
+  margin-left: auto;
 }
 
 .area-filter {
@@ -103,6 +107,29 @@ img {
   height: 0;
 }
 
+.area-filter--cities {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  max-width: 100%;
+  padding: 0.35rem 0.5rem;
+}
+
+.area-filter--districts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem 0.6rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.area-filter--districts[hidden] {
+  display: none;
+}
+
 .area-filter__button {
   position: relative;
   border: none;
@@ -115,6 +142,11 @@ img {
   cursor: pointer;
   transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   white-space: nowrap;
+}
+
+.area-filter__button--district {
+  padding: 0.45rem 1.05rem;
+  font-size: 0.8rem;
 }
 
 .area-filter__button:is(:hover, :focus-visible) {
@@ -143,14 +175,30 @@ img {
   }
 
   .site-subheader__container {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
     padding: 0.85rem clamp(1rem, 4vw, 1.75rem);
   }
 
-  .site-subheader__label {
-    letter-spacing: 0.22em;
+  .site-subheader__top-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .area-filter--cities {
+    width: 100%;
+  }
+
+  .language-select--header {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .language-select--header .language-select__dropdown {
+    width: 100%;
+  }
+
+  .site-subheader__top-row .language-select--header {
+    margin-left: 0;
   }
 
   .branding__logo {
@@ -159,6 +207,24 @@ img {
 
   .branding__text {
     font-size: clamp(1.65rem, 3.2vw, 1.78rem);
+  }
+
+  .area-browser {
+    padding: 1.25rem;
+  }
+
+  .area-browser__regions {
+    overflow-x: auto;
+    padding-bottom: 0.75rem;
+  }
+
+  .area-browser__region-btn {
+    flex: 0 0 auto;
+  }
+
+  .area-browser__grid,
+  .area-browser__region-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
 }
 
@@ -286,6 +352,52 @@ img {
 .language-select__dropdown option:hover {
   background-color: #ffe0f1;
   color: #2f184f;
+}
+
+.language-select__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.language-select--header {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  width: auto;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.language-select--header .language-select__flag {
+  width: 32px;
+  height: 24px;
+  border-radius: 0.4rem;
+  box-shadow: none;
+}
+
+.language-select--header .language-select__label {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+}
+
+.language-select--header .language-select__dropdown {
+  width: auto;
+  min-width: 150px;
+  padding: 0.45rem 2.2rem 0.45rem 0.9rem;
+  background: rgba(9, 6, 20, 0.85);
+  box-shadow: none;
+}
+
+.language-select--header .language-select__dropdown:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.language-select--header .language-select__dropdown:focus-visible {
+  box-shadow: 0 0 0 2px rgba(255, 46, 139, 0.25);
 }
 
 .btn {
@@ -494,6 +606,119 @@ img {
   gap: 2rem;
   flex-wrap: wrap;
   margin-bottom: 2.5rem;
+}
+
+.area-browser {
+  background: rgba(10, 6, 24, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  padding: 1.5rem;
+  box-shadow: 0 18px 32px rgba(5, 0, 20, 0.45);
+}
+
+.area-browser__regions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.area-browser__region-btn {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.area-browser__region-btn:is(:hover, :focus-visible) {
+  color: #fff;
+  outline: none;
+}
+
+.area-browser__region-btn.is-active {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: #fff;
+  box-shadow: 0 0 18px rgba(255, 46, 139, 0.35);
+}
+
+.area-browser__panel {
+  overflow: hidden;
+}
+
+.area-browser__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.area-browser__district {
+  background: rgba(8, 5, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 110px;
+}
+
+.area-browser__district-name {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.area-browser__dong-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.area-browser__dong-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.area-browser__empty {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.area-browser__region-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  margin-bottom: 1.25rem;
+}
+
+.area-browser__region-group:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.area-browser__region-heading {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.area-browser__region-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
 .shop-grid {
