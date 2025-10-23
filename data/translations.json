@@ -124,6 +124,14 @@
         "tc": "TC",
         "rt": "RT"
       },
+      "pricingHighlight": {
+        "badge": "금액 안내",
+        "region": "지역",
+        "category": "업종",
+        "brand": "상호",
+        "perPerson": "인당 가격",
+        "perPersonContext": "기준"
+      },
       "pricingTable": [
         {
           "label": "오후 9시 이전",
@@ -309,6 +317,14 @@
         "base": "Table",
         "tc": "TC",
         "rt": "RT"
+      },
+      "pricingHighlight": {
+        "badge": "Pricing spotlight",
+        "region": "Area",
+        "category": "Category",
+        "brand": "Venue",
+        "perPerson": "Per person",
+        "perPersonContext": "Based on"
       },
       "pricingTable": [
         {
@@ -496,6 +512,14 @@
         "tc": "TC",
         "rt": "RT"
       },
+      "pricingHighlight": {
+        "badge": "價格指南",
+        "region": "地區",
+        "category": "類型",
+        "brand": "商號",
+        "perPerson": "每人價格",
+        "perPersonContext": "基準"
+      },
       "pricingTable": [
         {
           "label": "晚9點前",
@@ -681,6 +705,14 @@
         "base": "基本料金",
         "tc": "TC",
         "rt": "RT"
+      },
+      "pricingHighlight": {
+        "badge": "料金ハイライト",
+        "region": "エリア",
+        "category": "業種",
+        "brand": "店舗名",
+        "perPerson": "お一人様料金",
+        "perPersonContext": "目安"
       },
       "pricingTable": [
         {
