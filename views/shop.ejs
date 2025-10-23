@@ -72,31 +72,125 @@
     </div>
   </section>
 
+  <%
+    const defaultPricingTable = [
+      {
+        label: '오후 9시 이전',
+        meta: '주대 10 · TC 12 · RT 5',
+        prices: [
+          { label: '1인', amount: '27만' },
+          { label: '2인', amount: '39만' },
+          { label: '3인', amount: '51만' },
+          { label: '4인', amount: '63만' },
+        ],
+      },
+      {
+        label: '오후 9시 이후',
+        meta: '주대 13 · TC 12 · RT 5',
+        prices: [
+          { label: '1인', amount: '30만' },
+          { label: '2인', amount: '42만' },
+          { label: '3인', amount: '54만' },
+          { label: '4인', amount: '67만' },
+        ],
+      },
+    ];
+
+    const pricingTable = Array.isArray(t.shop && t.shop.pricingTable)
+      && (t.shop.pricingTable.length ? t.shop.pricingTable : defaultPricingTable)
+      || defaultPricingTable;
+
+    const pricingText = (t.shop && t.shop.pricing) || {};
+    const pricingHighlight = (t.shop && t.shop.pricingHighlight) || {};
+    const primaryPricing = shop.pricing || {};
+    const pricingHighlightSubtitle = [shop.region, shop.district, shop.category]
+      .filter(Boolean)
+      .join(' · ');
+    const locationSummary = [shop.region, shop.district]
+      .filter(Boolean)
+      .join(' · ');
+    const highlightBlock = pricingTable.find(function (block) {
+      return Array.isArray(block.prices) && block.prices.length;
+    }) || null;
+    const highlightPrice = highlightBlock ? highlightBlock.prices[0] : null;
+    const perPersonNoteParts = [];
+
+    if (highlightPrice && highlightPrice.label) {
+      const perPersonContext = pricingHighlight.perPersonContext || '기준';
+      perPersonNoteParts.push(`${perPersonContext} ${highlightPrice.label}`);
+    }
+
+    if (highlightBlock && highlightBlock.label) {
+      perPersonNoteParts.push(highlightBlock.label);
+    }
+
+    const perPersonNote = perPersonNoteParts.join(' · ');
+  %>
+
+  <section class="pricing-highlight">
+    <div class="container">
+      <div class="pricing-highlight__panel">
+        <div class="pricing-highlight__header">
+          <span class="pricing-highlight__badge"><%= pricingHighlight.badge || '금액 안내' %></span>
+          <h2 class="pricing-highlight__title"><%= shop.name %></h2>
+          <% if (pricingHighlightSubtitle) { %>
+            <p class="pricing-highlight__subtitle"><%= pricingHighlightSubtitle %></p>
+          <% } %>
+        </div>
+        <div class="pricing-highlight__content">
+          <div class="pricing-highlight__info">
+            <div class="pricing-highlight__meta-grid">
+              <% if (locationSummary) { %>
+                <article class="pricing-highlight__meta-card">
+                  <span class="pricing-highlight__meta-label"><%= pricingHighlight.region || '지역' %></span>
+                  <strong class="pricing-highlight__meta-value"><%= locationSummary %></strong>
+                </article>
+              <% } %>
+              <% if (shop.category) { %>
+                <article class="pricing-highlight__meta-card">
+                  <span class="pricing-highlight__meta-label"><%= pricingHighlight.category || '업종' %></span>
+                  <strong class="pricing-highlight__meta-value"><%= shop.category %></strong>
+                </article>
+              <% } %>
+              <article class="pricing-highlight__meta-card">
+                <span class="pricing-highlight__meta-label"><%= pricingHighlight.brand || '상호' %></span>
+                <strong class="pricing-highlight__meta-value"><%= shop.name %></strong>
+              </article>
+            </div>
+            <div class="pricing-highlight__charges">
+              <article class="pricing-highlight__price-card">
+                <span class="pricing-highlight__price-label"><%= pricingText.base || '주대' %></span>
+                <strong class="pricing-highlight__price-value"><%= primaryPricing.base || '—' %></strong>
+              </article>
+              <article class="pricing-highlight__price-card">
+                <span class="pricing-highlight__price-label"><%= pricingText.tc || 'TC' %></span>
+                <strong class="pricing-highlight__price-value"><%= primaryPricing.tc || '—' %></strong>
+              </article>
+              <article class="pricing-highlight__price-card">
+                <span class="pricing-highlight__price-label"><%= pricingText.rt || 'RT' %></span>
+                <strong class="pricing-highlight__price-value"><%= primaryPricing.rt || '—' %></strong>
+              </article>
+            </div>
+          </div>
+          <div class="pricing-highlight__per-person">
+            <span class="pricing-highlight__per-person-label"><%= pricingHighlight.perPerson || '인당 가격' %></span>
+            <strong class="pricing-highlight__per-person-amount"><%= (highlightPrice && highlightPrice.amount) || '—' %></strong>
+            <% if (perPersonNote) { %>
+              <p class="pricing-highlight__per-person-note"><%= perPersonNote %></p>
+            <% } else if (pricingHighlightSubtitle) { %>
+              <p class="pricing-highlight__per-person-note"><%= pricingHighlightSubtitle %></p>
+            <% } %>
+            <% if (highlightBlock && highlightBlock.meta) { %>
+              <p class="pricing-highlight__per-person-meta"><%= highlightBlock.meta %></p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section detail-section">
     <div class="container detail-section__grid">
-      <% const defaultPricingTable = [
-           {
-             label: '오후 9시 이전',
-             meta: '주대 10 · TC 12 · RT 5',
-             prices: [
-               { label: '1인', amount: '27만' },
-               { label: '2인', amount: '39만' },
-               { label: '3인', amount: '51만' },
-               { label: '4인', amount: '63만' },
-             ],
-           },
-           {
-             label: '오후 9시 이후',
-             meta: '주대 13 · TC 12 · RT 5',
-             prices: [
-               { label: '1인', amount: '30만' },
-               { label: '2인', amount: '42만' },
-               { label: '3인', amount: '54만' },
-               { label: '4인', amount: '67만' },
-             ],
-           },
-         ]; %>
-      <% const pricingTable = Array.isArray(t.shop && t.shop.pricingTable) && (t.shop.pricingTable.length ? t.shop.pricingTable : defaultPricingTable) || defaultPricingTable; %>
       <div class="detail-card detail-card--full">
         <h2><%= t.shop && t.shop.pricing ? t.shop.pricing.title : 'Pricing' %></h2>
         <div class="rate-table">
