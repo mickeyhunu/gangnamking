@@ -102,20 +102,24 @@
 
     const pricingText = (t.shop && t.shop.pricing) || {};
     const pricingHighlight = (t.shop && t.shop.pricingHighlight) || {};
+    const pricingSchedule = shop.pricingSchedule || null;
+    const scheduleTableBlocks = buildBlocksFromSchedule(pricingSchedule);
     const translationPricingTable = Array.isArray(t.shop && t.shop.pricingTable)
       ? t.shop.pricingTable
       : null;
     const rawPricingTableData = (
-      Array.isArray(shop.pricingTable) && shop.pricingTable.length
-        ? shop.pricingTable
-        : (translationPricingTable && translationPricingTable.length
-          ? translationPricingTable
-          : defaultPricingTableData)
+      scheduleTableBlocks.length
+        ? scheduleTableBlocks
+        : (Array.isArray(shop.pricingTable) && shop.pricingTable.length
+          ? shop.pricingTable
+          : (translationPricingTable && translationPricingTable.length
+            ? translationPricingTable
+            : defaultPricingTableData))
     );
     const computedPricingTable = buildPricingTable(rawPricingTableData);
     const fallbackPricingTable = buildPricingTable(defaultPricingTableData);
     const pricingTable = computedPricingTable.length ? computedPricingTable : fallbackPricingTable;
-    const primaryPricing = shop.pricing || {};
+    const primaryPricing = buildPrimaryPricing(pricingSchedule) || shop.pricing || {};
     const pricingHighlightSubtitle = [shop.region, shop.district, shop.category]
       .filter(Boolean)
       .join(' · ');
@@ -207,6 +211,137 @@
           };
         })
         .filter(Boolean);
+    }
+
+    function buildBlocksFromSchedule(schedule) {
+      if (!schedule || typeof schedule !== 'object') {
+        return [];
+      }
+
+      const segments = Array.isArray(schedule.segments) ? schedule.segments : [];
+
+      if (!segments.length) {
+        return [];
+      }
+
+      const scheduleTc = toNumeric(schedule.tc);
+      const scheduleRt = toNumeric(schedule.rt);
+      const baseGuests = Array.isArray(schedule.guestCounts) && schedule.guestCounts.length
+        ? schedule.guestCounts
+        : [1, 2, 3, 4];
+      const amountConfig = resolveScheduleAmountConfig(schedule);
+      const scheduleMetaLabels = schedule.metaLabels || null;
+
+      return segments.reduce(function (acc, segment) {
+        if (!segment || typeof segment !== 'object') {
+          return acc;
+        }
+
+        const baseCharge = toNumeric(segment.base);
+        const tcCharge = getSegmentCharge(segment.tc, scheduleTc);
+        const rtCharge = getSegmentCharge(segment.rt, scheduleRt);
+
+        if (![baseCharge, tcCharge, rtCharge].every(function (value) { return Number.isFinite(value); })) {
+          return acc;
+        }
+
+        const segmentGuests = Array.isArray(segment.guests) && segment.guests.length
+          ? segment.guests
+          : baseGuests;
+        const mergedAmount = segment.amount
+          ? { ...amountConfig, ...segment.amount }
+          : amountConfig;
+        const metaLabels = segment.metaLabels || scheduleMetaLabels;
+
+        acc.push({
+          label: segment.label || '',
+          charges: {
+            base: baseCharge,
+            tc: tcCharge,
+            rt: rtCharge,
+          },
+          guests: segmentGuests,
+          amount: mergedAmount,
+          metaLabels,
+        });
+
+        return acc;
+      }, []);
+    }
+
+    function buildPrimaryPricing(schedule) {
+      if (!schedule || typeof schedule !== 'object') {
+        return null;
+      }
+
+      const segments = Array.isArray(schedule.segments) ? schedule.segments : [];
+
+      if (!segments.length) {
+        return null;
+      }
+
+      const defaultSegmentId = typeof schedule.defaultSegmentId === 'string'
+        ? schedule.defaultSegmentId
+        : null;
+      const targetSegment = (defaultSegmentId
+        ? segments.find(function (segment) { return segment && segment.id === defaultSegmentId; })
+        : null) || segments[0];
+
+      if (!targetSegment || typeof targetSegment !== 'object') {
+        return null;
+      }
+
+      const baseCharge = toNumeric(targetSegment.base);
+      const tcCharge = getSegmentCharge(targetSegment.tc, schedule.tc);
+      const rtCharge = getSegmentCharge(targetSegment.rt, schedule.rt);
+
+      if (!Number.isFinite(baseCharge)) {
+        return null;
+      }
+
+      const amountConfig = targetSegment.amount
+        ? { ...resolveScheduleAmountConfig(schedule), ...targetSegment.amount }
+        : resolveScheduleAmountConfig(schedule);
+      const block = { amount: amountConfig };
+
+      const formatted = {
+        base: formatAmount(baseCharge, block),
+      };
+
+      if (Number.isFinite(tcCharge)) {
+        formatted.tc = formatAmount(tcCharge, block);
+      }
+
+      if (Number.isFinite(rtCharge)) {
+        formatted.rt = formatAmount(rtCharge, block);
+      }
+
+      return formatted;
+    }
+
+    function resolveScheduleAmountConfig(schedule) {
+      const config = schedule && typeof schedule.amount === 'object'
+        ? { ...schedule.amount }
+        : {};
+
+      if (typeof schedule.unitSuffix === 'string'
+        && !Object.prototype.hasOwnProperty.call(config, 'suffix')) {
+        config.suffix = schedule.unitSuffix;
+      }
+
+      return config;
+    }
+
+    function getSegmentCharge(segmentValue, fallbackValue) {
+      const segmentNumeric = toNumeric(segmentValue);
+
+      if (Number.isFinite(segmentNumeric)) {
+        return segmentNumeric;
+      }
+
+      const fallbackNumeric = toNumeric(fallbackValue);
+
+      return Number.isFinite(fallbackNumeric) ? fallbackNumeric : NaN;
     }
 
     function normalizeGuestEntry(entry) {
@@ -319,8 +454,14 @@
       const baseLabel = metaLabels.base || pricingText.base || '주대';
       const tcLabel = metaLabels.tc || pricingText.tc || 'TC';
       const rtLabel = metaLabels.rt || pricingText.rt || 'RT';
+      const amountBlock = block && typeof block === 'object'
+        ? block
+        : {};
+      const formattedBase = formatAmount(baseCharge, amountBlock);
+      const formattedTc = formatAmount(tcCharge, amountBlock);
+      const formattedRt = formatAmount(rtCharge, amountBlock);
 
-      return `${baseLabel} ${baseCharge} · ${tcLabel} ${tcCharge} · ${rtLabel} ${rtCharge}`;
+      return `${baseLabel} ${formattedBase} · ${tcLabel} ${formattedTc} · ${rtLabel} ${formattedRt}`;
     }
 
     function getLocaleForLang(language) {
