@@ -26,15 +26,15 @@
     },
     "gallery": [
       {
-        "src": "/images/gangnam-lounge-101.svg",
+        "src": "/images/shops/gangnam-lounge-101/hero.svg",
         "alt": "강남 라운지 101 메인 홀"
       },
       {
-        "src": "/images/gallery-neon-1.svg",
+        "src": "/images/shops/gangnam-lounge-101/gallery-1.svg",
         "alt": "강남 라운지 101 네온 바 카운터"
       },
       {
-        "src": "/images/gallery-neon-3.svg",
+        "src": "/images/shops/gangnam-lounge-101/gallery-2.svg",
         "alt": "강남 라운지 101 프라이빗 룸"
       }
     ],
@@ -44,7 +44,7 @@
       "강남 VIP 룸",
       "서울 라운지 추천"
     ],
-    "image": "/images/gangnam-lounge-101.svg",
+    "image": "/images/shops/gangnam-lounge-101/hero.svg",
     "translations": {
       "en": {
         "name": "Running Rabbit Lounge",
@@ -141,15 +141,15 @@
     },
     "gallery": [
       {
-        "src": "/images/gwanak-premium-room.svg",
+        "src": "/images/shops/gwanak-premium-room/hero.svg",
         "alt": "관악 프리미엄 룸 리셉션"
       },
       {
-        "src": "/images/gallery-neon-2.svg",
+        "src": "/images/shops/gwanak-premium-room/gallery-1.svg",
         "alt": "관악 프리미엄 룸 라운지 존"
       },
       {
-        "src": "/images/gallery-neon-4.svg",
+        "src": "/images/shops/gwanak-premium-room/gallery-2.svg",
         "alt": "관악 프리미엄 룸 프라이빗 테이블"
       }
     ],
@@ -159,7 +159,7 @@
       "관악 주대 정보",
       "비즈니스 접대 장소"
     ],
-    "image": "/images/gwanak-premium-room.svg",
+    "image": "/images/shops/gwanak-premium-room/hero.svg",
     "translations": {
       "en": {
         "name": "Gwanak Premium Room",
@@ -256,15 +256,15 @@
     },
     "gallery": [
       {
-        "src": "/images/gangseo-night-suite.svg",
+        "src": "/images/shops/gangseo-night-suite/hero.svg",
         "alt": "강서 나이트 스위트 라운지"
       },
       {
-        "src": "/images/gallery-neon-5.svg",
+        "src": "/images/shops/gangseo-night-suite/gallery-1.svg",
         "alt": "강서 나이트 스위트 루프탑 바"
       },
       {
-        "src": "/images/gallery-neon-2.svg",
+        "src": "/images/shops/gangseo-night-suite/gallery-2.svg",
         "alt": "강서 나이트 스위트 시그니처 좌석"
       }
     ],
@@ -274,7 +274,7 @@
       "서울 강서 유흥",
       "강서 나이트 예약"
     ],
-    "image": "/images/gangseo-night-suite.svg",
+    "image": "/images/shops/gangseo-night-suite/hero.svg",
     "translations": {
       "en": {
         "name": "Gangseo Night Suite",
@@ -371,15 +371,15 @@
     },
     "gallery": [
       {
-        "src": "/images/haeundae-ocean-lounge.svg",
+        "src": "/images/shops/haeundae-ocean-lounge/hero.svg",
         "alt": "해운대 오션 라운지 전경"
       },
       {
-        "src": "/images/gallery-neon-3.svg",
+        "src": "/images/shops/haeundae-ocean-lounge/gallery-1.svg",
         "alt": "해운대 오션 라운지 오션뷰 좌석"
       },
       {
-        "src": "/images/gallery-neon-1.svg",
+        "src": "/images/shops/haeundae-ocean-lounge/gallery-2.svg",
         "alt": "해운대 오션 라운지 바 존"
       }
     ],
@@ -389,7 +389,7 @@
       "해운대 주대",
       "부산 프리미엄 라운지"
     ],
-    "image": "/images/haeundae-ocean-lounge.svg",
+    "image": "/images/shops/haeundae-ocean-lounge/hero.svg",
     "translations": {
       "en": {
         "name": "Haeundae Ocean Lounge",
@@ -486,15 +486,15 @@
     },
     "gallery": [
       {
-        "src": "/images/seomyeon-velvet-club.svg",
+        "src": "/images/shops/seomyeon-velvet-club/hero.svg",
         "alt": "서면 벨벳 클럽 메인 스테이지"
       },
       {
-        "src": "/images/gallery-neon-4.svg",
+        "src": "/images/shops/seomyeon-velvet-club/gallery-1.svg",
         "alt": "서면 벨벳 클럽 DJ 부스"
       },
       {
-        "src": "/images/gallery-neon-5.svg",
+        "src": "/images/shops/seomyeon-velvet-club/gallery-2.svg",
         "alt": "서면 벨벳 클럽 VIP 존"
       }
     ],
@@ -504,7 +504,7 @@
       "부산 클럽 주대",
       "부산 EDM 클럽"
     ],
-    "image": "/images/seomyeon-velvet-club.svg",
+    "image": "/images/shops/seomyeon-velvet-club/hero.svg",
     "translations": {
       "en": {
         "name": "Seomyeon Velvet Club",
