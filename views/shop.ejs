@@ -104,6 +104,9 @@
     const pricingHighlight = (t.shop && t.shop.pricingHighlight) || {};
     const pricingSchedule = shop.pricingSchedule || null;
     const scheduleTableBlocks = buildBlocksFromSchedule(pricingSchedule);
+    const scheduleDefaultBlockId = pricingSchedule && typeof pricingSchedule.defaultSegmentId === 'string'
+      ? pricingSchedule.defaultSegmentId
+      : null;
     const translationPricingTable = Array.isArray(t.shop && t.shop.pricingTable)
       ? t.shop.pricingTable
       : null;
@@ -126,9 +129,15 @@
     const locationSummary = [shop.region, shop.district]
       .filter(Boolean)
       .join(' · ');
-    const highlightBlock = pricingTable.find(function (block) {
-      return Array.isArray(block.prices) && block.prices.length;
-    }) || null;
+    const highlightBlock = (scheduleDefaultBlockId
+      ? pricingTable.find(function (block) {
+          return block && block.id === scheduleDefaultBlockId && Array.isArray(block.prices) && block.prices.length;
+        })
+      : null)
+      || pricingTable.find(function (block) {
+        return Array.isArray(block.prices) && block.prices.length;
+      })
+      || null;
     const highlightPrice = highlightBlock ? highlightBlock.prices[0] : null;
     const perPersonNoteParts = [];
 
@@ -254,6 +263,7 @@
         const metaLabels = segment.metaLabels || scheduleMetaLabels;
 
         acc.push({
+          id: typeof segment.id === 'string' ? segment.id : null,
           label: segment.label || '',
           charges: {
             base: baseCharge,
