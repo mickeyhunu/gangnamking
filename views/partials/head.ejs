@@ -54,6 +54,25 @@
         </a>
       </div>
     </header>
+    <% if (Array.isArray(areaFilters) && areaFilters.length) { %>
+      <nav class="region-nav" aria-label="<%= (t.areaFilters && t.areaFilters.title) || '지역 선택' %>">
+        <div class="container region-nav__container">
+          <ul class="region-nav__list">
+            <% areaFilters.forEach(function(option) { %>
+              <li class="region-nav__item">
+                <button
+                  class="region-nav__button <%= option.id === 'all' ? 'is-active' : '' %>"
+                  type="button"
+                  data-area-filter="<%= option.id %>"
+                >
+                  <%= option.label %>
+                </button>
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+      </nav>
+    <% } %>
     <% const currentLanguageOption = (languageOptions || []).find(function(option) { return option.isCurrent; }) || (languageOptions || [])[0]; %>
     <% const languageSelectId = 'language-select'; %>
     <% if (currentLanguageOption) { %>

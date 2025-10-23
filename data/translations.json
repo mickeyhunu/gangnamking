@@ -23,6 +23,13 @@
       "consultCta": "빠른 상담",
       "languageLabel": "언어"
     },
+    "areaFilters": {
+      "title": "지역 빠른 선택",
+      "all": "전체",
+      "seoulGangnam": "서울 강남",
+      "seoulOthers": "서울 비강남",
+      "busan": "부산"
+    },
     "hero": {
       "badge": "강남 전역 최저가 보장 큐레이션",
       "headline": "강남에서 가장 저렴한 단독 특가, 룸빵1번지가 책임집니다",
@@ -212,6 +219,13 @@
       "browseCta": "Explore Now",
       "consultCta": "Quick Consultation",
       "languageLabel": "Language"
+    },
+    "areaFilters": {
+      "title": "Quick region filter",
+      "all": "All",
+      "seoulGangnam": "Seoul Gangnam",
+      "seoulOthers": "Seoul (Non-Gangnam)",
+      "busan": "Busan"
     },
     "hero": {
       "badge": "Seoul · Capital Area · Busan premium curation",
@@ -411,6 +425,13 @@
       "consultCta": "快速諮詢",
       "languageLabel": "語言"
     },
+    "areaFilters": {
+      "title": "快速選擇地區",
+      "all": "全部",
+      "seoulGangnam": "首爾江南",
+      "seoulOthers": "首爾（非江南）",
+      "busan": "釜山"
+    },
     "hero": {
       "badge": "首爾・首都圈・釜山精品策展",
       "headline": "從江南到海雲台，發現最熱門的夜生活場域",
@@ -606,6 +627,13 @@
       "browseCta": "今すぐ見る",
       "consultCta": "スピード相談",
       "languageLabel": "言語"
+    },
+    "areaFilters": {
+      "title": "エリアを選択",
+      "all": "すべて",
+      "seoulGangnam": "ソウル江南",
+      "seoulOthers": "ソウル（江南以外）",
+      "busan": "釜山"
     },
     "hero": {
       "badge": "ソウル・首都圏・釜山のプレミアム厳選",

@@ -11,6 +11,29 @@ const LANGUAGE_FLAGS = {
   ja: { src: '/images/flags/flag-jp.svg', alt: '日本語' },
 };
 const DEFAULT_LANGUAGE = 'ko';
+const AREA_GROUPS = [
+  { id: 'all', translationKey: 'all', fallbackLabel: '전체' },
+  { id: 'seoul-gangnam', translationKey: 'seoulGangnam', fallbackLabel: '서울 강남' },
+  { id: 'seoul-others', translationKey: 'seoulOthers', fallbackLabel: '서울 비강남' },
+  { id: 'busan', translationKey: 'busan', fallbackLabel: '부산' },
+];
+
+function buildAreaFilters(shopList, translation) {
+  const availableAreaGroups = (Array.isArray(shopList) ? shopList : []).reduce((acc, shop) => {
+    if (Array.isArray(shop?.areaGroups)) {
+      shop.areaGroups.forEach((groupId) => acc.add(groupId));
+    }
+
+    return acc;
+  }, new Set());
+
+  return AREA_GROUPS.filter((group) => group.id === 'all' || availableAreaGroups.has(group.id)).map((group) => ({
+    id: group.id,
+    label:
+      (translation?.areaFilters && translation.areaFilters[group.translationKey])
+      || group.fallbackLabel,
+  }));
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -384,6 +407,14 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  if (!Array.isArray(res.locals.areaFilters) || !res.locals.areaFilters.length) {
+    res.locals.areaFilters = buildAreaFilters(shops, res.locals.t);
+  }
+
+  next();
+});
+
 app.get('/', (req, res) => {
   const lang = res.locals.lang || DEFAULT_LANGUAGE;
   const localizedShops = shops.map((shop) => localizeShop(shop, lang));
@@ -401,6 +432,8 @@ app.get('/', (req, res) => {
       localizedShops.flatMap((shop) => (Array.isArray(shop.seoKeywords) ? shop.seoKeywords : []))
     )
   ];
+  const areaFilters = buildAreaFilters(localizedShops, res.locals.t);
+  res.locals.areaFilters = areaFilters;
 
   res.render('index', {
     shops: localizedShops,
