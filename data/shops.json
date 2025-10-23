@@ -6,26 +6,22 @@
     "district": "강남구",
     "category": "하이퍼블릭",
     "address": "서울특별시 강남구 역삼동 604-11",
-    "phone": "02-000-0101",
-    "hours": "매일 18:00 - 04:00",
-    "description": "감각적인 무드와 전문 바텐더가 선사하는 시그니처 칵테일이 돋보이는 프리미엄 라운지입니다.",
-    "highlights": [
-      "수제 시그니처 칵테일",
-      "DJ 라운지 퍼포먼스",
-      "프라이빗 VIP 룸"
-    ],
+    "phone": "010-5733-8710",
+    "hours": "매일 17:00 - 익일 15:00",
+    "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricing": {
       "base": "13만원",
       "tc": "TC 12만",
       "rt": "RT 5만"
     },
     "manager": {
-      "name": "김매니저",
-      "phone": "010-1234-5678",
-      "kakao": "@gangnam101"
+      "name": "강동원 대표",
+      "phone": "010-5733-8710",
+      "kakao": "@roombbang1st"
     },
     "gallery": [
       {
+<<<<<<< Updated upstream
         "src": "/images/shops/gangnam-lounge-101/hero.svg",
         "alt": "강남 라운지 101 메인 홀"
       },
@@ -36,13 +32,34 @@
       {
         "src": "/images/shops/gangnam-lounge-101/gallery-2.svg",
         "alt": "강남 라운지 101 프라이빗 룸"
+=======
+        "src": "/images/gangnam-lounge-101.svg",
+        "alt": "강남 달리는토끼"
+      },
+      {
+        "src": "/images/gallery-neon-1.svg",
+        "alt": "강남 달리는토끼"
+      },
+      {
+        "src": "/images/gallery-neon-3.svg",
+        "alt": "강남 달리는토끼"
+>>>>>>> Stashed changes
       }
     ],
     "seoKeywords": [
-      "강남 라운지",
-      "강남 프리미엄 바",
-      "강남 VIP 룸",
-      "서울 라운지 추천"
+      "룸빵",
+      "가라오케",
+      "셔츠룸",
+      "셔츠",
+      "하퍼",
+      "달토",
+      "달리는토끼",
+      "달토하대표",
+      "달토우지호",
+      "달토강동원",
+      "강남가라오케",
+      "강남셔츠룸",
+      "강남하퍼"
     ],
     "image": "/images/shops/gangnam-lounge-101/hero.svg",
     "translations": {
@@ -114,6 +131,8 @@
       }
     }
   },
+
+
   {
     "id": "seoul-gwanak-premium-room",
     "name": "관악 프리미엄 룸",
@@ -229,6 +248,8 @@
       }
     }
   },
+
+
   {
     "id": "seoul-gangseo-night-suite",
     "name": "강서 나이트 스위트",
@@ -344,6 +365,8 @@
       }
     }
   },
+
+
   {
     "id": "busan-haeundae-ocean-lounge",
     "name": "해운대 오션 라운지",
@@ -459,6 +482,8 @@
       }
     }
   },
+
+
   {
     "id": "busan-seomyeon-velvet-club",
     "name": "서면 벨벳 클럽",
