@@ -53,6 +53,24 @@
           <span class="branding__text">룸빵1번지</span>
         </a>
       </div>
+      <% if (areaFilterConfig && Array.isArray(areaFilterConfig.options) && areaFilterConfig.options.length) { %>
+        <div class="site-subheader">
+          <div class="container site-subheader__container">
+            <span class="site-subheader__label"><%= areaFilterConfig.label %></span>
+            <nav class="area-filter" data-area-filter>
+              <% areaFilterConfig.options.forEach(function(option) { %>
+                <button
+                  type="button"
+                  class="area-filter__button <%= option.value === 'all' ? 'is-active' : '' %>"
+                  data-area-option="<%= option.value %>"
+                >
+                  <%= option.label %>
+                </button>
+              <% }) %>
+            </nav>
+          </div>
+        </div>
+      <% } %>
     </header>
     <% const currentLanguageOption = (languageOptions || []).find(function(option) { return option.isCurrent; }) || (languageOptions || [])[0]; %>
     <% const languageSelectId = 'language-select'; %>
