@@ -1,59 +1,4 @@
 <%- include('partials/head', { title: pageTitle, description: metaDescription, seoKeywords }) %>
-  <section class="section section--area-browser">
-    <div class="container">
-      <div class="section__header">
-        <div>
-          <h2 class="section__title"><%= t.areaBrowser && t.areaBrowser.title ? t.areaBrowser.title : '' %></h2>
-          <p class="section__subtitle"><%= t.areaBrowser && t.areaBrowser.subtitle ? t.areaBrowser.subtitle : '' %></p>
-        </div>
-      </div>
-      <div
-        class="area-browser"
-        data-area-browser
-        data-empty-message="<%= t.areaBrowser && t.areaBrowser.empty ? t.areaBrowser.empty : '' %>"
-      >
-        <div class="area-browser__regions" role="tablist">
-          <button
-            class="area-browser__region-btn is-active"
-            data-area-region="all"
-            type="button"
-          >
-            <%= t.areaBrowser && t.areaBrowser.all ? t.areaBrowser.all : 'All' %>
-          </button>
-          <% regions.forEach(function(region) { %>
-            <button
-              class="area-browser__region-btn"
-              data-area-region="<%= region %>"
-              type="button"
-            >
-              <%= region %>
-            </button>
-          <% }) %>
-        </div>
-        <div class="area-browser__panel">
-          <div class="area-browser__grid" data-area-browser-districts></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--intro">
-    <div class="container section__container">
-      <div>
-        <h2 class="section__title"><%= t.intro && t.intro.title ? t.intro.title : '' %></h2>
-        <p class="section__subtitle"><%= t.intro && t.intro.subtitle ? t.intro.subtitle : '' %></p>
-      </div>
-      <div class="feature-grid">
-        <% (t.intro && Array.isArray(t.intro.features) ? t.intro.features : []).forEach(function(feature) { %>
-          <div class="feature-card">
-            <h3><%= feature.title %></h3>
-            <p><%= feature.description %></p>
-          </div>
-        <% }) %>
-      </div>
-    </div>
-  </section>
-
   <section class="section" id="areas">
     <div class="container">
       <div class="section__header">
@@ -91,10 +36,7 @@
   <script id="region-district-data" type="application/json">
     <%- JSON.stringify(districtMap) %>
   </script>
-  <script id="area-hierarchy-data" type="application/json">
-    <%- JSON.stringify(areaHierarchy) %>
-  </script>
   <div class="seo-keywords" aria-hidden="true">
     <%- seoKeywords.join(', ') %>
   </div>
-<%- include('partials/footer', { scripts: ['/scripts/area-browser.js'] }) %>
+<%- include('partials/footer') %>

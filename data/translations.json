@@ -51,30 +51,6 @@
         "concierge": "맞춤형 예약 컨시어지"
       }
     },
-    "intro": {
-      "title": "강남 최저가 예약, 룸빵1번지가 제일 잘합니다",
-      "subtitle": "강남 전 지역 룸 · 라운지를 최저가로 비교하고, 숨은 특가 혜택까지 놓치지 마세요.",
-      "features": [
-        {
-          "title": "강남 상권 집중",
-          "description": "강남역, 신논현, 삼성 등 핵심 상권만 선별해 지역별 최저가 정보를 제공해드립니다."
-        },
-        {
-          "title": "실시간 최저가 상담",
-          "description": "카카오톡 · 전화로 즉시 연결되어 인원과 예산에 맞는 최저가 코스를 제안합니다."
-        },
-        {
-          "title": "추가 할인 혜택",
-          "description": "룸빵1번지 회원 전용 추가 할인과 단독 프로모션으로 더 저렴하게 이용하세요."
-        }
-      ]
-    },
-    "areaBrowser": {
-      "title": "도시별 구 · 동 한눈에 보기",
-      "subtitle": "도시를 선택하면 해당 구와 동 정보를 바로 확인할 수 있습니다.",
-      "all": "전체",
-      "empty": "선택한 도시의 구 · 동 데이터가 없습니다."
-    },
     "areas": {
       "title": "강남 핵심 역별 최저가 매장",
       "subtitle": "강남 지역, 구, 업종 필터로 원하는 조건의 최저가 제휴처를 바로 확인하세요.",
@@ -252,30 +228,6 @@
         "response": "Rapid support 24/7",
         "concierge": "1:1 tailored concierge"
       }
-    },
-    "intro": {
-      "title": "Enjoy high-end nightlife with Roombbang First",
-      "subtitle": "From trendy lounges to high-end clubs, our specialists recommend venues that match your taste.",
-      "features": [
-        {
-          "title": "Trusted verification",
-          "description": "All partners undergo a two-step on-site inspection and continuous quality monitoring."
-        },
-        {
-          "title": "Real-time support",
-          "description": "Consult via KakaoTalk or phone for tailor-made courses that fit your schedule and group size."
-        },
-        {
-          "title": "Exclusive perks",
-          "description": "Enjoy member-only discounts and complimentary room upgrades reserved for Roombbang First clients."
-        }
-      ]
-    },
-    "areaBrowser": {
-      "title": "Browse districts by city",
-      "subtitle": "Select a city to see the districts and neighborhoods we cover.",
-      "all": "All",
-      "empty": "There is no district or neighborhood data for the selected city."
     },
     "areas": {
       "title": "Featured lounges & clubs by station",
@@ -463,24 +415,6 @@
         "concierge": "一對一貼身管家"
       }
     },
-    "intro": {
-      "title": "與房房一番地共度高端夜生活",
-      "subtitle": "從時尚酒廊到頂級夜店，專家為您挑選最合適的場地。",
-      "features": [
-        {
-          "title": "嚴格審核",
-          "description": "所有合作夥伴皆經過兩階段實地評估，並持續監控服務品質。"
-        },
-        {
-          "title": "即時諮詢",
-          "description": "透過 KakaoTalk 或電話，依照人數與時間提供專屬行程建議。"
-        },
-        {
-          "title": "專屬禮遇",
-          "description": "享有房房一番地會員限定優惠與包廂升等福利。"
-        }
-      ]
-    },
     "areas": {
       "title": "推薦站點酒廊與夜店",
       "subtitle": "靈活組合篩選條件，快速找到理想店家。",
@@ -664,24 +598,6 @@
         "response": "365日迅速対応",
         "concierge": "オーダーメイド予約サポート"
       }
-    },
-    "intro": {
-      "title": "ルンパン一番地と楽しむハイエンドな夜",
-      "subtitle": "トレンディーなラウンジからハイエンドクラブまで、プロがご希望に合わせてご提案します。",
-      "features": [
-        {
-          "title": "信頼の審査体制",
-          "description": "すべての提携先は2段階の現地チェックを経て登録され、予約品質を常時モニタリングしています。"
-        },
-        {
-          "title": "即時コンサルティング",
-          "description": "KakaoTalk・電話相談で、ご希望の時間と人数に合わせたプランをご案内します。"
-        },
-        {
-          "title": "会員限定特典",
-          "description": "ルンパン一番地会員だけの特別割引や専用ルームアップグレードをご提供します。"
-        }
-      ]
     },
     "areas": {
       "title": "おすすめ駅別ラウンジ＆クラブ",
