@@ -64,9 +64,93 @@ img {
   padding: clamp(0.95rem, 1.5vw + 0.5rem, 1.35rem) clamp(1.25rem, 5vw, 2.25rem);
 }
 
+.site-subheader {
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(9, 6, 20, 0.92);
+  backdrop-filter: blur(18px);
+}
+
+.site-subheader__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.75rem clamp(1.25rem, 5vw, 2.25rem);
+}
+
+.site-subheader__label {
+  font-size: 0.8rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  white-space: nowrap;
+}
+
+.area-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.area-filter::-webkit-scrollbar {
+  height: 0;
+}
+
+.area-filter__button {
+  position: relative;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.area-filter__button:is(:hover, :focus-visible) {
+  color: #fff;
+  outline: none;
+}
+
+.area-filter__button.is-active {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255, 46, 139, 0.4);
+}
+
+.area-filter__button.is-active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+}
+
 @media (max-width: 960px) {
   .site-header__main {
     padding: clamp(0.85rem, 1.25vw + 0.55rem, 1.1rem) clamp(1rem, 4vw, 1.75rem);
+  }
+
+  .site-subheader__container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem clamp(1rem, 4vw, 1.75rem);
+  }
+
+  .site-subheader__label {
+    letter-spacing: 0.22em;
   }
 
   .branding__logo {

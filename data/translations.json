@@ -23,6 +23,12 @@
       "consultCta": "빠른 상담",
       "languageLabel": "언어"
     },
+    "quickRegions": {
+      "label": "지역 빠른 선택",
+      "all": "전체",
+      "gangnam": "강남",
+      "nonGangnam": "비강남"
+    },
     "hero": {
       "badge": "강남 전역 최저가 보장 큐레이션",
       "headline": "강남에서 가장 저렴한 단독 특가, 룸빵1번지가 책임집니다",
@@ -212,6 +218,12 @@
       "browseCta": "Explore Now",
       "consultCta": "Quick Consultation",
       "languageLabel": "Language"
+    },
+    "quickRegions": {
+      "label": "Browse by area",
+      "all": "All",
+      "gangnam": "Gangnam",
+      "nonGangnam": "Other areas"
     },
     "hero": {
       "badge": "Seoul · Capital Area · Busan premium curation",
@@ -411,6 +423,12 @@
       "consultCta": "快速諮詢",
       "languageLabel": "語言"
     },
+    "quickRegions": {
+      "label": "快速選擇地區",
+      "all": "全部",
+      "gangnam": "江南",
+      "nonGangnam": "其他地區"
+    },
     "hero": {
       "badge": "首爾・首都圈・釜山精品策展",
       "headline": "從江南到海雲台，發現最熱門的夜生活場域",
@@ -606,6 +624,12 @@
       "browseCta": "今すぐ見る",
       "consultCta": "スピード相談",
       "languageLabel": "言語"
+    },
+    "quickRegions": {
+      "label": "エリアを選択",
+      "all": "すべて",
+      "gangnam": "カンナム",
+      "nonGangnam": "その他"
     },
     "hero": {
       "badge": "ソウル・首都圏・釜山のプレミアム厳選",

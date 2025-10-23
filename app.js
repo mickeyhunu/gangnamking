@@ -16,6 +16,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const IMAGE_FILE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.avif']);
+const GANGNAM_KEYWORD = /강남/i;
+const AREA_FILTER_DEFAULTS = {
+  label: '지역 선택',
+  all: '전체',
+  gangnam: '강남',
+  nonGangnam: '비강남',
+};
 
 // Load shop data
 const shopsPath = path.join(__dirname, 'data', 'shops.json');
@@ -42,6 +49,53 @@ function loadTranslations() {
     console.error('Failed to load translation data:', error);
     translations = {};
   }
+}
+
+function determineAreaGroup(shop) {
+  if (!shop || typeof shop !== 'object') {
+    return 'nonGangnam';
+  }
+
+  const district = typeof shop.district === 'string' ? shop.district : '';
+  const region = typeof shop.region === 'string' ? shop.region : '';
+  const address = typeof shop.address === 'string' ? shop.address : '';
+  const combined = `${region} ${district} ${address}`;
+
+  if (GANGNAM_KEYWORD.test(combined)) {
+    return 'gangnam';
+  }
+
+  return 'nonGangnam';
+}
+
+function buildAreaFilterConfig(translation) {
+  const config = translation?.quickRegions || {};
+
+  return {
+    label: typeof config.label === 'string' && config.label.trim()
+      ? config.label.trim()
+      : AREA_FILTER_DEFAULTS.label,
+    options: [
+      {
+        value: 'all',
+        label: typeof config.all === 'string' && config.all.trim()
+          ? config.all.trim()
+          : AREA_FILTER_DEFAULTS.all,
+      },
+      {
+        value: 'gangnam',
+        label: typeof config.gangnam === 'string' && config.gangnam.trim()
+          ? config.gangnam.trim()
+          : AREA_FILTER_DEFAULTS.gangnam,
+      },
+      {
+        value: 'nonGangnam',
+        label: typeof config.nonGangnam === 'string' && config.nonGangnam.trim()
+          ? config.nonGangnam.trim()
+          : AREA_FILTER_DEFAULTS.nonGangnam,
+      },
+    ],
+  };
 }
 
 loadShops();
@@ -324,6 +378,7 @@ function localizeShop(shop, lang) {
   }
 
   localized.gallery = augmentGalleryWithFolderImages(localized);
+  localized.areaGroup = determineAreaGroup(shop);
 
   const primaryImage = derivePrimaryImage({ ...localized, gallery: localized.gallery });
 
@@ -379,6 +434,7 @@ app.use((req, res, next) => {
   res.locals.t = translation;
   res.locals.languageOptions = languageOptions;
   res.locals.defaultLanguage = DEFAULT_LANGUAGE;
+  res.locals.areaFilterConfig = buildAreaFilterConfig(translation);
   res.locals.canonicalUrl = currentLanguageOption ? currentLanguageOption.absoluteUrl : `${req.protocol}://${req.get('host')}${req.originalUrl}`;
 
   next();
