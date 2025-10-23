@@ -1,8 +1,11 @@
 <%
   const fallbackAltSuffix = (t.shop && t.shop.galleryAltFallback) || '분위기';
+  const fallbackAltText = shop.imageAlt || `${shop.name} ${fallbackAltSuffix}`;
   const galleryImages = Array.isArray(shop.gallery) && shop.gallery.length
     ? shop.gallery
-    : [{ src: shop.image, alt: `${shop.name} ${fallbackAltSuffix}` }];
+    : (shop.image
+        ? [{ src: shop.image, alt: fallbackAltText }]
+        : []);
 %>
 <%- include('partials/head', { title: pageTitle, description: metaDescription, seoKeywords }) %>
   <section class="detail-hero">

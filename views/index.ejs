@@ -99,7 +99,9 @@
             data-category="<%= shop.category %>"
           >
             <div class="shop-card__image">
-              <img src="<%= shop.image %>" alt="<%= shop.name %>" />
+              <% if (shop.image) { %>
+                <img src="<%= shop.image %>" alt="<%= shop.imageAlt || shop.name %>" />
+              <% } %>
             </div>
             <div class="shop-card__body">
               <span class="shop-card__meta"><%= shop.region %> · <%= shop.district %> · <%= shop.category %></span>

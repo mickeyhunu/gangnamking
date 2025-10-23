@@ -169,41 +169,63 @@ function readImagesFromDirectory(relativeDir) {
   }
 }
 
+function buildGalleryEntry(entry, fallbackAlt) {
+  if (!entry) {
+    return null;
+  }
+
+  const candidate = typeof entry === 'string' ? { src: entry } : entry;
+
+  if (!candidate || typeof candidate !== 'object') {
+    return null;
+  }
+
+  const normalizedSrc = normalizeWebPath(candidate.src);
+
+  if (!normalizedSrc) {
+    return null;
+  }
+
+  const altText = typeof candidate.alt === 'string' && candidate.alt.trim()
+    ? candidate.alt.trim()
+    : fallbackAlt;
+
+  return {
+    ...candidate,
+    src: normalizedSrc,
+    alt: altText,
+  };
+}
+
 function augmentGalleryWithFolderImages(shop) {
+  const fallbackAltBase = typeof shop?.name === 'string' && shop.name.trim()
+    ? shop.name.trim()
+    : 'Shop';
+  const fallbackAlt = `${fallbackAltBase} 이미지`;
   const result = [];
   const seen = new Set();
 
-  function addEntry(entry, preserveObject) {
-    if (!entry) {
+  function addEntry(entry) {
+    const galleryEntry = buildGalleryEntry(entry, fallbackAlt);
+
+    if (!galleryEntry || seen.has(galleryEntry.src)) {
       return;
     }
 
-    const src = typeof entry === 'string' ? entry : entry.src;
-    const normalizedSrc = normalizeWebPath(src);
-
-    if (!normalizedSrc || seen.has(normalizedSrc)) {
-      return;
-    }
-
-    seen.add(normalizedSrc);
-
-    if (preserveObject && typeof entry === 'object' && entry !== null) {
-      result.push({ ...entry, src: normalizedSrc });
-    } else {
-      result.push(normalizedSrc);
-    }
+    seen.add(galleryEntry.src);
+    result.push(galleryEntry);
   }
 
   if (Array.isArray(shop?.gallery)) {
-    shop.gallery.forEach((entry) => addEntry(entry, true));
+    shop.gallery.forEach((entry) => addEntry(entry));
   }
 
   getImageDirectoriesForShop(shop).forEach((dir) => {
-    readImagesFromDirectory(dir).forEach((src) => addEntry(src, false));
+    readImagesFromDirectory(dir).forEach((src) => addEntry({ src }));
   });
 
   if (!result.length && typeof shop?.image === 'string') {
-    addEntry({ src: shop.image }, true);
+    addEntry({ src: shop.image });
   }
 
   return result;
@@ -234,6 +256,32 @@ function detectLanguage(req) {
   }
 
   return DEFAULT_LANGUAGE;
+}
+
+function derivePrimaryImage(localizedShop) {
+  if (!localizedShop || typeof localizedShop !== 'object') {
+    return null;
+  }
+
+  if (Array.isArray(localizedShop.gallery) && localizedShop.gallery.length) {
+    return localizedShop.gallery[0];
+  }
+
+  const normalized = normalizeWebPath(localizedShop.image);
+
+  if (!normalized) {
+    return null;
+  }
+
+  const fallbackAltBase = typeof localizedShop.name === 'string' && localizedShop.name.trim()
+    ? localizedShop.name.trim()
+    : 'Shop';
+
+  return {
+    src: normalized,
+    alt: localizedShop.imageAlt
+      || `${fallbackAltBase} 이미지`,
+  };
 }
 
 function localizeShop(shop, lang) {
@@ -275,6 +323,16 @@ function localizeShop(shop, lang) {
   }
 
   localized.gallery = augmentGalleryWithFolderImages(localized);
+
+  const primaryImage = derivePrimaryImage({ ...localized, gallery: localized.gallery });
+
+  if (primaryImage) {
+    localized.image = primaryImage.src;
+    localized.imageAlt = primaryImage.alt;
+  } else {
+    localized.image = null;
+    localized.imageAlt = null;
+  }
 
   return localized;
 }
