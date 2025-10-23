@@ -21,7 +21,6 @@
     },
     "gallery": [
       {
-<<<<<<< Updated upstream
         "src": "/images/shops/gangnam-lounge-101/hero.svg",
         "alt": "강남 라운지 101 메인 홀"
       },
@@ -32,18 +31,6 @@
       {
         "src": "/images/shops/gangnam-lounge-101/gallery-2.svg",
         "alt": "강남 라운지 101 프라이빗 룸"
-=======
-        "src": "/images/gangnam-lounge-101.svg",
-        "alt": "강남 달리는토끼"
-      },
-      {
-        "src": "/images/gallery-neon-1.svg",
-        "alt": "강남 달리는토끼"
-      },
-      {
-        "src": "/images/gallery-neon-3.svg",
-        "alt": "강남 달리는토끼"
->>>>>>> Stashed changes
       }
     ],
     "seoKeywords": [

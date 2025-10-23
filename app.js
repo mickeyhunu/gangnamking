@@ -14,6 +14,8 @@ const DEFAULT_LANGUAGE = 'ko';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const PUBLIC_DIR = path.join(__dirname, 'public');
+const IMAGE_FILE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.avif']);
 
 // Load shop data
 const shopsPath = path.join(__dirname, 'data', 'shops.json');
@@ -55,6 +57,180 @@ fs.watchFile(translationsPath, { interval: 1000 }, () => {
   loadTranslations();
 });
 
+function sanitizeResourcePath(resourcePath) {
+  if (typeof resourcePath !== 'string') {
+    return null;
+  }
+
+  const trimmed = resourcePath.trim();
+
+  if (!trimmed || /^https?:\/\//i.test(trimmed)) {
+    return null;
+  }
+
+  const withoutLeadingSlash = trimmed.replace(/^\/+/, '');
+  const normalized = path.posix.normalize(withoutLeadingSlash);
+
+  if (normalized.startsWith('..')) {
+    return null;
+  }
+
+  return normalized;
+}
+
+function normalizeWebPath(resourcePath) {
+  if (typeof resourcePath !== 'string') {
+    return null;
+  }
+
+  const trimmed = resourcePath.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+
+  const relative = sanitizeResourcePath(trimmed);
+
+  if (!relative) {
+    return null;
+  }
+
+  return `/${relative}`;
+}
+
+function getDirectoryFromResource(resourcePath) {
+  const relative = sanitizeResourcePath(resourcePath);
+
+  if (!relative || !relative.startsWith('images/')) {
+    return null;
+  }
+
+  return path.posix.dirname(relative);
+}
+
+function getImageDirectoriesForShop(shop) {
+  const directories = new Set();
+
+  if (shop && typeof shop.galleryDir === 'string') {
+    const sanitizedDir = sanitizeResourcePath(shop.galleryDir);
+
+    if (sanitizedDir && sanitizedDir.startsWith('images/')) {
+      directories.add(sanitizedDir);
+    }
+  }
+
+  const candidates = [];
+
+  if (shop && typeof shop.image === 'string') {
+    candidates.push(shop.image);
+  }
+
+  if (Array.isArray(shop?.gallery)) {
+    shop.gallery.forEach((entry) => {
+      const src = typeof entry === 'string' ? entry : entry && entry.src;
+
+      if (typeof src === 'string') {
+        candidates.push(src);
+      }
+    });
+  }
+
+  candidates.forEach((candidate) => {
+    const dir = getDirectoryFromResource(candidate);
+
+    if (dir) {
+      directories.add(dir);
+    }
+  });
+
+  return Array.from(directories);
+}
+
+function readImagesFromDirectory(relativeDir) {
+  if (typeof relativeDir !== 'string' || !relativeDir) {
+    return [];
+  }
+
+  const absoluteDir = path.join(PUBLIC_DIR, relativeDir);
+
+  try {
+    const entries = fs.readdirSync(absoluteDir, { withFileTypes: true });
+
+    return entries
+      .filter((entry) => entry.isFile() && IMAGE_FILE_EXTENSIONS.has(path.extname(entry.name).toLowerCase()))
+      .map((entry) => `/${path.posix.join(relativeDir, entry.name)}`)
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+  } catch (error) {
+    return [];
+  }
+}
+
+function buildGalleryEntry(entry, fallbackAlt) {
+  if (!entry) {
+    return null;
+  }
+
+  const candidate = typeof entry === 'string' ? { src: entry } : entry;
+
+  if (!candidate || typeof candidate !== 'object') {
+    return null;
+  }
+
+  const normalizedSrc = normalizeWebPath(candidate.src);
+
+  if (!normalizedSrc) {
+    return null;
+  }
+
+  const altText = typeof candidate.alt === 'string' && candidate.alt.trim()
+    ? candidate.alt.trim()
+    : fallbackAlt;
+
+  return {
+    ...candidate,
+    src: normalizedSrc,
+    alt: altText,
+  };
+}
+
+function augmentGalleryWithFolderImages(shop) {
+  const fallbackAltBase = typeof shop?.name === 'string' && shop.name.trim()
+    ? shop.name.trim()
+    : 'Shop';
+  const fallbackAlt = `${fallbackAltBase} 이미지`;
+  const result = [];
+  const seen = new Set();
+
+  function addEntry(entry) {
+    const galleryEntry = buildGalleryEntry(entry, fallbackAlt);
+
+    if (!galleryEntry || seen.has(galleryEntry.src)) {
+      return;
+    }
+
+    seen.add(galleryEntry.src);
+    result.push(galleryEntry);
+  }
+
+  if (Array.isArray(shop?.gallery)) {
+    shop.gallery.forEach((entry) => addEntry(entry));
+  }
+
+  getImageDirectoriesForShop(shop).forEach((dir) => {
+    readImagesFromDirectory(dir).forEach((src) => addEntry({ src }));
+  });
+
+  if (!result.length && typeof shop?.image === 'string') {
+    addEntry({ src: shop.image });
+  }
+
+  return result;
+}
+
 function normalizeLanguage(lang) {
   if (typeof lang !== 'string') {
     return null;
@@ -82,44 +258,80 @@ function detectLanguage(req) {
   return DEFAULT_LANGUAGE;
 }
 
+function derivePrimaryImage(localizedShop) {
+  if (!localizedShop || typeof localizedShop !== 'object') {
+    return null;
+  }
+
+  if (Array.isArray(localizedShop.gallery) && localizedShop.gallery.length) {
+    return localizedShop.gallery[0];
+  }
+
+  const normalized = normalizeWebPath(localizedShop.image);
+
+  if (!normalized) {
+    return null;
+  }
+
+  const fallbackAltBase = typeof localizedShop.name === 'string' && localizedShop.name.trim()
+    ? localizedShop.name.trim()
+    : 'Shop';
+
+  return {
+    src: normalized,
+    alt: localizedShop.imageAlt
+      || `${fallbackAltBase} 이미지`,
+  };
+}
+
 function localizeShop(shop, lang) {
   if (!shop || typeof shop !== 'object') {
     return shop;
   }
 
-  if (lang === DEFAULT_LANGUAGE) {
-    return { ...shop };
+  let localized = { ...shop };
+
+  if (lang !== DEFAULT_LANGUAGE) {
+    const translation = shop.translations && shop.translations[lang];
+
+    if (translation && typeof translation === 'object') {
+      localized = {
+        ...localized,
+        ...translation,
+        pricing: {
+          ...(shop.pricing || {}),
+          ...(translation.pricing || {}),
+        },
+        manager: {
+          ...(shop.manager || {}),
+          ...(translation.manager || {}),
+        },
+      };
+
+      if (Array.isArray(translation.highlights)) {
+        localized.highlights = translation.highlights;
+      }
+
+      if (Array.isArray(translation.seoKeywords)) {
+        localized.seoKeywords = translation.seoKeywords;
+      }
+
+      if (Array.isArray(translation.gallery)) {
+        localized.gallery = translation.gallery;
+      }
+    }
   }
 
-  const translation = shop.translations && shop.translations[lang];
+  localized.gallery = augmentGalleryWithFolderImages(localized);
 
-  if (!translation || typeof translation !== 'object') {
-    return { ...shop };
-  }
+  const primaryImage = derivePrimaryImage({ ...localized, gallery: localized.gallery });
 
-  const localized = {
-    ...shop,
-    ...translation,
-    pricing: {
-      ...(shop.pricing || {}),
-      ...(translation.pricing || {}),
-    },
-    manager: {
-      ...(shop.manager || {}),
-      ...(translation.manager || {}),
-    },
-  };
-
-  if (Array.isArray(translation.highlights)) {
-    localized.highlights = translation.highlights;
-  }
-
-  if (Array.isArray(translation.seoKeywords)) {
-    localized.seoKeywords = translation.seoKeywords;
-  }
-
-  if (Array.isArray(translation.gallery)) {
-    localized.gallery = translation.gallery;
+  if (primaryImage) {
+    localized.image = primaryImage.src;
+    localized.imageAlt = primaryImage.alt;
+  } else {
+    localized.image = null;
+    localized.imageAlt = null;
   }
 
   return localized;
