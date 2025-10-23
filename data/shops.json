@@ -17,7 +17,7 @@
     "manager": {
       "name": "강동원 대표",
       "phone": "010-5733-8710",
-      "kakao": "@roombbang1st"
+      "kakao": "@gangnamking98"
     },
     "gallery": [
       {
@@ -25,11 +25,11 @@
         "alt": "강남 라운지 101 메인 홀"
       },
       {
-        "src": "/images/shops/gangnam-lounge-101/gallery-1.svg",
+        "src": "/images/shops/1runningRV/gallery-1.svg",
         "alt": "강남 라운지 101 네온 바 카운터"
       },
       {
-        "src": "/images/shops/gangnam-lounge-101/gallery-2.svg",
+        "src": "/images/shops/1runningRV/gallery-2.svg",
         "alt": "강남 라운지 101 프라이빗 룸"
       }
     ],
@@ -48,7 +48,7 @@
       "강남셔츠룸",
       "강남하퍼"
     ],
-    "image": "/images/shops/gangnam-lounge-101/hero.svg",
+    "image": "/images/shops/1runningRV/hero.svg",
     "translations": {
       "en": {
         "name": "Running Rabbit Lounge",
