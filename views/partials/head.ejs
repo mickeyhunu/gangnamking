@@ -42,6 +42,9 @@
     />
   </head>
   <body>
+    <% const currentLanguageOption = (languageOptions || []).find(function(option) { return option.isCurrent; }) || (languageOptions || [])[0]; %>
+    <% const languageSelectId = 'language-select'; %>
+    <% const cityFilterOptions = Array.isArray(areaFilterConfig && areaFilterConfig.cities) ? areaFilterConfig.cities : []; %>
     <header class="site-header">
       <div class="container site-header__main">
         <a class="branding" href="/">
@@ -53,52 +56,68 @@
           <span class="branding__text">룸빵1번지</span>
         </a>
       </div>
-      <% if (areaFilterConfig && Array.isArray(areaFilterConfig.options) && areaFilterConfig.options.length) { %>
+      <% if (cityFilterOptions.length || currentLanguageOption) { %>
         <div class="site-subheader">
           <div class="container site-subheader__container">
-            <span class="site-subheader__label"><%= areaFilterConfig.label %></span>
-            <nav class="area-filter" data-area-filter>
-              <% areaFilterConfig.options.forEach(function(option) { %>
-                <button
-                  type="button"
-                  class="area-filter__button <%= option.value === 'all' ? 'is-active' : '' %>"
-                  data-area-option="<%= option.value %>"
+            <div class="site-subheader__top-row">
+              <% if (cityFilterOptions.length) { %>
+                <nav
+                  class="area-filter area-filter--cities"
+                  data-area-filter
+                  data-all-label="<%= areaFilterConfig.allLabel || '전체' %>"
                 >
-                  <%= option.label %>
-                </button>
-              <% }) %>
-            </nav>
+                  <% cityFilterOptions.forEach(function(option) { %>
+                    <button
+                      type="button"
+                      class="area-filter__button"
+                      data-city-option="<%= option.value %>"
+                    >
+                      <%= option.label %>
+                    </button>
+                  <% }) %>
+                </nav>
+              <% } %>
+              <% if (currentLanguageOption) { %>
+                <div class="language-select language-select--header">
+                  <% if (currentLanguageOption.flagSrc) { %>
+                    <img
+                      class="language-select__flag"
+                      src="<%= currentLanguageOption.flagSrc %>"
+                      alt="<%= currentLanguageOption.flagAlt || currentLanguageOption.label %>"
+                    />
+                  <% } %>
+                  <div class="language-select__body">
+                    <label class="language-select__label" for="<%= languageSelectId %>">
+                      <%= (t.header && t.header.languageLabel) || 'Language' %>
+                    </label>
+                    <select
+                      class="language-select__dropdown"
+                      id="<%= languageSelectId %>"
+                      data-language-select
+                    >
+                      <% (languageOptions || []).forEach(function(option) { %>
+                        <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
+                          <%= option.label %>
+                        </option>
+                      <% }) %>
+                    </select>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+            <% if (cityFilterOptions.length) { %>
+              <div class="area-filter area-filter--districts" data-city-district-bar hidden></div>
+            <% } %>
           </div>
         </div>
       <% } %>
+      <% if (cityFilterOptions.length) { %>
+        <script id="city-district-data" type="application/json">
+          <%- JSON.stringify(cityFilterOptions.reduce(function(acc, option) {
+                acc[option.value] = option.districts;
+                return acc;
+              }, {})) %>
+        </script>
+      <% } %>
     </header>
-    <% const currentLanguageOption = (languageOptions || []).find(function(option) { return option.isCurrent; }) || (languageOptions || [])[0]; %>
-    <% const languageSelectId = 'language-select'; %>
-    <% if (currentLanguageOption) { %>
-      <div class="language-select language-select--floating">
-        <div class="language-select__top">
-          <% if (currentLanguageOption.flagSrc) { %>
-            <img
-              class="language-select__flag"
-              src="<%= currentLanguageOption.flagSrc %>"
-              alt="<%= currentLanguageOption.flagAlt || currentLanguageOption.label %>"
-            />
-          <% } %>
-          <label class="language-select__label" for="<%= languageSelectId %>">
-            <%= (t.header && t.header.languageLabel) || 'Language' %>
-          </label>
-        </div>
-        <select
-          class="language-select__dropdown"
-          id="<%= languageSelectId %>"
-          data-language-select
-        >
-          <% (languageOptions || []).forEach(function(option) { %>
-            <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
-              <%= option.label %>
-            </option>
-          <% }) %>
-        </select>
-      </div>
-    <% } %>
     <main class="site-main">

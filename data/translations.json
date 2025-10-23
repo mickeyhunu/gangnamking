@@ -69,6 +69,12 @@
         }
       ]
     },
+    "areaBrowser": {
+      "title": "도시별 구 · 동 한눈에 보기",
+      "subtitle": "도시를 선택하면 해당 구와 동 정보를 바로 확인할 수 있습니다.",
+      "all": "전체",
+      "empty": "선택한 도시의 구 · 동 데이터가 없습니다."
+    },
     "areas": {
       "title": "강남 핵심 역별 최저가 매장",
       "subtitle": "강남 지역, 구, 업종 필터로 원하는 조건의 최저가 제휴처를 바로 확인하세요.",
@@ -264,6 +270,12 @@
           "description": "Enjoy member-only discounts and complimentary room upgrades reserved for Roombbang First clients."
         }
       ]
+    },
+    "areaBrowser": {
+      "title": "Browse districts by city",
+      "subtitle": "Select a city to see the districts and neighborhoods we cover.",
+      "all": "All",
+      "empty": "There is no district or neighborhood data for the selected city."
     },
     "areas": {
       "title": "Featured lounges & clubs by station",
