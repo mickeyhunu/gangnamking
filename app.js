@@ -220,13 +220,14 @@ function augmentGalleryWithFolderImages(shop) {
     shop.gallery.forEach((entry) => addEntry(entry));
   }
 
+  if (typeof shop?.image === 'string') {
+    const altOverride = typeof shop.imageAlt === 'string' ? shop.imageAlt : undefined;
+    addEntry({ src: shop.image, alt: altOverride });
+  }
+
   getImageDirectoriesForShop(shop).forEach((dir) => {
     readImagesFromDirectory(dir).forEach((src) => addEntry({ src }));
   });
-
-  if (!result.length && typeof shop?.image === 'string') {
-    addEntry({ src: shop.image });
-  }
 
   return result;
 }
