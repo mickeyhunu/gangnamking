@@ -57,9 +57,52 @@
     districtFilter.value = 'all';
   }
 
+  let lastSelectionSignature = '';
+
+  function notifySelectionChange(regionValue, districtValue, categoryValue) {
+    const signature = `${regionValue}|${districtValue}|${categoryValue}`;
+
+    if (signature === lastSelectionSignature) {
+      return;
+    }
+
+    lastSelectionSignature = signature;
+
+    let labelText = '';
+
+    if (regionValue === 'all' && districtValue === 'all') {
+      labelText = '';
+    } else if (districtValue === 'all') {
+      labelText = regionValue;
+    } else if (regionValue === 'all') {
+      labelText = districtValue;
+    } else {
+      labelText = `${regionValue} · ${districtValue}`;
+    }
+
+    document.dispatchEvent(
+      new CustomEvent('filters:selectionChange', {
+        detail: {
+          region: regionValue,
+          district: districtValue,
+          category: categoryValue,
+          label: labelText,
+        },
+      })
+    );
+  }
+
   function applyFilters() {
-    const regionValue = regionFilter ? regionFilter.value : 'all';
-    const districtValue = districtFilter && !districtFilter.disabled ? districtFilter.value : 'all';
+    const regionValue =
+      typeof activeCity === 'string' && activeCity.length
+        ? activeCity
+        : regionFilter
+        ? regionFilter.value
+        : 'all';
+    const districtValue =
+      typeof activeDistrict === 'string' && activeDistrict.length
+        ? activeDistrict
+        : 'all';
     const categoryValue = categoryFilter ? categoryFilter.value : 'all';
 
     cards.forEach((card) => {
@@ -69,6 +112,8 @@
 
       card.style.display = matchesRegion && matchesDistrict && matchesCategory ? 'flex' : 'none';
     });
+
+    notifySelectionChange(regionValue, districtValue, categoryValue);
   }
 
   function setActiveCity(city) {
@@ -151,7 +196,8 @@
     }
   }
 
-  function activateCity(city) {
+  function activateCity(city, options = {}) {
+    const { apply = true, keepDistrict = false } = options;
     const normalizedCity = typeof city === 'string' && city.length ? city : null;
 
     setActiveCity(normalizedCity);
@@ -162,8 +208,14 @@
     }
 
     renderDistrictBar(normalizedCity);
-    setActiveDistrict('all');
-    applyFilters();
+
+    if (!keepDistrict) {
+      setActiveDistrict('all');
+    }
+
+    if (apply) {
+      applyFilters();
+    }
   }
 
   function syncCityFromRegion(regionValue) {
@@ -236,6 +288,41 @@
   if (categoryFilter) {
     categoryFilter.addEventListener('change', applyFilters);
   }
+
+  document.addEventListener('areaMenu:select', (event) => {
+    const detail = event.detail || {};
+    const region = typeof detail.region === 'string' && detail.region.length ? detail.region : 'all';
+    const district = typeof detail.district === 'string' && detail.district.length ? detail.district : 'all';
+
+    if (regionFilter) {
+      regionFilter.value = region === 'all' ? 'all' : region;
+      populateDistricts(regionFilter.value);
+    }
+
+    if (region === 'all') {
+      activateCity(null, { apply: false });
+    } else {
+      activateCity(region, { apply: false, keepDistrict: true });
+    }
+
+    if (districtFilter) {
+      if (district === 'all' || districtFilter.disabled) {
+        districtFilter.value = 'all';
+      } else {
+        const exists = Array.from(districtFilter.options).some((option) => option.value === district);
+        if (!exists) {
+          const option = document.createElement('option');
+          option.value = district;
+          option.textContent = district;
+          districtFilter.appendChild(option);
+        }
+        districtFilter.value = district;
+      }
+    }
+
+    setActiveDistrict(district, { syncDropdown: false });
+    applyFilters();
+  });
 
   if (searchButton) {
     searchButton.addEventListener('click', () => {

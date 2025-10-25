@@ -61,21 +61,36 @@
           <div class="container site-subheader__container">
             <div class="site-subheader__top-row">
               <% if (cityFilterOptions.length) { %>
-                <nav
-                  class="area-filter area-filter--cities"
-                  data-area-filter
-                  data-all-label="<%= areaFilterConfig.allLabel || '전체' %>"
-                >
-                  <% cityFilterOptions.forEach(function(option) { %>
-                    <button
-                      type="button"
-                      class="area-filter__button"
-                      data-city-option="<%= option.value %>"
-                    >
-                      <%= option.label %>
-                    </button>
-                  <% }) %>
-                </nav>
+                <div class="site-subheader__filters">
+                  <button
+                    type="button"
+                    class="area-menu-toggle"
+                    data-area-menu-toggle
+                    aria-expanded="false"
+                    aria-controls="area-menu"
+                    data-default-label="<%= areaFilterConfig.label || '지역 선택' %>"
+                  >
+                    <span class="area-menu-toggle__label" data-area-menu-label>
+                      <%= areaFilterConfig.label || '지역 선택' %>
+                    </span>
+                    <span class="area-menu-toggle__icon" aria-hidden="true">▼</span>
+                  </button>
+                  <nav
+                    class="area-filter area-filter--cities"
+                    data-area-filter
+                    data-all-label="<%= areaFilterConfig.allLabel || '전체' %>"
+                  >
+                    <% cityFilterOptions.forEach(function(option) { %>
+                      <button
+                        type="button"
+                        class="area-filter__button"
+                        data-city-option="<%= option.value %>"
+                      >
+                        <%= option.label %>
+                      </button>
+                    <% }) %>
+                  </nav>
+                </div>
               <% } %>
               <% if (currentLanguageOption) { %>
                 <div class="language-select language-select--header">
@@ -108,6 +123,89 @@
             <% if (cityFilterOptions.length) { %>
               <div class="area-filter area-filter--districts" data-city-district-bar hidden></div>
             <% } %>
+          </div>
+        </div>
+      <% } %>
+      <% if (cityFilterOptions.length) { %>
+        <div class="area-menu" id="area-menu" data-area-menu hidden>
+          <div class="area-menu__overlay" data-area-menu-close></div>
+          <div class="area-menu__panel" role="dialog" aria-modal="true" aria-labelledby="area-menu-title">
+            <header class="area-menu__header">
+              <h2 class="area-menu__title" id="area-menu-title"><%= areaFilterConfig.label || '지역 선택' %></h2>
+              <button type="button" class="area-menu__close" data-area-menu-close aria-label="닫기">×</button>
+            </header>
+            <div class="area-menu__body">
+              <div class="area-menu__groups" role="tablist">
+                <button
+                  type="button"
+                  class="area-menu__group-button is-active"
+                  data-area-group="all"
+                  data-area-group-label="<%= areaFilterConfig.allLabel || '전체' %>"
+                >
+                  <%= areaFilterConfig.allLabel || '전체' %>
+                </button>
+                <% cityFilterOptions.forEach(function(option) { %>
+                  <button
+                    type="button"
+                    class="area-menu__group-button"
+                    data-area-group="<%= option.value %>"
+                    data-area-group-label="<%= option.label %>"
+                  >
+                    <%= option.label %>
+                  </button>
+                <% }) %>
+              </div>
+              <div class="area-menu__lists">
+                <div
+                  class="area-menu__list is-active"
+                  data-area-group-panel="all"
+                  data-area-group-label="<%= areaFilterConfig.allLabel || '전체' %>"
+                >
+                  <button
+                    type="button"
+                    class="area-menu__action"
+                    data-area-menu-action
+                    data-region="all"
+                    data-district="all"
+                  >
+                    <%= areaFilterConfig.allLabel || '전체' %>
+                  </button>
+                </div>
+                <% cityFilterOptions.forEach(function(option) { %>
+                  <div
+                    class="area-menu__list"
+                    data-area-group-panel="<%= option.value %>"
+                    data-area-group-label="<%= option.label %>"
+                    hidden
+                  >
+                    <button
+                      type="button"
+                      class="area-menu__action"
+                      data-area-menu-action
+                      data-region="<%= option.value %>"
+                      data-district="all"
+                    >
+                      <%= areaFilterConfig.allLabel || '전체' %>
+                    </button>
+                    <% if (Array.isArray(option.districts) && option.districts.length) { %>
+                      <% option.districts.forEach(function(district) { %>
+                        <button
+                          type="button"
+                          class="area-menu__action"
+                          data-area-menu-action
+                          data-region="<%= option.value %>"
+                          data-district="<%= district %>"
+                        >
+                          <%= district %>
+                        </button>
+                      <% }) %>
+                    <% } else { %>
+                      <p class="area-menu__empty">등록된 구/군이 없습니다.</p>
+                    <% } %>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
           </div>
         </div>
       <% } %>
