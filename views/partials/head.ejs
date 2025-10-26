@@ -62,19 +62,6 @@
             <div class="site-subheader__top-row">
               <% if (cityFilterOptions.length) { %>
                 <div class="site-subheader__filters">
-                  <button
-                    type="button"
-                    class="area-menu-toggle"
-                    data-area-menu-toggle
-                    aria-expanded="false"
-                    aria-controls="area-menu"
-                    data-default-label="<%= areaFilterConfig.label || '지역 선택' %>"
-                  >
-                    <span class="area-menu-toggle__label" data-area-menu-label>
-                      <%= areaFilterConfig.label || '지역 선택' %>
-                    </span>
-                    <span class="area-menu-toggle__icon" aria-hidden="true">▼</span>
-                  </button>
                   <nav
                     class="area-filter area-filter--cities"
                     data-area-filter
