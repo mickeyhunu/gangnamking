@@ -28,6 +28,53 @@ const AREA_FILTER_DEFAULTS = {
   all: '전체',
 };
 
+const SEOUL_PROXIMITY_RANK = (() => {
+  const proximityGroups = [
+    ['서울', '서울특별시'],
+    ['경기', '경기도'],
+    ['인천', '인천광역시'],
+    ['강원', '강원도'],
+    ['세종', '세종특별자치시'],
+    ['충북', '충청북도'],
+    ['충남', '충청남도'],
+    ['대전', '대전광역시'],
+    ['전북', '전라북도'],
+    ['전남', '전라남도'],
+    ['광주', '광주광역시'],
+    ['경북', '경상북도'],
+    ['대구', '대구광역시'],
+    ['울산', '울산광역시'],
+    ['경남', '경상남도'],
+    ['부산', '부산광역시', '부산'],
+    ['제주', '제주특별자치도', '제주도'],
+  ];
+
+  return proximityGroups.reduce((acc, names, index) => {
+    names.forEach((name) => {
+      acc[name] = index;
+    });
+    return acc;
+  }, {});
+})();
+
+function getSeoulProximityRank(cityName) {
+  if (typeof cityName !== 'string') {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  const normalized = cityName.trim();
+
+  if (!normalized) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(SEOUL_PROXIMITY_RANK, normalized)) {
+    return SEOUL_PROXIMITY_RANK[normalized];
+  }
+
+  return Number.POSITIVE_INFINITY;
+}
+
 // Load shop data
 const shopsPath = path.join(__dirname, 'data', 'shops.json');
 let shops = [];
@@ -104,7 +151,16 @@ function buildAreaFilterConfig(translation, lang) {
       label: city,
       districts: [...districts].sort((a, b) => collator.compare(a, b)),
     }))
-    .sort((a, b) => collator.compare(a.label, b.label));
+    .sort((a, b) => {
+      const rankA = getSeoulProximityRank(a.label);
+      const rankB = getSeoulProximityRank(b.label);
+
+      if (rankA !== rankB) {
+        return rankA < rankB ? -1 : 1;
+      }
+
+      return collator.compare(a.label, b.label);
+    });
 
   const config = (translation && translation.quickRegions) || {};
   const heroFilters = translation && translation.hero && translation.hero.filters;
