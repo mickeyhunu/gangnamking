@@ -642,6 +642,13 @@
             <p class="pricing-highlight__subtitle"><%= pricingHighlightSubtitle %></p>
           <% } %>
         </div>
+        <% const resolvedPrimaryPricing = primaryPricing || {}; %>
+        <% const basePriceSegments = (Array.isArray(resolvedPrimaryPricing.baseSegments) && resolvedPrimaryPricing.baseSegments.length)
+          ? resolvedPrimaryPricing.baseSegments
+          : [{
+            label: pricingText.base || '주대',
+            value: resolvedPrimaryPricing.base || (shop.pricing && shop.pricing.base) || '—',
+          }]; %>
         <div class="pricing-highlight__content">
           <div class="pricing-highlight__info">
             <div class="pricing-highlight__meta-grid">
@@ -662,29 +669,22 @@
                 <strong class="pricing-highlight__meta-value"><%= shop.name %></strong>
               </article>
             </div>
-            <% const resolvedPrimaryPricing = primaryPricing || {}; %>
-            <% const basePriceSegments = (Array.isArray(resolvedPrimaryPricing.baseSegments) && resolvedPrimaryPricing.baseSegments.length)
-              ? resolvedPrimaryPricing.baseSegments
-              : [{
-                label: pricingText.base || '주대',
-                value: resolvedPrimaryPricing.base || (shop.pricing && shop.pricing.base) || '—',
-              }]; %>
-            <div class="pricing-highlight__charges">
-              <% basePriceSegments.forEach(function (segment) { %>
-                <article class="pricing-highlight__price-card">
-                  <span class="pricing-highlight__price-label"><%= segment && segment.label ? segment.label : (pricingText.base || '주대') %></span>
-                  <strong class="pricing-highlight__price-value"><%= segment && segment.value ? segment.value : (resolvedPrimaryPricing.base || '—') %></strong>
-                </article>
-              <% }); %>
+          </div>
+          <div class="pricing-highlight__charges">
+            <% basePriceSegments.forEach(function (segment) { %>
               <article class="pricing-highlight__price-card">
-                <span class="pricing-highlight__price-label"><%= pricingText.tc || 'TC' %></span>
-                <strong class="pricing-highlight__price-value"><%= resolvedPrimaryPricing.tc || '—' %></strong>
+                <span class="pricing-highlight__price-label"><%= segment && segment.label ? segment.label : (pricingText.base || '주대') %></span>
+                <strong class="pricing-highlight__price-value"><%= segment && segment.value ? segment.value : (resolvedPrimaryPricing.base || '—') %></strong>
               </article>
-              <article class="pricing-highlight__price-card">
-                <span class="pricing-highlight__price-label"><%= pricingText.rt || 'RT' %></span>
-                <strong class="pricing-highlight__price-value"><%= resolvedPrimaryPricing.rt || '—' %></strong>
-              </article>
-            </div>
+            <% }); %>
+            <article class="pricing-highlight__price-card">
+              <span class="pricing-highlight__price-label"><%= pricingText.tc || 'TC' %></span>
+              <strong class="pricing-highlight__price-value"><%= resolvedPrimaryPricing.tc || '—' %></strong>
+            </article>
+            <article class="pricing-highlight__price-card">
+              <span class="pricing-highlight__price-label"><%= pricingText.rt || 'RT' %></span>
+              <strong class="pricing-highlight__price-value"><%= resolvedPrimaryPricing.rt || '—' %></strong>
+            </article>
           </div>
         </div>
       </div>
