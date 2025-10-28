@@ -79,24 +79,6 @@
                   </nav>
                 </div>
               <% } %>
-              <% if (currentLanguageOption) { %>
-                <div class="language-select language-select--header">
-                  <div class="language-select__current">
-                    <% if (currentLanguageOption.flagSrc) { %>
-                      <span class="language-select__flag-circle" aria-hidden="true">
-                        <img
-                          class="language-select__flag"
-                          src="<%= currentLanguageOption.flagSrc %>"
-                          alt=""
-                        />
-                      </span>
-                    <% } %>
-                    <span class="language-select__code">
-                      <%= (currentLanguageOption.code || '').toUpperCase() %>
-                    </span>
-                  </div>
-                </div>
-              <% } %>
             </div>
             <% if (cityFilterOptions.length) { %>
               <div class="area-filter area-filter--districts" data-city-district-bar hidden></div>
@@ -196,4 +178,32 @@
         </script>
       <% } %>
     </header>
+    <% if (Array.isArray(languageOptions) && languageOptions.length) { %>
+      <% const languageLabel = (t && t.header && t.header.languageLabel) || 'Language'; %>
+      <div class="language-select language-select--floating">
+        <div class="language-select__top">
+          <% if (currentLanguageOption && currentLanguageOption.flagSrc) { %>
+            <img
+              class="language-select__flag"
+              src="<%= currentLanguageOption.flagSrc %>"
+              alt="<%= currentLanguageOption.flagAlt || '' %>"
+            />
+          <% } %>
+          <span class="language-select__label"><%= languageLabel %></span>
+        </div>
+        <select
+          class="language-select__dropdown"
+          id="<%= languageSelectId %>"
+          name="<%= languageSelectId %>"
+          data-language-select
+          aria-label="<%= languageLabel %>"
+        >
+          <% languageOptions.forEach(function(option) { %>
+            <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
+              <%= option.label %>
+            </option>
+          <% }) %>
+        </select>
+      </div>
+    <% } %>
     <main class="site-main">
