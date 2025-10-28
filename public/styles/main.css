@@ -878,8 +878,6 @@ img {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, rgba(255, 46, 139, 0.08), transparent 55%),
-    linear-gradient(-160deg, rgba(143, 91, 255, 0.08), transparent 45%);
   pointer-events: none;
 }
 
@@ -913,6 +911,8 @@ img {
 
 .detail-gallery__slide--static {
   height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
 }
 
 .detail-gallery__placeholder {
