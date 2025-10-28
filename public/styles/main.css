@@ -1178,7 +1178,8 @@ img {
   margin-top: clamp(2rem, 4vw, 2.75rem);
   display: grid;
   gap: clamp(1.5rem, 4vw, 2.5rem);
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr);
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
   align-items: stretch;
 }
 
@@ -1248,12 +1249,6 @@ img {
   font-size: 1.45rem;
   font-weight: 700;
   color: #fff;
-}
-
-@media (max-width: 960px) {
-  .pricing-highlight__content {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 600px) {
