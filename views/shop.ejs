@@ -686,17 +686,6 @@
               </article>
             </div>
           </div>
-          <div class="pricing-highlight__per-person">
-            <strong class="pricing-highlight__per-person-amount"><%= (highlightPrice && highlightPrice.amount) || '—' %></strong>
-            <% if (perPersonNote) { %>
-              <p class="pricing-highlight__per-person-note"><%= perPersonNote %></p>
-            <% } else if (pricingHighlightSubtitle) { %>
-              <p class="pricing-highlight__per-person-note"><%= pricingHighlightSubtitle %></p>
-            <% } %>
-            <% if (highlightBlock && highlightBlock.meta) { %>
-              <p class="pricing-highlight__per-person-meta"><%= highlightBlock.meta %></p>
-            <% } %>
-          </div>
         </div>
       </div>
     </div>
