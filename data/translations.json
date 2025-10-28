@@ -123,7 +123,7 @@
       "pricingTable": [
         {
           "label": "오후 9시 이전",
-          "charges": { "base": 10, "tc": 12, "rt": 5 },
+          "charges": { "base": 9, "tc": 12, "rt": 5 },
           "guests": [
             { "count": 1, "label": "1인" },
             { "count": 2, "label": "2인" },

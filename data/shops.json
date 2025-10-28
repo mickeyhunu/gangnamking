@@ -24,12 +24,26 @@
         {
           "id": "before-9pm",
           "label": "오후 9시 이전",
-          "base": 10
+          "base": 9,
+          "highlightLabel": {
+            "ko": "9시 전 주대",
+            "en": "Before 9 PM Base",
+            "zh": "9点前主台",
+            "ja": "9時前 基本料金"
+          },
+          "highlightOrder": 0
         },
         {
           "id": "after-9pm",
           "label": "오후 9시 이후",
-          "base": 13
+          "base": 13,
+          "highlightLabel": {
+            "ko": "ALL 타임 주대",
+            "en": "All-Time Base",
+            "zh": "全时段主台",
+            "ja": "オールタイム 基本料金"
+          },
+          "highlightOrder": 1
         }
       ]
     },
