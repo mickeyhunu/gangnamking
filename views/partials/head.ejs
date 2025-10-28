@@ -180,8 +180,14 @@
     </header>
     <% if (Array.isArray(languageOptions) && languageOptions.length) { %>
       <% const languageLabel = (t && t.header && t.header.languageLabel) || 'Language'; %>
-      <div class="language-select language-select--floating">
-        <div class="language-select__top">
+      <div class="language-select language-select--floating" data-language-select>
+        <button
+          type="button"
+          class="language-select__toggle"
+          data-language-toggle
+          aria-label="<%= languageLabel %>"
+          aria-expanded="false"
+        >
           <% if (currentLanguageOption && currentLanguageOption.flagSrc) { %>
             <img
               class="language-select__flag"
@@ -189,21 +195,40 @@
               alt="<%= currentLanguageOption.flagAlt || '' %>"
             />
           <% } %>
-          <span class="language-select__label"><%= languageLabel %></span>
-        </div>
-        <select
-          class="language-select__dropdown"
-          id="<%= languageSelectId %>"
-          name="<%= languageSelectId %>"
-          data-language-select
+          <span class="language-select__label">
+            <%= (currentLanguageOption && currentLanguageOption.code ? currentLanguageOption.code.toUpperCase() : languageLabel) %>
+          </span>
+          <span class="language-select__icon" aria-hidden="true">▾</span>
+        </button>
+        <ul
+          class="language-select__options"
+          data-language-options
+          role="listbox"
           aria-label="<%= languageLabel %>"
+          hidden
         >
           <% languageOptions.forEach(function(option) { %>
-            <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
-              <%= option.label %>
-            </option>
+            <li>
+              <button
+                type="button"
+                class="language-select__option <%= option.isCurrent ? 'is-active' : '' %>"
+                data-language-option
+                data-language-value="<%= option.url %>"
+                role="option"
+                aria-selected="<%= option.isCurrent ? 'true' : 'false' %>"
+              >
+                <% if (option.flagSrc) { %>
+                  <img
+                    class="language-select__option-flag"
+                    src="<%= option.flagSrc %>"
+                    alt="<%= option.flagAlt || '' %>"
+                  />
+                <% } %>
+                <span class="language-select__option-label"><%= option.code ? option.code.toUpperCase() : option.label %></span>
+              </button>
+            </li>
           <% }) %>
-        </select>
+        </ul>
       </div>
     <% } %>
     <main class="site-main">
