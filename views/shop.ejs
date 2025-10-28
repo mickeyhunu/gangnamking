@@ -89,7 +89,7 @@
     const defaultPricingTableData = [
       {
         label: '오후 9시 이전',
-        charges: { base: 10, tc: 12, rt: 5 },
+        charges: { base: 9, tc: 12, rt: 5 },
         guests: [
           { count: 1, label: '1인' },
           { count: 2, label: '2인' },
@@ -301,6 +301,7 @@
         return null;
       }
 
+      const baseAmountConfig = resolveScheduleAmountConfig(schedule);
       const defaultSegmentId = typeof schedule.defaultSegmentId === 'string'
         ? schedule.defaultSegmentId
         : null;
@@ -320,14 +321,55 @@
         return null;
       }
 
-      const amountConfig = targetSegment.amount
-        ? { ...resolveScheduleAmountConfig(schedule), ...targetSegment.amount }
-        : resolveScheduleAmountConfig(schedule);
-      const block = { amount: amountConfig };
+      const mergedAmountConfig = targetSegment.amount
+        ? { ...baseAmountConfig, ...targetSegment.amount }
+        : baseAmountConfig;
+      const block = { amount: mergedAmountConfig };
 
       const formatted = {
         base: formatAmount(baseCharge, block),
       };
+
+      const highlightSegments = segments
+        .slice()
+        .sort(function (a, b) {
+          const orderA = a && typeof a.highlightOrder === 'number' ? a.highlightOrder : Number.POSITIVE_INFINITY;
+          const orderB = b && typeof b.highlightOrder === 'number' ? b.highlightOrder : Number.POSITIVE_INFINITY;
+
+          if (orderA !== orderB) {
+            return orderA - orderB;
+          }
+
+          return 0;
+        })
+        .reduce(function (acc, segment) {
+          if (!segment || typeof segment !== 'object') {
+            return acc;
+          }
+
+          const segmentBaseCharge = toNumeric(segment.base);
+
+          if (!Number.isFinite(segmentBaseCharge)) {
+            return acc;
+          }
+
+          const segmentAmountConfig = segment.amount
+            ? { ...baseAmountConfig, ...segment.amount }
+            : baseAmountConfig;
+          const segmentBlock = { amount: segmentAmountConfig };
+
+          acc.push({
+            id: segment.id || null,
+            label: resolveSegmentHighlightLabel(segment),
+            value: formatAmount(segmentBaseCharge, segmentBlock),
+          });
+
+          return acc;
+        }, []);
+
+      if (highlightSegments.length) {
+        formatted.baseSegments = highlightSegments;
+      }
 
       if (Number.isFinite(tcCharge)) {
         formatted.tc = formatAmount(tcCharge, block);
@@ -338,6 +380,54 @@
       }
 
       return formatted;
+    }
+
+    function resolveSegmentHighlightLabel(segment) {
+      if (!segment || typeof segment !== 'object') {
+        return pricingText.base || '주대';
+      }
+
+      const highlightLabel = segment.highlightLabel;
+
+      if (typeof highlightLabel === 'string' && highlightLabel.trim()) {
+        return highlightLabel.trim();
+      }
+
+      if (highlightLabel && typeof highlightLabel === 'object') {
+        const localized = highlightLabel[activeLang];
+
+        if (typeof localized === 'string' && localized.trim()) {
+          return localized.trim();
+        }
+
+        if (typeof highlightLabel.ko === 'string' && highlightLabel.ko.trim()) {
+          return highlightLabel.ko.trim();
+        }
+
+        const fallbackLabel = Object.keys(highlightLabel).reduce(function (acc, key) {
+          if (acc) {
+            return acc;
+          }
+
+          const value = highlightLabel[key];
+
+          if (typeof value === 'string' && value.trim()) {
+            return value.trim();
+          }
+
+          return acc;
+        }, null);
+
+        if (fallbackLabel) {
+          return fallbackLabel;
+        }
+      }
+
+      if (typeof segment.label === 'string' && segment.label.trim()) {
+        return segment.label.trim();
+      }
+
+      return pricingText.base || '주대';
     }
 
     function resolveScheduleAmountConfig(schedule) {
@@ -572,18 +662,27 @@
                 <strong class="pricing-highlight__meta-value"><%= shop.name %></strong>
               </article>
             </div>
+            <% const resolvedPrimaryPricing = primaryPricing || {}; %>
+            <% const basePriceSegments = (Array.isArray(resolvedPrimaryPricing.baseSegments) && resolvedPrimaryPricing.baseSegments.length)
+              ? resolvedPrimaryPricing.baseSegments
+              : [{
+                label: pricingText.base || '주대',
+                value: resolvedPrimaryPricing.base || (shop.pricing && shop.pricing.base) || '—',
+              }]; %>
             <div class="pricing-highlight__charges">
-              <article class="pricing-highlight__price-card">
-                <span class="pricing-highlight__price-label"><%= pricingText.base || '주대' %></span>
-                <strong class="pricing-highlight__price-value"><%= primaryPricing.base || '—' %></strong>
-              </article>
+              <% basePriceSegments.forEach(function (segment) { %>
+                <article class="pricing-highlight__price-card">
+                  <span class="pricing-highlight__price-label"><%= segment && segment.label ? segment.label : (pricingText.base || '주대') %></span>
+                  <strong class="pricing-highlight__price-value"><%= segment && segment.value ? segment.value : (resolvedPrimaryPricing.base || '—') %></strong>
+                </article>
+              <% }); %>
               <article class="pricing-highlight__price-card">
                 <span class="pricing-highlight__price-label"><%= pricingText.tc || 'TC' %></span>
-                <strong class="pricing-highlight__price-value"><%= primaryPricing.tc || '—' %></strong>
+                <strong class="pricing-highlight__price-value"><%= resolvedPrimaryPricing.tc || '—' %></strong>
               </article>
               <article class="pricing-highlight__price-card">
                 <span class="pricing-highlight__price-label"><%= pricingText.rt || 'RT' %></span>
-                <strong class="pricing-highlight__price-value"><%= primaryPricing.rt || '—' %></strong>
+                <strong class="pricing-highlight__price-value"><%= resolvedPrimaryPricing.rt || '—' %></strong>
               </article>
             </div>
           </div>
