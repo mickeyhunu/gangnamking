@@ -163,6 +163,15 @@
 
     const perPersonNote = perPersonNoteParts.join(' · ');
 
+    const entriesText = (t.shop && t.shop.entries) || {};
+    const entriesColumnText = entriesText.columns || {};
+    const entriesTitleText = entriesText.title || '엔트리 현황';
+    const entriesEmptyText = entriesText.empty || '등록된 엔트리 정보가 없습니다.';
+    const entriesWorkerLabel = entriesColumnText.worker || '담당자';
+    const entriesMentionLabel = entriesColumnText.mentionCount || '멘션 수';
+    const entriesInsertLabel = entriesColumnText.insertCount || '입장 수';
+    const entriesRecordedAtLabel = entriesColumnText.createdAt || '기록 시간';
+
     function buildPricingTable(blocks) {
       if (!Array.isArray(blocks)) {
         return [];
@@ -715,6 +724,40 @@
             </div>
           <% }) %>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section detail-section store-entries">
+    <div class="container detail-section__grid">
+      <div class="detail-card detail-card--full">
+        <h2><%= entriesTitleText %></h2>
+        <% if (Array.isArray(storeEntries) && storeEntries.length) { %>
+          <div class="store-entries__table-wrapper">
+            <table class="store-entries__table">
+              <thead>
+                <tr>
+                  <th scope="col"><%= entriesWorkerLabel %></th>
+                  <th scope="col"><%= entriesMentionLabel %></th>
+                  <th scope="col"><%= entriesInsertLabel %></th>
+                  <th scope="col"><%= entriesRecordedAtLabel %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% storeEntries.forEach(function (entry) { %>
+                  <tr>
+                    <td><%= entry.workerName || '-' %></td>
+                    <td><%= entry.mentionCountLabel %></td>
+                    <td><%= entry.insertCountLabel %></td>
+                    <td><%= entry.createdAtLabel %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <p class="store-entries__empty"><%= entriesEmptyText %></p>
+        <% } %>
       </div>
     </div>
   </section>

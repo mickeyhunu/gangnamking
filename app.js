@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const { URLSearchParams } = require('url');
+const { pool } = require('./config/db');
 
 const SUPPORTED_LANGUAGES = ['ko', 'en', 'zh', 'ja'];
 const LANGUAGE_FLAGS = {
@@ -176,6 +177,69 @@ function buildAreaFilterConfig(translation, lang) {
     allLabel: allLabelFromTranslation || AREA_FILTER_DEFAULTS.all,
     cities,
   };
+}
+
+async function fetchEntriesForStore(storeNo) {
+  if (!storeNo) {
+    return [];
+  }
+
+  if (!pool || typeof pool.query !== 'function') {
+    return [];
+  }
+
+  const requiredEnv = [process.env.DB_HOST, process.env.DB_USER, process.env.DB_NAME];
+
+  if (requiredEnv.some((value) => !value)) {
+    return [];
+  }
+
+  try {
+    const [rows] = await pool.query(
+      `SELECT workerName, mentionCount, insertCount, createdAt
+         FROM ENTRY_TODAY
+        WHERE storeNo=?
+        ORDER BY createdAt DESC`,
+      [storeNo]
+    );
+
+    return rows
+      .map((row) => {
+        if (!row || typeof row !== 'object') {
+          return null;
+        }
+
+        const workerName = typeof row.workerName === 'string' ? row.workerName : '';
+        const mentionCount = Number.isFinite(Number(row.mentionCount))
+          ? Number(row.mentionCount)
+          : 0;
+        const insertCount = Number.isFinite(Number(row.insertCount))
+          ? Number(row.insertCount)
+          : 0;
+        let createdAt = null;
+
+        if (row.createdAt instanceof Date) {
+          createdAt = row.createdAt;
+        } else if (row.createdAt) {
+          const parsed = new Date(row.createdAt);
+
+          if (!Number.isNaN(parsed.getTime())) {
+            createdAt = parsed;
+          }
+        }
+
+        return {
+          workerName,
+          mentionCount,
+          insertCount,
+          createdAt,
+        };
+      })
+      .filter(Boolean);
+  } catch (error) {
+    console.error('Failed to fetch entries for store', storeNo, error);
+    return [];
+  }
 }
 
 loadShops();
@@ -549,22 +613,45 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/shops/:id', (req, res, next) => {
-  const shop = shops.find((item) => item.id === req.params.id);
+app.get('/shops/:id', async (req, res, next) => {
+  try {
+    const shop = shops.find((item) => item.id === req.params.id);
 
-  if (!shop) {
-    return next();
+    if (!shop) {
+      return next();
+    }
+
+    const lang = res.locals.lang || DEFAULT_LANGUAGE;
+    const localizedShop = localizeShop(shop, lang);
+    const locale = LANGUAGE_LOCALES[lang] || LANGUAGE_LOCALES[DEFAULT_LANGUAGE];
+    const numberFormatter = new Intl.NumberFormat(locale);
+    const dateFormatter = new Intl.DateTimeFormat(locale, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+    const storeNo = localizedShop.storeNo || shop.storeNo;
+    const rawEntries = await fetchEntriesForStore(storeNo);
+    const storeEntries = rawEntries.map((entry) => ({
+      workerName: entry.workerName,
+      mentionCount: entry.mentionCount,
+      mentionCountLabel: numberFormatter.format(entry.mentionCount || 0),
+      insertCount: entry.insertCount,
+      insertCountLabel: numberFormatter.format(entry.insertCount || 0),
+      createdAt: entry.createdAt,
+      createdAtLabel: entry.createdAt ? dateFormatter.format(entry.createdAt) : '',
+    }));
+
+    res.render('shop', {
+      shop: localizedShop,
+      storeEntries,
+      seoKeywords: Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : [],
+      pageTitle: `${localizedShop.name}${(res.locals.t.meta && res.locals.t.meta.shopTitleSuffix) || ''}`,
+      metaDescription: localizedShop.description || '',
+    });
+  } catch (error) {
+    console.error('Failed to render shop detail page', error);
+    next(error);
   }
-
-  const lang = res.locals.lang || DEFAULT_LANGUAGE;
-  const localizedShop = localizeShop(shop, lang);
-
-  res.render('shop', {
-    shop: localizedShop,
-    seoKeywords: Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : [],
-    pageTitle: `${localizedShop.name}${(res.locals.t.meta && res.locals.t.meta.shopTitleSuffix) || ''}`,
-    metaDescription: localizedShop.description || '',
-  });
 });
 
 app.get('/sitemap.xml', (req, res) => {
