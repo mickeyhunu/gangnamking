@@ -1,46 +1,57 @@
 <%
   const fallbackAltSuffix = (t.shop && t.shop.galleryAltFallback) || '분위기';
   const fallbackAltText = shop.imageAlt || `${shop.name} ${fallbackAltSuffix}`;
-  const galleryImages = Array.isArray(shop.gallery) && shop.gallery.length
-    ? shop.gallery
-    : (shop.image
-        ? [{ src: shop.image, alt: fallbackAltText }]
-        : []);
+  function normalizeImageEntry(image) {
+    if (!image) {
+      return null;
+    }
+
+    if (typeof image === 'string') {
+      return { src: image, alt: fallbackAltText };
+    }
+
+    if (typeof image === 'object' && image.src) {
+      return {
+        src: image.src,
+        alt: image.alt || fallbackAltText,
+      };
+    }
+
+    return null;
+  }
+
+  const primaryImageEntry = normalizeImageEntry(shop.image);
+  const rawGalleryEntries = Array.isArray(shop.gallery) ? shop.gallery : [];
+  const normalizedGalleryEntries = rawGalleryEntries
+    .map(normalizeImageEntry)
+    .filter(function (entry) {
+      return entry && entry.src;
+    });
+
+  const highlightGallery = [];
+
+  if (primaryImageEntry) {
+    highlightGallery.push(primaryImageEntry);
+  }
+
+  normalizedGalleryEntries.forEach(function (entry) {
+    if (!highlightGallery.some(function (existing) { return existing.src === entry.src; })) {
+      highlightGallery.push(entry);
+    }
+  });
+
+  const primaryImage = highlightGallery.length ? highlightGallery[0] : null;
 %>
 <%- include('partials/head', { title: pageTitle, description: metaDescription, seoKeywords }) %>
   <section class="detail-hero">
     <div class="container detail-hero__grid">
-      <div
-        class="detail-gallery"
-        data-slider
-        data-dot-label="<%= t.shop && t.shop.gallery ? t.shop.gallery.dotLabel : 'View image {{index}}' %>"
-      >
-        <div class="detail-gallery__track" data-slider-track>
-          <% galleryImages.forEach(function(image) {
-               const source = typeof image === 'string' ? image : image.src;
-               const altText = typeof image === 'string'
-                 ? `${shop.name} ${fallbackAltSuffix}`
-                 : (image.alt || `${shop.name} ${fallbackAltSuffix}`);
-          %>
-            <figure class="detail-gallery__slide">
-              <img src="<%= source %>" alt="<%= altText %>" />
-            </figure>
-          <% }) %>
-        </div>
-        <% if (galleryImages.length > 1) { %>
-          <button
-            class="detail-gallery__control detail-gallery__control--prev"
-            type="button"
-            aria-label="<%= t.shop && t.shop.gallery ? t.shop.gallery.prev : 'Previous image' %>"
-            data-slider-prev
-          ></button>
-          <button
-            class="detail-gallery__control detail-gallery__control--next"
-            type="button"
-            aria-label="<%= t.shop && t.shop.gallery ? t.shop.gallery.next : 'Next image' %>"
-            data-slider-next
-          ></button>
-          <div class="detail-gallery__dots" data-slider-dots></div>
+      <div class="detail-gallery detail-gallery--static">
+        <% if (primaryImage) { %>
+          <figure class="detail-gallery__slide detail-gallery__slide--static">
+            <img src="<%= primaryImage.src %>" alt="<%= primaryImage.alt %>" />
+          </figure>
+        <% } else { %>
+          <div class="detail-gallery__placeholder" aria-hidden="true"></div>
         <% } %>
       </div>
       <div class="detail-hero__info">
@@ -504,6 +515,36 @@
   <section class="pricing-highlight">
     <div class="container">
       <div class="pricing-highlight__panel">
+        <% if (highlightGallery.length) { %>
+          <div
+            class="pricing-highlight__media"
+            data-slider
+            data-dot-label="<%= t.shop && t.shop.gallery ? t.shop.gallery.dotLabel : 'View image {{index}}' %>"
+          >
+            <div class="detail-gallery__track" data-slider-track>
+              <% highlightGallery.forEach(function (image) { %>
+                <figure class="detail-gallery__slide pricing-highlight__media-slide">
+                  <img src="<%= image.src %>" alt="<%= image.alt || fallbackAltText %>" />
+                </figure>
+              <% }) %>
+            </div>
+            <% if (highlightGallery.length > 1) { %>
+              <button
+                class="detail-gallery__control detail-gallery__control--prev pricing-highlight__control"
+                type="button"
+                aria-label="<%= t.shop && t.shop.gallery ? t.shop.gallery.prev : 'Previous image' %>"
+                data-slider-prev
+              ></button>
+              <button
+                class="detail-gallery__control detail-gallery__control--next pricing-highlight__control"
+                type="button"
+                aria-label="<%= t.shop && t.shop.gallery ? t.shop.gallery.next : 'Next image' %>"
+                data-slider-next
+              ></button>
+              <div class="detail-gallery__dots pricing-highlight__dots" data-slider-dots></div>
+            <% } %>
+          </div>
+        <% } %>
         <div class="pricing-highlight__header">
           <span class="pricing-highlight__badge"><%= pricingHighlight.badge || '금액 안내' %></span>
           <h2 class="pricing-highlight__title"><%= shop.name %></h2>
