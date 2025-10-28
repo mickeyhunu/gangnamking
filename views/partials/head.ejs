@@ -81,15 +81,22 @@
               <% } %>
               <% if (currentLanguageOption) { %>
                 <div class="language-select language-select--header">
-                  <% if (currentLanguageOption.flagSrc) { %>
-                    <img
-                      class="language-select__flag"
-                      src="<%= currentLanguageOption.flagSrc %>"
-                      alt="<%= currentLanguageOption.flagAlt || currentLanguageOption.label %>"
-                    />
-                  <% } %>
+                  <div class="language-select__current">
+                    <% if (currentLanguageOption.flagSrc) { %>
+                      <span class="language-select__flag-circle" aria-hidden="true">
+                        <img
+                          class="language-select__flag"
+                          src="<%= currentLanguageOption.flagSrc %>"
+                          alt=""
+                        />
+                      </span>
+                    <% } %>
+                    <span class="language-select__code">
+                      <%= (currentLanguageOption.code || '').toUpperCase() %>
+                    </span>
+                  </div>
                   <div class="language-select__body">
-                    <label class="language-select__label" for="<%= languageSelectId %>">
+                    <label class="language-select__label sr-only" for="<%= languageSelectId %>">
                       <%= (t.header && t.header.languageLabel) || 'Language' %>
                     </label>
                     <select
