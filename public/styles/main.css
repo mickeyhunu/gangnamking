@@ -907,12 +907,10 @@ img {
 .detail-gallery--static {
   position: relative;
   overflow: hidden;
-  border-radius: inherit;
 }
 
 .detail-gallery__slide--static {
   height: 100%;
-  border-radius: inherit;
   overflow: hidden;
 }
 
