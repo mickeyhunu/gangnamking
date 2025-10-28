@@ -95,22 +95,6 @@
                       <%= (currentLanguageOption.code || '').toUpperCase() %>
                     </span>
                   </div>
-                  <div class="language-select__body">
-                    <label class="language-select__label sr-only" for="<%= languageSelectId %>">
-                      <%= (t.header && t.header.languageLabel) || 'Language' %>
-                    </label>
-                    <select
-                      class="language-select__dropdown"
-                      id="<%= languageSelectId %>"
-                      data-language-select
-                    >
-                      <% (languageOptions || []).forEach(function(option) { %>
-                        <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
-                          <%= option.label %>
-                        </option>
-                      <% }) %>
-                    </select>
-                  </div>
                 </div>
               <% } %>
             </div>
