@@ -81,28 +81,19 @@
               <% } %>
               <% if (currentLanguageOption) { %>
                 <div class="language-select language-select--header">
-                  <% if (currentLanguageOption.flagSrc) { %>
-                    <img
-                      class="language-select__flag"
-                      src="<%= currentLanguageOption.flagSrc %>"
-                      alt="<%= currentLanguageOption.flagAlt || currentLanguageOption.label %>"
-                    />
-                  <% } %>
-                  <div class="language-select__body">
-                    <label class="language-select__label" for="<%= languageSelectId %>">
-                      <%= (t.header && t.header.languageLabel) || 'Language' %>
-                    </label>
-                    <select
-                      class="language-select__dropdown"
-                      id="<%= languageSelectId %>"
-                      data-language-select
-                    >
-                      <% (languageOptions || []).forEach(function(option) { %>
-                        <option value="<%= option.url %>" <%= option.isCurrent ? 'selected' : '' %>>
-                          <%= option.label %>
-                        </option>
-                      <% }) %>
-                    </select>
+                  <div class="language-select__current">
+                    <% if (currentLanguageOption.flagSrc) { %>
+                      <span class="language-select__flag-circle" aria-hidden="true">
+                        <img
+                          class="language-select__flag"
+                          src="<%= currentLanguageOption.flagSrc %>"
+                          alt=""
+                        />
+                      </span>
+                    <% } %>
+                    <span class="language-select__code">
+                      <%= (currentLanguageOption.code || '').toUpperCase() %>
+                    </span>
                   </div>
                 </div>
               <% } %>
