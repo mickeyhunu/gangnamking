@@ -546,7 +546,7 @@
           </div>
         <% } %>
         <div class="pricing-highlight__header">
-          <span class="pricing-highlight__badge"><%= pricingHighlight.badge || '금액 안내' %></span>
+          <span class="pricing-highlight__badge"><%= pricingHighlight.badge || '업소 정보' %></span>
           <h2 class="pricing-highlight__title"><%= shop.name %></h2>
           <% if (pricingHighlightSubtitle) { %>
             <p class="pricing-highlight__subtitle"><%= pricingHighlightSubtitle %></p>
@@ -588,7 +588,6 @@
             </div>
           </div>
           <div class="pricing-highlight__per-person">
-            <span class="pricing-highlight__per-person-label"><%= pricingHighlight.perPerson || '인당 가격' %></span>
             <strong class="pricing-highlight__per-person-amount"><%= (highlightPrice && highlightPrice.amount) || '—' %></strong>
             <% if (perPersonNote) { %>
               <p class="pricing-highlight__per-person-note"><%= perPersonNote %></p>

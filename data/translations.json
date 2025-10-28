@@ -113,11 +113,10 @@
         "rt": "RT"
       },
       "pricingHighlight": {
-        "badge": "금액 안내",
+        "badge": "업소 정보",
         "region": "지역",
         "category": "업종",
         "brand": "상호",
-        "perPerson": "인당 가격",
         "perPersonContext": "기준"
       },
       "pricingTable": [
