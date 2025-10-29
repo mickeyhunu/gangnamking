@@ -221,6 +221,50 @@ async function attemptProvider(queue, provider) {
   const { name, request, formatResult, isAuthError, authErrorCode, extractAuthDetails } = provider;
   let authError = null;
 
+          let parsed;
+          try {
+            parsed = rawBody ? JSON.parse(rawBody) : [];
+          } catch (error) {
+            const parseError = new Error('Failed to parse Nominatim response.');
+            parseError.cause = error;
+            reject(parseError);
+            return;
+          }
+
+          const first = Array.isArray(parsed) && parsed.length ? parsed[0] : null;
+
+          if (!first) {
+            reject(new Error('No geocoding results found from Nominatim.'));
+            return;
+          }
+
+          const lat = Number.parseFloat(first.lat);
+          const lng = Number.parseFloat(first.lon);
+
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            reject(new Error('Received invalid coordinates from Nominatim response.'));
+            return;
+          }
+
+          resolve({
+            lat,
+            lng,
+            displayName: first.display_name || '',
+            query,
+          });
+        });
+      }
+    );
+
+    request.on('error', (error) => {
+      reject(error);
+    });
+
+    request.end();
+  });
+}
+
+async function attemptProvider(queue, { name, request, formatResult, isAuthError }) {
   for (const query of queue) {
     try {
       const result = await request(query);
