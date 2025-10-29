@@ -15,7 +15,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(languageMiddleware);
 app.use((req, res, next) => {
-  res.locals.naverMapClientId = process.env.NAVER_MAP_CLIENT_ID || '';
+  res.locals.naverMapClientId = process.env.NAVER_MAP_API_KEY_ID || '';
   next();
 });
 app.use('/', shopRoutes);
