@@ -2,11 +2,10 @@ const https = require('https');
 
 const GEOCODE_ENDPOINT = 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode';
 const NOMINATIM_ENDPOINT = 'https://nominatim.openstreetmap.org/search';
-const CLIENT_ID = process.env.NAVER_MAP_CLIENT_ID;
-const CLIENT_SECRET = process.env.NAVER_MAP_CLIENT_SECRET;
+const { getNaverMapCredentials, hasNaverMapCredentials } = require('../config/naver');
 
 function hasCredentials() {
-  return typeof CLIENT_ID === 'string' && CLIENT_ID && typeof CLIENT_SECRET === 'string' && CLIENT_SECRET;
+  return hasNaverMapCredentials();
 }
 
 function normalizeQuery(value) {
@@ -51,13 +50,15 @@ function requestNaverGeocode(query) {
     const encodedQuery = encodeURIComponent(query);
     const requestUrl = `${GEOCODE_ENDPOINT}?query=${encodedQuery}`;
 
+    const { clientId, clientSecret } = getNaverMapCredentials();
+
     const request = https.request(
       requestUrl,
       {
         method: 'GET',
         headers: {
-          'X-NCP-APIGW-API-KEY-ID': CLIENT_ID,
-          'X-NCP-APIGW-API-KEY': CLIENT_SECRET,
+          'X-NCP-APIGW-API-KEY-ID': clientId,
+          'X-NCP-APIGW-API-KEY': clientSecret,
         },
       },
       (response) => {

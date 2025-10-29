@@ -1377,6 +1377,17 @@ img {
   opacity: 0.6;
 }
 
+.shop-map[data-map-state='static'] .shop-map__map {
+  filter: saturate(0.85);
+}
+
+.shop-map__static-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .shop-map__info-window {
   padding: 0.65rem 0.8rem;
   background: rgba(8, 5, 18, 0.92);
