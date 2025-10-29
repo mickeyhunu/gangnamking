@@ -37,6 +37,13 @@
       "back": "메인으로 돌아가기",
       "address": "주소",
       "hours": "영업시간",
+      "manager": {
+        "title": "담당자 정보",
+        "name": "담당자",
+        "phone": "전화번호",
+        "kakao": "카카오톡",
+        "call": "전화 연결"
+      },
       "viewDetails": "자세히 보기",
       "galleryAltFallback": "분위기",
       "map": {
@@ -183,6 +190,13 @@
       "back": "Back to home",
       "address": "Address",
       "hours": "Business hours",
+      "manager": {
+        "title": "Manager contact",
+        "name": "Manager",
+        "phone": "Phone",
+        "kakao": "KakaoTalk",
+        "call": "Call now"
+      },
       "viewDetails": "View details",
       "galleryAltFallback": "ambience",
       "map": {
@@ -345,6 +359,13 @@
       "back": "返回首頁",
       "address": "地址",
       "hours": "營業時間",
+      "manager": {
+        "title": "負責人資訊",
+        "name": "負責人",
+        "phone": "電話",
+        "kakao": "KakaoTalk",
+        "call": "立即撥打"
+      },
       "viewDetails": "查看詳情",
       "galleryAltFallback": "氛圍",
       "map": {
@@ -497,6 +518,13 @@
       "back": "トップへ戻る",
       "address": "住所",
       "hours": "営業時間",
+      "manager": {
+        "title": "担当者情報",
+        "name": "担当者",
+        "phone": "電話番号",
+        "kakao": "カカオトーク",
+        "call": "電話する"
+      },
       "viewDetails": "詳細を見る",
       "galleryAltFallback": "雰囲気",
       "map": {
