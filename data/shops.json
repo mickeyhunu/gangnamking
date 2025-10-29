@@ -6,7 +6,6 @@
     "district": "강남구",
     "category": "하이퍼블릭",
     "address": "서울특별시 강남구 역삼동 604-11",
-    "phone": "010-5733-8710",
     "hours": "24시간",
     "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricingSchedule": {
@@ -156,7 +155,6 @@
     "district": "강남구",
     "category": "하이퍼블릭",
     "address": "서울특별시 강남구 대치동 890-38",
-    "phone": "010-5733-8710",
     "hours": "24시간",
     "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricingSchedule": {
@@ -307,7 +305,6 @@
     "district": "강남구",
     "category": "하이퍼블릭",
     "address": "서울특별시 강남구 논현로 645",
-    "phone": "010-5733-8710",
     "hours": "24시간",
     "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricingSchedule": {
@@ -357,7 +354,6 @@
     },
     "manager": {
       "name": "우주 대표",
-      "phone": "010-5733-8710",
       "kakao": "@gangnamking98"
     },
     "seoKeywords": [
@@ -470,7 +466,6 @@
     "district": "강남구",
     "category": "하이퍼블릭",
     "address": "서울특별시 강남구 잠원동 23-8",
-    "phone": "010-5733-8710",
     "hours": "24시간",
     "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricingSchedule": {
@@ -621,7 +616,6 @@
     "district": "강남구",
     "category": "하이퍼블릭",
     "address": "서울특별시 강남구 삼성동 142-29",
-    "phone": "010-5733-8710",
     "hours": "24시간",
     "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricingSchedule": {
@@ -768,7 +762,7 @@
 
 
 
-  
+
   {
     "id": "강남-클래식-텐카페",
     "name": "클래식",
