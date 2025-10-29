@@ -54,8 +54,7 @@
 <%- include('partials/head', {
   title: pageTitle,
   description: metaDescription,
-  seoKeywords,
-  extraStyles: ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css']
+  seoKeywords
 }) %>
   <section class="detail-hero">
     <div class="container detail-hero__grid">
@@ -85,12 +84,6 @@
             <dt><%= t.shop && t.shop.address ? t.shop.address : 'Address' %></dt>
             <dd><%= shop.address %></dd>
           </div>
-          <% if (shop.postalCode) { %>
-            <div>
-              <dt><%= t.shop && t.shop.postalCode ? t.shop.postalCode : 'Postal code' %></dt>
-              <dd><%= shop.postalCode %></dd>
-            </div>
-          <% } %>
           <div>
             <dt><%= t.shop && t.shop.hours ? t.shop.hours : 'Hours' %></dt>
             <dd><%= shop.hours %></dd>
@@ -112,7 +105,6 @@
           data-shop-map
           data-shop-name="<%= shop.name %>"
           data-shop-address="<%= shop.address %>"
-          data-shop-postal-code="<%= shop.postalCode || '' %>"
           data-shop-district="<%= shop.district %>"
           data-shop-region="<%= shop.region %>"
           data-map-locale="<%= lang || 'ko' %>"
@@ -812,9 +804,15 @@
   <div class="seo-keywords" aria-hidden="true">
     <%- (seoKeywords || []).join(', ') %>
   </div>
+<%
+  const resolvedClientId = typeof naverMapClientId === 'string' ? naverMapClientId.trim() : '';
+  const mapScripts = [];
+  if (resolvedClientId) {
+    const encodedClientId = encodeURIComponent(resolvedClientId);
+    mapScripts.push(`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${encodedClientId}&submodules=geocoder`);
+  }
+  mapScripts.push('/scripts/shop-detail.js');
+%>
 <%- include('partials/footer', {
-  scripts: [
-    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
-    '/scripts/shop-detail.js'
-  ]
+  scripts: mapScripts
 }) %>
