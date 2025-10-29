@@ -1079,6 +1079,8 @@ img {
 .detail-gallery--static {
   position: relative;
   overflow: hidden;
+  aspect-ratio: 16 / 7;
+  max-height: 420px;
 }
 
 .detail-gallery__slide--static {
