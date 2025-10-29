@@ -361,7 +361,12 @@
             { "count": 3, "label": "3 guests" },
             { "count": 4, "label": "4 guests" }
           ],
-          "amount": { "multiplier": 10, "format": "{value}K KRW", "locale": "en-US" },
+          "amount": {
+            "multiplier": 10000,
+            "suffix": "₩",
+            "locale": "en-US",
+            "useGrouping": true
+          },
           "metaLabels": { "base": "Cover", "tc": "TC", "rt": "RT" }
         },
         {
@@ -373,7 +378,12 @@
             { "count": 3, "label": "3 guests" },
             { "count": 4, "label": "4 guests" }
           ],
-          "amount": { "multiplier": 10, "format": "{value}K KRW", "locale": "en-US" },
+          "amount": {
+            "multiplier": 10000,
+            "suffix": "₩",
+            "locale": "en-US",
+            "useGrouping": true
+          },
           "metaLabels": { "base": "Cover", "tc": "TC", "rt": "RT" }
         }
       ],
@@ -571,7 +581,12 @@
             { "count": 3, "label": "3人" },
             { "count": 4, "label": "4人" }
           ],
-          "amount": { "suffix": "萬韓元" }
+          "amount": {
+            "multiplier": 10000,
+            "suffix": "₩",
+            "locale": "zh-CN",
+            "useGrouping": true
+          }
         },
         {
           "label": "晚9點後",
@@ -582,7 +597,12 @@
             { "count": 3, "label": "3人" },
             { "count": 4, "label": "4人" }
           ],
-          "amount": { "suffix": "萬韓元" }
+          "amount": {
+            "multiplier": 10000,
+            "suffix": "₩",
+            "locale": "zh-CN",
+            "useGrouping": true
+          }
         }
       ],
       "services": [
@@ -779,7 +799,12 @@
             { "count": 3, "label": "3名" },
             { "count": 4, "label": "4名" }
           ],
-          "amount": { "suffix": "万ウォン" }
+          "amount": {
+            "multiplier": 10000,
+            "suffix": "₩",
+            "locale": "ja-JP",
+            "useGrouping": true
+          }
         },
         {
           "label": "21時以降",
@@ -790,7 +815,12 @@
             { "count": 3, "label": "3名" },
             { "count": 4, "label": "4名" }
           ],
-          "amount": { "suffix": "万ウォン" }
+          "amount": {
+            "multiplier": 10000,
+            "suffix": "₩",
+            "locale": "ja-JP",
+            "useGrouping": true
+          }
         }
       ],
       "services": [
