@@ -1424,6 +1424,38 @@ img {
   gap: 1rem;
 }
 
+.store-entry-top__cta {
+  margin-top: 0.5rem;
+}
+
+.store-entry-top__cta-link {
+  display: block;
+  border-radius: 16px;
+  overflow: hidden;
+  background: transparent;
+  padding: 0;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+.store-entry-top__cta-link:hover,
+.store-entry-top__cta-link:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.28);
+}
+
+.store-entry-top__cta-link:focus-visible {
+  outline: 2px solid rgba(255, 208, 0, 0.85);
+  outline-offset: 4px;
+}
+
+.store-entry-top__cta-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .store-entry-top__title {
   font-size: 1.25rem;
   font-weight: 600;
