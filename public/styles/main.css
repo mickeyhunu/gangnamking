@@ -526,11 +526,23 @@ img {
   color: #f2efff;
 }
 
+.language-select__toggle:hover .language-select__label,
+.language-select__toggle:focus-visible .language-select__label,
+.language-select--open .language-select__label {
+  color: #ff9bd6;
+}
+
 .language-select__icon {
   font-size: 0.9rem;
   line-height: 1;
   color: #f2efff;
   transition: transform 0.2s ease;
+}
+
+.language-select__toggle:hover .language-select__icon,
+.language-select__toggle:focus-visible .language-select__icon,
+.language-select--open .language-select__icon {
+  color: #ff9bd6;
 }
 
 .language-select--open .language-select__icon {
@@ -604,6 +616,12 @@ img {
 
 .language-select__option-label {
   color: #f2efff;
+}
+
+.language-select__option:hover .language-select__option-label,
+.language-select__option:focus-visible .language-select__option-label,
+.language-select__option.is-active .language-select__option-label {
+  color: #ff9bd6;
 }
 
 .btn {
