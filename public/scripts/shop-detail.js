@@ -151,4 +151,106 @@
       });
     }
   }
+
+  const mapHost = document.querySelector('[data-shop-map]');
+  if (mapHost) {
+    const mapContainer = mapHost.querySelector('[data-map-region]');
+    const status = mapHost.querySelector('[data-map-status]');
+    const address = (mapHost.dataset.shopAddress || '').trim();
+    const venueName = mapHost.dataset.shopName || '';
+    const locale = mapHost.dataset.mapLocale || document.documentElement.lang || 'en';
+    const loadingText = mapHost.dataset.loadingText || 'Loading map...';
+    const errorText = mapHost.dataset.errorText || 'Unable to load map.';
+
+    function setStatus(message, state) {
+      if (state) {
+        mapHost.dataset.mapState = state;
+      } else {
+        delete mapHost.dataset.mapState;
+      }
+
+      if (status) {
+        if (message) {
+          status.textContent = message;
+          status.hidden = false;
+        } else {
+          status.textContent = '';
+          status.hidden = true;
+        }
+      }
+    }
+
+    if (!mapContainer || !address) {
+      setStatus(errorText, 'error');
+      return;
+    }
+
+    if (status) {
+      status.hidden = false;
+    }
+
+    setStatus(loadingText, 'loading');
+
+    if (typeof L === 'undefined') {
+      console.warn('Leaflet library is not available.');
+      setStatus(errorText, 'error');
+      return;
+    }
+
+    const query = encodeURIComponent(address);
+
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${query}`, {
+      headers: {
+        'Accept-Language': locale,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Geocoding request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((results) => {
+        if (!Array.isArray(results) || !results.length) {
+          throw new Error('No geocoding results found.');
+        }
+
+        const [firstResult] = results;
+        const lat = parseFloat(firstResult.lat);
+        const lon = parseFloat(firstResult.lon);
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+          throw new Error('Invalid coordinates received.');
+        }
+
+        const map = L.map(mapContainer, {
+          scrollWheelZoom: false,
+        }).setView([lat, lon], 16);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+
+        const marker = L.marker([lat, lon]).addTo(map);
+
+        if (venueName) {
+          marker.bindPopup(venueName);
+        }
+
+        setStatus('', 'ready');
+
+        window.setTimeout(() => {
+          map.invalidateSize();
+          if (venueName) {
+            marker.openPopup();
+          }
+        }, 250);
+      })
+      .catch((error) => {
+        console.warn('Failed to render map:', error);
+        setStatus(errorText, 'error');
+      });
+  }
 })();

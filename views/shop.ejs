@@ -41,8 +41,22 @@
   });
 
   const primaryImage = highlightGallery.length ? highlightGallery[0] : null;
+  const mapText = (t.shop && t.shop.map) || {};
+
+  function formatMapLabel(template) {
+    if (typeof template !== 'string' || !template.trim()) {
+      return `${shop.name || ''} location map`;
+    }
+
+    return template.replace(/\{\{\s*shopName\s*\}\}/g, shop.name || '');
+  }
 %>
-<%- include('partials/head', { title: pageTitle, description: metaDescription, seoKeywords }) %>
+<%- include('partials/head', {
+  title: pageTitle,
+  description: metaDescription,
+  seoKeywords,
+  extraStyles: ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css']
+}) %>
   <section class="detail-hero">
     <div class="container detail-hero__grid">
       <div class="detail-gallery detail-gallery--static">
@@ -78,6 +92,33 @@
         </dl>
         <div class="detail-hero__actions">
           <a class="back-link" href="/"><%= t.shop && t.shop.back ? t.shop.back : 'Back to home' %></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section detail-section">
+    <div class="container detail-section__grid">
+      <div class="detail-card detail-card--full">
+        <h2><%= mapText.title || 'Location' %></h2>
+        <div
+          class="shop-map"
+          data-shop-map
+          data-shop-name="<%= shop.name %>"
+          data-shop-address="<%= shop.address %>"
+          data-map-locale="<%= lang || 'ko' %>"
+          data-loading-text="<%= mapText.loading || 'Loading map…' %>"
+          data-error-text="<%= mapText.error || 'Unable to load map. Please check the address.' %>"
+        >
+          <div
+            class="shop-map__map"
+            data-map-region
+            role="img"
+            aria-label="<%= formatMapLabel(mapText.ariaLabel || 'Map showing location of {{shopName}}') %>"
+          ></div>
+          <p class="shop-map__status" data-map-status aria-live="polite">
+            <%= mapText.loading || 'Loading map…' %>
+          </p>
         </div>
       </div>
     </div>
@@ -762,4 +803,9 @@
   <div class="seo-keywords" aria-hidden="true">
     <%- (seoKeywords || []).join(', ') %>
   </div>
-<%- include('partials/footer', { scripts: ['/scripts/shop-detail.js'] }) %>
+<%- include('partials/footer', {
+  scripts: [
+    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+    '/scripts/shop-detail.js'
+  ]
+}) %>
