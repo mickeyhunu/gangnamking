@@ -807,6 +807,10 @@ img {
   flex-direction: column;
 }
 
+.shop-category--hidden {
+  display: none !important;
+}
+
 .shop-category__header {
   display: flex;
   align-items: center;

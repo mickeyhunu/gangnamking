@@ -184,7 +184,18 @@
 
     categorySections.forEach((section) => {
       const shouldShow = Boolean(sectionVisibility.get(section));
-      section.hidden = !shouldShow;
+
+      if (shouldShow) {
+        section.hidden = false;
+        section.classList.remove('shop-category--hidden');
+        section.setAttribute('aria-hidden', 'false');
+        section.style.removeProperty('display');
+      } else {
+        section.hidden = true;
+        section.classList.add('shop-category--hidden');
+        section.setAttribute('aria-hidden', 'true');
+        section.style.display = 'none';
+      }
     });
 
     notifySelectionChange(regionValue, districtValue, categoryValue);
