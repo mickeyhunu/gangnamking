@@ -113,7 +113,10 @@ async function fetchEntriesForStore(storeNo, options = {}) {
 }
 
 async function fetchEntryWorkerNames(storeNo, options = {}) {
-  const entries = await fetchEntriesForStore(storeNo, options);
+  const { entries: prefetchedEntries, ...fetchOptions } = options || {};
+  const entries = Array.isArray(prefetchedEntries)
+    ? prefetchedEntries
+    : await fetchEntriesForStore(storeNo, fetchOptions);
 
   if (!Array.isArray(entries) || !entries.length) {
     return [];

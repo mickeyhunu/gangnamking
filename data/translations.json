@@ -120,6 +120,17 @@
         "tc": "TC",
         "rt": "RT"
       },
+      "entries": {
+        "title": "엔트리 현황",
+        "workerListTitle": "엔트리 목록",
+        "empty": "등록된 엔트리 정보가 없습니다.",
+        "columns": {
+          "worker": "담당자",
+          "mentionCount": "멘션 수",
+          "insertCount": "입장 수",
+          "createdAt": "기록 시간"
+        }
+      },
       "pricingHighlight": {
         "badge": "업소 정보",
         "region": "지역",
@@ -310,6 +321,17 @@
         "base": "Table",
         "tc": "TC",
         "rt": "RT"
+      },
+      "entries": {
+        "title": "Entry Status",
+        "workerListTitle": "Entry Roster",
+        "empty": "No entry activity has been recorded yet.",
+        "columns": {
+          "worker": "Manager",
+          "mentionCount": "Mentions",
+          "insertCount": "Check-ins",
+          "createdAt": "Logged at"
+        }
       },
       "pricingHighlight": {
         "badge": "Pricing spotlight",
@@ -505,6 +527,17 @@
         "tc": "TC",
         "rt": "RT"
       },
+      "entries": {
+        "title": "入場紀錄",
+        "workerListTitle": "入場名單",
+        "empty": "尚無入場紀錄。",
+        "columns": {
+          "worker": "負責人",
+          "mentionCount": "提及次數",
+          "insertCount": "入場次數",
+          "createdAt": "紀錄時間"
+        }
+      },
       "pricingHighlight": {
         "badge": "價格指南",
         "region": "地區",
@@ -696,6 +729,17 @@
         "base": "基本料金",
         "tc": "TC",
         "rt": "RT"
+      },
+      "entries": {
+        "title": "エントリー状況",
+        "workerListTitle": "エントリー担当者一覧",
+        "empty": "エントリー情報はまだ登録されていません。",
+        "columns": {
+          "worker": "担当者",
+          "mentionCount": "メンション数",
+          "insertCount": "入場数",
+          "createdAt": "記録時間"
+        }
       },
       "pricingHighlight": {
         "badge": "料金ハイライト",
