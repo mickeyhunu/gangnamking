@@ -181,6 +181,17 @@
     const entriesTitleText = entriesText.title || '엔트리 현황';
     const entriesEmptyText = entriesText.empty || '등록된 엔트리 정보가 없습니다.';
     const entriesWorkerLabel = entriesColumnText.worker || '담당자';
+    const entriesWorkerListTitle = entriesText.workerListTitle || '엔트리 목록';
+    const workerNameList = Array.isArray(entryWorkerNames)
+      ? entryWorkerNames
+          .map(function (name) {
+            return typeof name === 'string' ? name.trim() : '';
+          })
+          .filter(function (name) {
+            return Boolean(name);
+          })
+      : [];
+    const hasWorkerNameList = workerNameList.length > 0;
 
     function buildPricingTable(blocks) {
       if (!Array.isArray(blocks)) {
@@ -742,6 +753,16 @@
     <div class="container detail-section__grid">
       <div class="detail-card detail-card--full">
         <h2><%= entriesTitleText %></h2>
+        <% if (hasWorkerNameList) { %>
+          <div class="store-entry-workers">
+            <h3 class="store-entry-workers__title"><%= entriesWorkerListTitle %></h3>
+            <ul class="store-entry-workers__list">
+              <% workerNameList.forEach(function (name) { %>
+                <li class="store-entry-workers__item"><%= name %></li>
+              <% }) %>
+            </ul>
+          </div>
+        <% } %>
         <% if (Array.isArray(storeEntries) && storeEntries.length) { %>
           <div class="store-entries__table-wrapper">
             <table class="store-entries__table">

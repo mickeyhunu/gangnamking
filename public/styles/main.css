@@ -1086,6 +1086,42 @@ img {
   gap: 1.5rem;
 }
 
+.store-entry-workers {
+  margin-bottom: 0.5rem;
+}
+
+.store-entry-workers__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
+.store-entry-workers__list {
+  column-gap: 1.5rem;
+  column-count: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 36rem) {
+  .store-entry-workers__list {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 64rem) {
+  .store-entry-workers__list {
+    column-count: 3;
+  }
+}
+
+.store-entry-workers__item {
+  break-inside: avoid;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
 .store-entries__table-wrapper {
   overflow-x: auto;
   border-radius: 18px;

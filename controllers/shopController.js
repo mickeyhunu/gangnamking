@@ -1,7 +1,7 @@
 const { DEFAULT_LANGUAGE, LANGUAGE_LOCALES } = require('../lib/constants');
 const { localizeShop } = require('../lib/shopUtils');
 const { getShops } = require('../services/dataStore');
-const { fetchEntriesForStore } = require('../services/entryService');
+const { fetchEntriesForStore, fetchEntryWorkerNames } = require('../services/entryService');
 const { fetchShopLocation } = require('../services/naverMapService');
 
 function getLocalizedShops(lang) {
@@ -66,6 +66,10 @@ async function renderShopDetail(req, res, next) {
     });
     const storeNo = localizedShop.storeNo || shop.storeNo;
     const rawEntries = await fetchEntriesForStore(storeNo, { shopId: shop.id });
+    const entryWorkerNames = await fetchEntryWorkerNames(storeNo, {
+      shopId: shop.id,
+      entries: rawEntries,
+    });
     const storeEntries = rawEntries.map((entry) => ({
       workerName: entry.workerName,
       mentionCount: entry.mentionCount,
@@ -105,6 +109,7 @@ async function renderShopDetail(req, res, next) {
     res.render('shop', {
       shop: localizedShop,
       storeEntries,
+      entryWorkerNames,
       shopLocation,
       mapAuthErrorCode,
       seoKeywords: Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : [],
