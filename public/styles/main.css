@@ -8,6 +8,7 @@
   --color-muted: #b1a7d6;
   --color-border: rgba(255, 255, 255, 0.1);
   --color-glow: rgba(255, 46, 139, 0.38);
+  --shadow-accent-inset: inset 0 0 0 1px rgba(255, 46, 139, 0.12);
   --max-width: 1120px;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     'Noto Sans KR', sans-serif;
@@ -1433,7 +1434,7 @@ img {
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 12px 32px rgba(5, 0, 20, 0.28);
+  box-shadow: var(--shadow-accent-inset);
 }
 
 .store-entry-top__rank {
@@ -1511,7 +1512,7 @@ img {
   border-radius: 30px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: clamp(2.5rem, 5vw, 3.5rem);
-  box-shadow: 0 34px 80px rgba(5, 0, 20, 0.55);
+  box-shadow: var(--shadow-accent-inset);
   overflow: hidden;
 }
 
@@ -1641,7 +1642,7 @@ img {
   flex-direction: column;
   gap: 0.55rem;
   min-height: 120px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  box-shadow: var(--shadow-accent-inset);
 }
 
 .pricing-highlight__meta-label {
@@ -1673,7 +1674,7 @@ img {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  box-shadow: 0 22px 48px rgba(7, 3, 20, 0.45);
+  box-shadow: var(--shadow-accent-inset);
 }
 
 .pricing-highlight__price-label {
@@ -1699,7 +1700,7 @@ img {
   border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 2rem;
-  box-shadow: 0 22px 44px rgba(5, 0, 20, 0.5);
+  box-shadow: var(--shadow-accent-inset);
 }
 
 .detail-card h2 {
@@ -1725,7 +1726,7 @@ img {
   border: 1px solid rgba(255, 255, 255, 0.12);
   overflow: hidden;
   background: rgba(32, 25, 55, 0.55);
-  box-shadow: 0 22px 44px rgba(5, 0, 20, 0.5);
+  box-shadow: var(--shadow-accent-inset);
 }
 
 .shop-map__status {
@@ -1776,7 +1777,7 @@ img {
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 1.75rem;
-  box-shadow: inset 0 0 0 1px rgba(255, 46, 139, 0.12);
+  box-shadow: var(--shadow-accent-inset);
 }
 
 .rate-table__header {
