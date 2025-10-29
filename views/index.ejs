@@ -9,25 +9,18 @@
       </div>
       <div class="shop-groups">
         <% (shopsByCategory || []).forEach(function(group) { %>
-          <% const categoryHidden = initialCategoryVisibility && !initialCategoryVisibility[group.category]; %>
-          <section
-            class="shop-category"
-            data-category-section="<%= group.category %>"
-            <%= categoryHidden ? 'hidden' : '' %>
-          >
+          <section class="shop-category" data-category-section="<%= group.category %>">
             <header class="shop-category__header">
               <h3 class="shop-category__title"><%= group.category %></h3>
             </header>
             <div class="shop-grid" data-grid data-category-group="<%= group.category %>">
               <% group.shops.forEach(function(shop) { %>
-                <% const shopHidden = initialShopVisibility && !initialShopVisibility[shop.id]; %>
                 <article
                   class="shop-card"
                   data-region="<%= shop.region %>"
                   data-district="<%= shop.district %>"
                   data-category="<%= shop.category %>"
                   data-area-group="<%= shop.areaGroup %>"
-                  <%= shopHidden ? 'style="display:none;"' : '' %>
                 >
                   <div class="shop-card__image">
                     <% if (shop.image) { %>
@@ -57,9 +50,6 @@
 
   <script id="region-district-data" type="application/json">
     <%- JSON.stringify(districtMap) %>
-  </script>
-  <script id="initial-filter-state" type="application/json">
-    <%- JSON.stringify(initialFilters || { region: 'all', district: 'all', category: 'all' }) %>
   </script>
   <div class="seo-keywords" aria-hidden="true">
     <%- seoKeywords.join(', ') %>
