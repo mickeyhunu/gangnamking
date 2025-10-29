@@ -18,6 +18,8 @@ const LANGUAGE_LOCALES = {
 };
 const DEFAULT_LANGUAGE = 'ko';
 
+const fetchImpl = typeof fetch === 'function' ? fetch.bind(global) : null;
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -78,6 +80,9 @@ function getSeoulProximityRank(cityName) {
 // Load shop data
 const shopsPath = path.join(__dirname, 'data', 'shops.json');
 let shops = [];
+const geocodeCache = new Map();
+const GEOCODE_ENDPOINT = 'https://nominatim.openstreetmap.org/search';
+const GEOCODE_USER_AGENT = 'GangnamKing/1.0 (+https://gangnamking.example)';
 
 const translationsPath = path.join(__dirname, 'data', 'translations.json');
 let translations = {};
@@ -99,6 +104,75 @@ function loadTranslations() {
   } catch (error) {
     console.error('Failed to load translation data:', error);
     translations = {};
+  }
+}
+
+async function geocodeAddress(address) {
+  if (typeof address !== 'string') {
+    return null;
+  }
+
+  const trimmed = address.trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  if (geocodeCache.has(trimmed)) {
+    return geocodeCache.get(trimmed);
+  }
+
+  if (!fetchImpl) {
+    console.warn('Geocoding skipped: fetch API is not available in this environment.');
+    geocodeCache.set(trimmed, null);
+    return null;
+  }
+
+  const url = `${GEOCODE_ENDPOINT}?format=json&limit=1&q=${encodeURIComponent(trimmed)}`;
+
+  try {
+    const response = await fetchImpl(url, {
+      headers: {
+        'User-Agent': GEOCODE_USER_AGENT,
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.warn('Geocoding request failed with status', response.status);
+      geocodeCache.set(trimmed, null);
+      return null;
+    }
+
+    const results = await response.json();
+
+    if (!Array.isArray(results) || !results.length) {
+      geocodeCache.set(trimmed, null);
+      return null;
+    }
+
+    const [match] = results;
+    const latitude = Number.parseFloat(match.lat);
+    const longitude = Number.parseFloat(match.lon);
+
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      geocodeCache.set(trimmed, null);
+      return null;
+    }
+
+    const resolved = {
+      latitude,
+      longitude,
+      displayName: typeof match.display_name === 'string' ? match.display_name : trimmed,
+    };
+
+    geocodeCache.set(trimmed, resolved);
+
+    return resolved;
+  } catch (error) {
+    console.error('Failed to geocode address:', error);
+    geocodeCache.set(trimmed, null);
+    return null;
   }
 }
 
@@ -549,7 +623,7 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/shops/:id', (req, res, next) => {
+app.get('/shops/:id', async (req, res, next) => {
   const shop = shops.find((item) => item.id === req.params.id);
 
   if (!shop) {
@@ -558,12 +632,37 @@ app.get('/shops/:id', (req, res, next) => {
 
   const lang = res.locals.lang || DEFAULT_LANGUAGE;
   const localizedShop = localizeShop(shop, lang);
+  const geocodeAddressSource = typeof shop.address === 'string' && shop.address.trim()
+    ? shop.address
+    : localizedShop.address;
+
+  let mapData = null;
+
+  if (typeof geocodeAddressSource === 'string' && geocodeAddressSource.trim()) {
+    try {
+      const geocoded = await geocodeAddress(geocodeAddressSource);
+
+      if (geocoded) {
+        mapData = {
+          latitude: geocoded.latitude,
+          longitude: geocoded.longitude,
+          address: localizedShop.address || geocodeAddressSource,
+          name: localizedShop.name,
+          displayName: geocoded.displayName,
+          mapUrl: `https://www.openstreetmap.org/?mlat=${geocoded.latitude}&mlon=${geocoded.longitude}&zoom=18`,
+        };
+      }
+    } catch (error) {
+      console.error('Failed to resolve map data for shop:', error);
+    }
+  }
 
   res.render('shop', {
     shop: localizedShop,
     seoKeywords: Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : [],
     pageTitle: `${localizedShop.name}${(res.locals.t.meta && res.locals.t.meta.shopTitleSuffix) || ''}`,
     metaDescription: localizedShop.description || '',
+    mapData,
   });
 });
 

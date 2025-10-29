@@ -83,6 +83,78 @@
     </div>
   </section>
 
+  <% if (mapData) { %>
+    <section class="detail-map" aria-labelledby="shop-map-title">
+      <div class="container">
+        <div class="detail-map__header">
+          <h2 class="detail-map__title" id="shop-map-title">
+            <%= (t.shop && t.shop.map && t.shop.map.title) || '위치 안내' %>
+          </h2>
+          <% const mapSubtitle = t.shop && t.shop.map && t.shop.map.subtitle; %>
+          <% if (mapSubtitle) { %>
+            <p class="detail-map__subtitle"><%= mapSubtitle %></p>
+          <% } %>
+        </div>
+        <div
+          id="shop-map"
+          class="detail-map__canvas"
+          data-latitude="<%= mapData.latitude %>"
+          data-longitude="<%= mapData.longitude %>"
+          data-shop-name="<%= shop.name %>"
+          data-shop-address="<%= mapData.address %>"
+        ></div>
+        <dl class="detail-map__info">
+          <div>
+            <dt><%= (t.shop && t.shop.address) || '주소' %></dt>
+            <dd><%= mapData.address %></dd>
+          </div>
+          <% if (mapData.displayName && mapData.displayName !== mapData.address) { %>
+            <div>
+              <dt><%= (t.shop && t.shop.map && t.shop.map.geocodedLabel) || '지도 위치' %></dt>
+              <dd><%= mapData.displayName %></dd>
+            </div>
+          <% } %>
+        </dl>
+        <% if (mapData.mapUrl) { %>
+          <a
+            class="detail-map__link"
+            href="<%= mapData.mapUrl %>"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <%= (t.shop && t.shop.map && t.shop.map.openExternal) || '지도에서 크게 보기' %>
+          </a>
+        <% } %>
+      </div>
+    </section>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha512-sA+e2PK0quS0n26F7f/Dr7fPmyAnbcW2CYwiVdc+GqORdzdrIW6DCJxN74vNys8lm2SleqciJ9D1yXv4hW8gKw=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha512-kJt5jJ5zv+dS9H0nLBKBPXn1HULICwhf66A1VpzwuNFuIBqmoeZaZX6mE6xPD58Ll35H0pNG0Ax7AnNJeqgnGw=="
+      crossorigin=""
+      defer
+    ></script>
+    <script src="/scripts/shop-map.js" defer></script>
+  <% } else if (shop.address) { %>
+    <section class="detail-map detail-map--fallback" aria-labelledby="shop-map-title">
+      <div class="container">
+        <div class="detail-map__header">
+          <h2 class="detail-map__title" id="shop-map-title">
+            <%= (t.shop && t.shop.map && t.shop.map.title) || '위치 안내' %>
+          </h2>
+        </div>
+        <p class="detail-map__fallback">
+          <%= (t.shop && t.shop.map && t.shop.map.unavailable) || '지도를 불러올 수 없습니다. 아래 주소를 참고해주세요.' %>
+        </p>
+      </div>
+    </section>
+  <% } %>
+
   <%
     const activeLang = typeof lang === 'string' && lang ? lang : 'ko';
 
@@ -722,4 +794,8 @@
   <div class="seo-keywords" aria-hidden="true">
     <%- (seoKeywords || []).join(', ') %>
   </div>
-<%- include('partials/footer', { scripts: ['/scripts/shop-detail.js'] }) %>
+<%
+  const baseScripts = Array.isArray(scripts) ? scripts.slice() : [];
+  baseScripts.push('/scripts/shop-detail.js');
+%>
+<%- include('partials/footer', { scripts: baseScripts }) %>

@@ -42,7 +42,17 @@
     <script src="/scripts/language-switcher.js"></script>
     <% if (typeof scripts !== 'undefined' && Array.isArray(scripts) && scripts.length) { %>
       <% scripts.forEach(function (script) { %>
-        <script src="<%= script %>"></script>
+        <% if (typeof script === 'string') { %>
+          <script src="<%= script %>"></script>
+        <% } else if (script && typeof script === 'object' && script.src) { %>
+          <script
+            src="<%= script.src %>"
+            <% if (script.integrity) { %>integrity="<%= script.integrity %>"<% } %>
+            <% if (typeof script.crossorigin === 'string') { %>crossorigin="<%= script.crossorigin %>"<% } %>
+            <% if (script.referrerpolicy) { %>referrerpolicy="<%= script.referrerpolicy %>"<% } %>
+            <% if (script.defer) { %>defer<% } %>
+          ></script>
+        <% } %>
       <% }); %>
     <% } %>
   </body>
