@@ -111,76 +111,22 @@ function buildSeoKeywords(shops) {
   ];
 }
 
-function normalizeFilterValue(value) {
-  if (typeof value !== 'string') {
-    return 'all';
-  }
-
-  const trimmed = value.trim();
-  return trimmed.length ? trimmed : 'all';
-}
-
 function renderIndex(req, res) {
   const lang = res.locals.lang || DEFAULT_LANGUAGE;
-  const allLocalizedShops = getLocalizedShops(lang);
-  const activeRegion = normalizeFilterValue(req.query.region);
-  const activeDistrict = normalizeFilterValue(req.query.district);
-  const activeCategory = normalizeFilterValue(req.query.category);
-
-  const filteredShops = allLocalizedShops.filter((shop) => {
-    if (!shop || typeof shop !== 'object') {
-      return false;
-    }
-
-    if (activeRegion !== 'all' && shop.region !== activeRegion) {
-      return false;
-    }
-
-    if (activeDistrict !== 'all' && shop.district !== activeDistrict) {
-      return false;
-    }
-
-    if (activeCategory !== 'all' && shop.category !== activeCategory) {
-      return false;
-    }
-
-    return true;
-  });
-
-  const filtersApplied = [activeRegion, activeDistrict, activeCategory].some(
-    (value) => value !== 'all'
-  );
-  const categories = [...new Set(allLocalizedShops.map((shop) => shop.category))];
+  const localizedShops = getLocalizedShops(lang);
+  const regions = [...new Set(localizedShops.map((shop) => shop.region))];
+  const categories = [...new Set(localizedShops.map((shop) => shop.category))];
   const shopsByCategory = categories
     .map((category) => ({
       category,
-      shops: allLocalizedShops.filter((shop) => shop.category === category),
+      shops: localizedShops.filter((shop) => shop.category === category),
     }))
     .filter((group) => Array.isArray(group.shops) && group.shops.length > 0);
-  const districtMap = buildDistrictMap(allLocalizedShops);
-  const seoKeywords = buildSeoKeywords(filtersApplied ? filteredShops : allLocalizedShops);
-  const regions = [...new Set(allLocalizedShops.map((shop) => shop.region))];
-  const initialVisibleCategories = filtersApplied
-    ? filteredShops.reduce((acc, shop) => {
-        if (shop && typeof shop.category === 'string' && shop.category) {
-          acc[shop.category] = true;
-        }
-
-        return acc;
-      }, {})
-    : null;
-  const initialVisibleShopIds = filtersApplied
-    ? filteredShops.reduce((acc, shop) => {
-        if (shop && typeof shop.id === 'string' && shop.id) {
-          acc[shop.id] = true;
-        }
-
-        return acc;
-      }, {})
-    : null;
+  const districtMap = buildDistrictMap(localizedShops);
+  const seoKeywords = buildSeoKeywords(localizedShops);
 
   res.render('index', {
-    shops: allLocalizedShops,
+    shops: localizedShops,
     shopsByCategory,
     regions,
     categories: shopsByCategory.map((group) => group.category),
@@ -188,13 +134,6 @@ function renderIndex(req, res) {
     seoKeywords,
     pageTitle: (res.locals.t.meta && res.locals.t.meta.indexTitle) || 'Gangnam King',
     metaDescription: (res.locals.t.meta && res.locals.t.meta.description) || '',
-    initialFilters: {
-      region: activeRegion,
-      district: activeDistrict,
-      category: activeCategory,
-    },
-    initialCategoryVisibility: initialVisibleCategories,
-    initialShopVisibility: initialVisibleShopIds,
   });
 }
 

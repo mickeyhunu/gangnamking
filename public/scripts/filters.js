@@ -9,37 +9,6 @@
   const cityDataElement = document.getElementById('city-district-data');
   const cityFilterContainer = document.querySelector('[data-area-filter]');
   const districtBar = document.querySelector('[data-city-district-bar]');
-  const initialStateElement = document.getElementById('initial-filter-state');
-
-  function normalizeStateValue(value) {
-    if (typeof value !== 'string') {
-      return 'all';
-    }
-
-    const trimmed = value.trim();
-    return trimmed.length ? trimmed : 'all';
-  }
-
-  let initialState = { region: 'all', district: 'all', category: 'all' };
-
-  if (initialStateElement) {
-    try {
-      const parsed = JSON.parse(initialStateElement.textContent || '{}');
-
-      if (parsed && typeof parsed === 'object') {
-        initialState = {
-          ...initialState,
-          ...parsed,
-        };
-      }
-    } catch (error) {
-      initialState = { region: 'all', district: 'all', category: 'all' };
-    }
-  }
-
-  const initialRegion = normalizeStateValue(initialState.region);
-  const initialDistrict = normalizeStateValue(initialState.district);
-  const initialCategory = normalizeStateValue(initialState.category);
 
   let districtMap = {};
   let cityDistrictMap = {};
@@ -64,8 +33,8 @@
     ? cityFilterContainer.getAttribute('data-all-label') || '전체'
     : '전체';
 
-  let activeCity = initialRegion === 'all' ? null : initialRegion;
-  let activeDistrict = initialDistrict;
+  let activeCity = null;
+  let activeDistrict = 'all';
 
   function populateDistricts(region) {
     if (!districtFilter) {
@@ -96,7 +65,8 @@
       return currentValue;
     }
 
-    const normalizedCurrent = normalizeStateValue(currentValue);
+    const normalizedCurrent =
+      typeof currentValue === 'string' && currentValue.length ? currentValue : 'all';
     let hasCurrent = normalizedCurrent === 'all';
 
     const options = Array.from(categoryFilter.options || []);
@@ -165,10 +135,13 @@
       typeof activeCity === 'string' && activeCity.length
         ? activeCity
         : regionFilter
-        ? normalizeStateValue(regionFilter.value)
+        ? regionFilter.value
         : 'all';
-    const districtValue = normalizeStateValue(activeDistrict);
-    const rawCategoryValue = categoryFilter ? normalizeStateValue(categoryFilter.value) : 'all';
+    const districtValue =
+      typeof activeDistrict === 'string' && activeDistrict.length
+        ? activeDistrict
+        : 'all';
+    const rawCategoryValue = categoryFilter ? categoryFilter.value : 'all';
 
     const sectionVisibility = new Map();
     const availableCategories = new Set();
@@ -440,56 +413,14 @@
     });
   }
 
-  const normalizedInitialRegion =
-    activeCity || (regionFilter ? normalizeStateValue(regionFilter.value) : 'all');
+  populateDistricts(regionFilter ? regionFilter.value : 'all');
 
-  if (regionFilter) {
-    regionFilter.value = normalizedInitialRegion || 'all';
-  }
-
-  populateDistricts(normalizedInitialRegion || 'all');
-
-  if (activeCity) {
-    activateCity(activeCity, { apply: false, keepDistrict: true });
-  } else if (regionFilter && regionFilter.value && regionFilter.value !== 'all') {
+  if (regionFilter && regionFilter.value && regionFilter.value !== 'all') {
     syncCityFromRegion(regionFilter.value);
   } else {
     setActiveCity(null);
     renderDistrictBar(null);
-  }
-
-  const normalizedInitialDistrict = normalizeStateValue(activeDistrict);
-
-  if (normalizedInitialDistrict !== 'all') {
-    if (districtFilter) {
-      const hasOption = Array.from(districtFilter.options || []).some(
-        (option) => option.value === normalizedInitialDistrict
-      );
-
-      if (!hasOption) {
-        const option = document.createElement('option');
-        option.value = normalizedInitialDistrict;
-        option.textContent = normalizedInitialDistrict;
-        districtFilter.appendChild(option);
-      }
-    }
-
-    setActiveDistrict(normalizedInitialDistrict);
-  } else {
     setActiveDistrict('all');
-  }
-
-  if (categoryFilter) {
-    const normalizedInitialCategory = normalizeStateValue(initialCategory);
-    const hasCategoryOption = Array.from(categoryFilter.options || []).some(
-      (option) => option.value === normalizedInitialCategory
-    );
-
-    if (normalizedInitialCategory !== 'all' && hasCategoryOption) {
-      categoryFilter.value = normalizedInitialCategory;
-    } else {
-      categoryFilter.value = 'all';
-    }
   }
 
   applyFilters();
