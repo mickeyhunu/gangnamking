@@ -7,26 +7,40 @@
           <p class="section__subtitle"><%= t.areas && t.areas.subtitle ? t.areas.subtitle : '' %></p>
         </div>
       </div>
-      <div class="shop-grid" data-grid>
-        <% shops.forEach(function(shop) { %>
-          <article
-            class="shop-card"
-            data-region="<%= shop.region %>"
-            data-district="<%= shop.district %>"
-            data-category="<%= shop.category %>"
-            data-area-group="<%= shop.areaGroup %>"
-          >
-            <div class="shop-card__image">
-              <% if (shop.image) { %>
-                <img src="<%= shop.image %>" alt="<%= shop.imageAlt || shop.name %>" />
-              <% } %>
+      <div class="shop-groups">
+        <% (shopsByCategory || []).forEach(function(group) { %>
+          <section class="shop-category" data-category-section="<%= group.category %>">
+            <header class="shop-category__header">
+              <h3 class="shop-category__title"><%= group.category %></h3>
+            </header>
+            <div class="shop-grid" data-grid data-category-group="<%= group.category %>">
+              <% group.shops.forEach(function(shop) { %>
+                <article
+                  class="shop-card"
+                  data-region="<%= shop.region %>"
+                  data-district="<%= shop.district %>"
+                  data-category="<%= shop.category %>"
+                  data-area-group="<%= shop.areaGroup %>"
+                >
+                  <div class="shop-card__image">
+                    <% if (shop.image) { %>
+                      <img src="<%= shop.image %>" alt="<%= shop.imageAlt || shop.name %>" />
+                    <% } %>
+                  </div>
+                  <div class="shop-card__body">
+                    <div class="shop-card__info">
+                      <span class="shop-card__meta"><%= shop.region %> · <%= shop.district %></span>
+                      <h3 class="shop-card__name"><%= shop.name %></h3>
+                    </div>
+                    <span class="shop-card__category"><%= shop.category %></span>
+                    <a class="shop-card__link" href="/shops/<%= shop.id %>">
+                      <%= t.shop && t.shop.viewDetails ? t.shop.viewDetails : '' %>
+                    </a>
+                  </div>
+                </article>
+              <% }) %>
             </div>
-            <div class="shop-card__body">
-              <span class="shop-card__meta"><%= shop.region %> · <%= shop.district %> · <%= shop.category %></span>
-              <h3><%= shop.name %></h3>
-              <a class="shop-card__link" href="/shops/<%= shop.id %>"><%= t.shop && t.shop.viewDetails ? t.shop.viewDetails : '' %></a>
-            </div>
-          </article>
+          </section>
         <% }) %>
       </div>
     </div>

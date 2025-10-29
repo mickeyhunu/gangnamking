@@ -116,11 +116,16 @@ function renderIndex(req, res) {
   const localizedShops = getLocalizedShops(lang);
   const regions = [...new Set(localizedShops.map((shop) => shop.region))];
   const categories = [...new Set(localizedShops.map((shop) => shop.category))];
+  const shopsByCategory = categories.map((category) => ({
+    category,
+    shops: localizedShops.filter((shop) => shop.category === category),
+  }));
   const districtMap = buildDistrictMap(localizedShops);
   const seoKeywords = buildSeoKeywords(localizedShops);
 
   res.render('index', {
     shops: localizedShops,
+    shopsByCategory,
     regions,
     categories,
     districtMap,

@@ -3,6 +3,7 @@
   const districtFilter = document.getElementById('district-filter');
   const categoryFilter = document.getElementById('category-filter');
   const cards = document.querySelectorAll('[data-grid] .shop-card');
+  const categorySections = document.querySelectorAll('[data-category-section]');
   const searchButton = document.getElementById('search-button');
   const mappingElement = document.getElementById('region-district-data');
   const cityDataElement = document.getElementById('city-district-data');
@@ -105,12 +106,34 @@
         : 'all';
     const categoryValue = categoryFilter ? categoryFilter.value : 'all';
 
+    const sectionVisibility = new Map();
+
     cards.forEach((card) => {
       const matchesRegion = regionValue === 'all' || card.dataset.region === regionValue;
       const matchesDistrict = districtValue === 'all' || card.dataset.district === districtValue;
       const matchesCategory = categoryValue === 'all' || card.dataset.category === categoryValue;
 
-      card.style.display = matchesRegion && matchesDistrict && matchesCategory ? 'flex' : 'none';
+      const isVisible = matchesRegion && matchesDistrict && matchesCategory;
+      card.style.display = isVisible ? 'flex' : 'none';
+
+      const section = card.closest('[data-category-section]');
+      if (section) {
+        if (!sectionVisibility.has(section)) {
+          sectionVisibility.set(section, false);
+        }
+
+        if (isVisible) {
+          sectionVisibility.set(section, true);
+        }
+      }
+    });
+
+    categorySections.forEach((section) => {
+      if (sectionVisibility.get(section)) {
+        section.removeAttribute('hidden');
+      } else {
+        section.setAttribute('hidden', '');
+      }
     });
 
     notifySelectionChange(regionValue, districtValue, categoryValue);
@@ -327,7 +350,12 @@
   if (searchButton) {
     searchButton.addEventListener('click', () => {
       applyFilters();
-      const grid = document.querySelector('[data-grid]');
+      const firstVisibleSection = Array.from(categorySections || []).find(
+        (section) => !section.hasAttribute('hidden')
+      );
+      const grid = firstVisibleSection
+        ? firstVisibleSection.querySelector('[data-grid]')
+        : document.querySelector('[data-grid]');
       if (grid) {
         grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
