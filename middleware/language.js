@@ -1,5 +1,5 @@
 const { URLSearchParams } = require('url');
-const { detectLanguage, getCookieLanguage } = require('../lib/language');
+const { detectLanguage, getCookieLanguage, normalizeLanguage } = require('../lib/language');
 const {
   SUPPORTED_LANGUAGES,
   LANGUAGE_FLAGS,
@@ -12,14 +12,18 @@ const { getTranslations } = require('../services/dataStore');
 function buildLanguageOptions(req, activeLang, translations) {
   return SUPPORTED_LANGUAGES.map((code) => {
     const params = new URLSearchParams(req.query);
-    if (code === DEFAULT_LANGUAGE) {
-      params.delete('lang');
-    } else {
-      params.set('lang', code);
-    }
+    params.set('lang', code);
     const queryString = params.toString();
     const relativeUrl = `${req.path}${queryString ? `?${queryString}` : ''}`;
-    const absoluteUrl = `${req.protocol}://${req.get('host')}${relativeUrl}`;
+    let absoluteUrl = `${req.protocol}://${req.get('host')}${relativeUrl}`;
+
+    if (code === DEFAULT_LANGUAGE) {
+      const defaultParams = new URLSearchParams(req.query);
+      defaultParams.delete('lang');
+      const defaultQuery = defaultParams.toString();
+      const defaultRelativeUrl = `${req.path}${defaultQuery ? `?${defaultQuery}` : ''}`;
+      absoluteUrl = `${req.protocol}://${req.get('host')}${defaultRelativeUrl}`;
+    }
 
     const flag = LANGUAGE_FLAGS[code] || {};
 
@@ -48,6 +52,23 @@ function languageMiddleware(req, res, next) {
       httpOnly: false,
       sameSite: 'lax',
     });
+  }
+  const requestedLang = normalizeLanguage(req.query.lang);
+  const shouldRedirectToDefault =
+    requestedLang === DEFAULT_LANGUAGE &&
+    activeLang === DEFAULT_LANGUAGE &&
+    typeof req.method === 'string' &&
+    req.method.toUpperCase() === 'GET';
+
+  if (shouldRedirectToDefault) {
+    const params = new URLSearchParams(req.query);
+    params.delete('lang');
+    const queryString = params.toString();
+    const redirectUrl = `${req.path}${queryString ? `?${queryString}` : ''}`;
+
+    if (redirectUrl !== req.originalUrl) {
+      return res.redirect(302, redirectUrl);
+    }
   }
   const languageOptions = buildLanguageOptions(req, activeLang, translations);
   const currentLanguageOption = languageOptions.find((item) => item.isCurrent) || languageOptions[0];
