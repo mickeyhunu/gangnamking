@@ -69,62 +69,66 @@
   description: metaDescription,
   seoKeywords
 }) %>
-  <section class="detail-hero">
-    <div class="container detail-hero__grid">
-      <div class="detail-gallery detail-gallery--static">
-        <% if (primaryImage) { %>
-          <figure class="detail-gallery__slide detail-gallery__slide--static">
-            <img src="<%= primaryImage.src %>" alt="<%= primaryImage.alt %>" />
-          </figure>
-        <% } else { %>
-          <div class="detail-gallery__placeholder" aria-hidden="true"></div>
-        <% } %>
-      </div>
-      <div class="detail-hero__info">
-        <p class="detail-hero__meta"><%= shop.region %> · <%= shop.district %> · <%= shop.category %></p>
-        <h1><%= shop.name %></h1>
-        <dl class="detail-hero__list">
-          <div>
-            <dt><%= t.shop && t.shop.address ? t.shop.address : 'Address' %></dt>
-            <dd><%= shop.address %></dd>
+  <section class="section detail-section detail-hero">
+    <div class="container">
+      <div class="detail-section__grid detail-hero__grid">
+        <div class="detail-card detail-card--flush detail-hero__media">
+          <div class="detail-gallery detail-gallery--static">
+            <% if (primaryImage) { %>
+              <figure class="detail-gallery__slide detail-gallery__slide--static">
+                <img src="<%= primaryImage.src %>" alt="<%= primaryImage.alt %>" />
+              </figure>
+            <% } else { %>
+              <div class="detail-gallery__placeholder" aria-hidden="true"></div>
+            <% } %>
           </div>
-          <div>
-            <dt><%= t.shop && t.shop.hours ? t.shop.hours : 'Hours' %></dt>
-            <dd><%= shop.hours %></dd>
-          </div>
-          <% if (hasManagerInfo) { %>
-            <div class="detail-hero__manager">
-              <dt><%= managerTitleText %></dt>
-              <dd>
-                <ul class="detail-hero__manager-list">
-                  <% if (managerName) { %>
-                    <li class="detail-hero__manager-item">
-                      <span class="detail-hero__manager-label"><%= managerNameLabel %></span>
-                      <span class="detail-hero__manager-value"><%= managerName %></span>
-                    </li>
-                  <% } %>
-                  <% if (managerPhone) { %>
-                    <li class="detail-hero__manager-item">
-                      <span class="detail-hero__manager-label"><%= managerPhoneLabel %></span>
-                      <a class="detail-hero__manager-link" href="<%= managerPhoneHref %>">
-                        <%= managerPhone %>
-                      </a>
-                    </li>
-                  <% } %>
-                  <% if (managerKakao) { %>
-                    <li class="detail-hero__manager-item">
-                      <span class="detail-hero__manager-label"><%= managerKakaoLabel %></span>
-                      <span class="detail-hero__manager-value"><%= managerKakao %></span>
-                    </li>
-                  <% } %>
-                </ul>
-              </dd>
-            </div>
-          <% } %>
-        </dl>
-        <div class="detail-hero__actions">
-          <a class="back-link" href="/"><%= t.shop && t.shop.back ? t.shop.back : 'Back to home' %></a>
         </div>
+        <article class="detail-card detail-hero__info">
+          <p class="detail-hero__meta"><%= shop.region %> · <%= shop.district %> · <%= shop.category %></p>
+          <h1><%= shop.name %></h1>
+          <dl class="detail-hero__list">
+            <div>
+              <dt><%= t.shop && t.shop.address ? t.shop.address : 'Address' %></dt>
+              <dd><%= shop.address %></dd>
+            </div>
+            <div>
+              <dt><%= t.shop && t.shop.hours ? t.shop.hours : 'Hours' %></dt>
+              <dd><%= shop.hours %></dd>
+            </div>
+            <% if (hasManagerInfo) { %>
+              <div class="detail-hero__manager">
+                <dt><%= managerTitleText %></dt>
+                <dd>
+                  <ul class="detail-hero__manager-list">
+                    <% if (managerName) { %>
+                      <li class="detail-hero__manager-item">
+                        <span class="detail-hero__manager-label"><%= managerNameLabel %></span>
+                        <span class="detail-hero__manager-value"><%= managerName %></span>
+                      </li>
+                    <% } %>
+                    <% if (managerPhone) { %>
+                      <li class="detail-hero__manager-item">
+                        <span class="detail-hero__manager-label"><%= managerPhoneLabel %></span>
+                        <a class="detail-hero__manager-link" href="<%= managerPhoneHref %>">
+                          <%= managerPhone %>
+                        </a>
+                      </li>
+                    <% } %>
+                    <% if (managerKakao) { %>
+                      <li class="detail-hero__manager-item">
+                        <span class="detail-hero__manager-label"><%= managerKakaoLabel %></span>
+                        <span class="detail-hero__manager-value"><%= managerKakao %></span>
+                      </li>
+                    <% } %>
+                  </ul>
+                </dd>
+              </div>
+            <% } %>
+          </dl>
+          <div class="detail-hero__actions">
+            <a class="back-link" href="/"><%= t.shop && t.shop.back ? t.shop.back : 'Back to home' %></a>
+          </div>
+        </article>
       </div>
     </div>
   </section>
