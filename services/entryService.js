@@ -112,6 +112,21 @@ async function fetchEntriesForStore(storeNo, options = {}) {
   }
 }
 
+async function fetchEntryWorkerNames(storeNo, options = {}) {
+  const entries = await fetchEntriesForStore(storeNo, options);
+
+  if (!Array.isArray(entries) || !entries.length) {
+    return [];
+  }
+
+  const workerNames = entries
+    .map((entry) => (entry && typeof entry.workerName === 'string' ? entry.workerName.trim() : ''))
+    .filter(Boolean);
+
+  return [...new Set(workerNames)];
+}
+
 module.exports = {
   fetchEntriesForStore,
+  fetchEntryWorkerNames,
 };
