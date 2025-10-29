@@ -217,6 +217,89 @@ function parseErrorBody(error) {
   }
 }
 
+function extractResponseError(error) {
+  const parsed = parseErrorBody(error);
+  if (!parsed || typeof parsed.error !== 'object' || !parsed.error) {
+    return null;
+  }
+
+  const responseError = parsed.error;
+  const rawCode = responseError.errorCode;
+
+  return {
+    statusCode: Number(error && error.statusCode) || null,
+    errorCode: typeof rawCode === 'string' || typeof rawCode === 'number'
+      ? String(rawCode).trim()
+      : null,
+    message: typeof responseError.message === 'string' ? responseError.message : '',
+  };
+}
+
+function inferAuthReason(error) {
+  if (!error) {
+    return null;
+  }
+
+  if (error.message === 'Naver Map credentials are not configured.') {
+    return 'missing_credentials';
+  }
+
+  const statusCode = Number(error.statusCode);
+  if (statusCode === 401) {
+    return 'invalid_credentials';
+  }
+
+  if (statusCode === 403) {
+    return 'permission_denied';
+  }
+
+  const responseError = extractResponseError(error);
+  if (responseError && responseError.errorCode) {
+    const normalized = responseError.errorCode.toUpperCase();
+
+    if (normalized === '210') {
+      return 'permission_denied';
+    }
+
+    if (normalized === '024') {
+      return 'invalid_credentials';
+    }
+
+    if (normalized === '010' || normalized === '011' || normalized === '012') {
+      return 'subscription_required';
+    }
+  }
+
+  return null;
+}
+
+function isNaverAuthError(error) {
+  if (!error) {
+    return false;
+  }
+
+  if (error.message === 'Naver Map credentials are not configured.') {
+    return true;
+  }
+
+  const statusCode = Number(error.statusCode);
+  if (statusCode === 401 || statusCode === 403) {
+    return true;
+  }
+
+  const responseError = extractResponseError(error);
+  if (!responseError) {
+    return false;
+  }
+
+  if (responseError.errorCode) {
+    const normalized = responseError.errorCode.toUpperCase();
+    return normalized === '024' || normalized === '010' || normalized === '011' || normalized === '012' || normalized === '210';
+  }
+
+  return false;
+}
+
 async function attemptProvider(queue, provider) {
   const { name, request, formatResult, isAuthError, authErrorCode, extractAuthDetails } = provider;
   let authError = null;
@@ -337,9 +420,7 @@ async function fetchShopLocation({ address, district, region }) {
         englishAddress: result.englishAddress,
         queryUsed: result.query,
       }),
-      isAuthError: (error) =>
-        Number(error && error.statusCode) === 401 ||
-        (error && error.message === 'Naver Map credentials are not configured.'),
+        isAuthError: (error) => isNaverAuthError(error),
       authErrorCode: 'NAVER_MAP_AUTH',
       extractAuthDetails: (error) => {
         if (!error) {
@@ -355,17 +436,25 @@ async function fetchShopLocation({ address, district, region }) {
           };
         }
 
-        const parsed = parseErrorBody(error);
-        const responseError = parsed && parsed.error ? parsed.error : null;
+        const responseError = extractResponseError(error);
+        const reason = inferAuthReason(error);
+        const logMessage = responseError
+          ? `Authentication failed: ${responseError.message || 'Permission denied'} (code ${
+              responseError.errorCode || 'unknown'
+            })`
+          : reason === 'permission_denied'
+          ? 'Authentication failed: Permission denied. Falling back to alternative provider.'
+          : reason === 'subscription_required'
+          ? 'Authentication failed: Maps subscription is not enabled. Falling back to alternative provider.'
+          : 'Authentication failed with status 401. Falling back to alternative provider.';
 
         return {
-          logMessage: responseError
-            ? `Authentication failed: ${responseError.message || 'Permission denied'} (code ${responseError.errorCode || 'unknown'})`
-            : 'Authentication failed with status 401. Falling back to alternative provider.',
+          logMessage,
           details: {
             statusCode: Number(error.statusCode) || null,
             errorCode: responseError && responseError.errorCode ? responseError.errorCode : null,
             providerMessage: responseError && responseError.message ? responseError.message : null,
+            reason: reason || (responseError ? 'unknown' : null),
           },
         };
       },
