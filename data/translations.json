@@ -10,103 +10,39 @@
       "shopTitleSuffix": " - 룸빵1번지"
     },
     "header": {
-      "tagline": "전국 최저가 룸 · 라운지 컨시어지",
-      "affiliate": "제휴 문의",
-      "support": "고객센터 010-5733-8710",
-      "nav": {
-        "areas": "추천 지역",
-        "categories": "업종별 찾기",
-        "process": "진행 절차",
-        "consult": "제휴 안내"
-      },
-      "browseCta": "바로 둘러보기",
-      "consultCta": "빠른 상담",
       "languageLabel": "언어"
     },
     "quickRegions": {
-      "label": "지역 빠른 선택",
-      "all": "전체",
-      "gangnam": "강남",
-      "nonGangnam": "비강남"
+      "label": "지역 빠른 선택"
     },
     "hero": {
-      "badge": "강남 전역 최저가 보장 큐레이션",
-      "headline": "강남에서 가장 저렴한 단독 특가, 룸빵1번지가 책임집니다",
-      "description": "강남 핵심 상권을 지역 → 구 → 업종으로 나눠 최저가 조건을 즉시 비교하세요. 모든 파트너는 직접 검증하고 가격 협상을 완료한 곳만 소개합니다.",
       "filters": {
-        "region": "지역",
-        "district": "구 / 군",
-        "category": "업종",
-        "all": "전체",
-        "action": "최저가 찾기"
-      },
-      "highlights": [
-        "강남 전역 최저가 비교",
-        "예약 시 추가 할인 혜택",
-        "실시간 1:1 컨시어지 지원"
-      ],
-      "stats": {
-        "shops": "강남 최저가 제휴 매장",
-        "response": "365일 빠른 응대",
-        "concierge": "맞춤형 예약 컨시어지"
+        "all": "전체"
       }
     },
     "areas": {
       "title": "강남 핵심 역별 최저가 매장",
-      "subtitle": "강남 지역, 구, 업종 필터로 원하는 조건의 최저가 제휴처를 바로 확인하세요.",
-      "cta": "최저가 제휴 문의"
-    },
-    "categories": {
-      "title": "업종별 강남 최저가",
-      "subtitle": "업종 필터를 통해 원하는 강남 업소의 최저가 혜택만 모아보세요."
-    },
-    "process": {
-      "title": "최저가 이용 방법",
-      "steps": [
-        {
-          "number": "01",
-          "title": "강남 지역 · 업종 선택",
-          "description": "원하는 강남 구와 업종을 지정하면 최저가 제휴 매장을 바로 추천합니다."
-        },
-        {
-          "number": "02",
-          "title": "전담 컨시어지 견적",
-          "description": "전담 컨시어지가 실시간으로 가격을 비교해 가장 저렴한 조건을 안내합니다."
-        },
-        {
-          "number": "03",
-          "title": "최저가 예약 확정",
-          "description": "예약 확정과 동시에 추가 할인과 전용 혜택을 적용해 가장 합리적인 밤을 준비하세요."
-        }
-      ]
-    },
-    "cta": {
-      "title": "전국 최저가 파트너 합류하기",
-      "subtitle": "룸빵1번지와 함께 전국 최저가 프로모션을 진행하고 더 많은 고객을 만나보세요.",
-      "button": "최저가 제휴 상담"
+      "subtitle": "강남 지역, 구, 업종 필터로 원하는 조건의 최저가 제휴처를 바로 확인하세요."
     },
     "footer": {
       "title": "룸빵1번지",
       "description": "전국 핵심 상권의 룸과 라운지를 최저가로 연결하는 원스톱 컨시어지 플랫폼입니다.",
       "contactTitle": "상담 안내",
+      "contactHours": "24시",
+      "kakaoId": "@gangnamking98",
+      "copyright": "© {year} 룸빵1번지. All rights reserved.",
       "contact": {
         "partner": "제휴 문의",
         "hours": "운영 시간",
         "kakao": "카카오톡"
-      },
-      "contactHours": "24시",
-      "kakaoId": "@gangnamking98",
-      "copyright": "© {year} 룸빵1번지. All rights reserved."
+      }
     },
     "shop": {
       "back": "메인으로 돌아가기",
-      "call": "즉시 전화 상담",
       "address": "주소",
-      "postalCode": "우편번호",
-      "phone": "대표 전화",
-      "manager": "담당 매니저",
-      "managerContact": "전담 매니저가 예약, 혜택, 행사 문의를 실시간으로 응대해드립니다.",
       "hours": "영업시간",
+      "viewDetails": "자세히 보기",
+      "galleryAltFallback": "분위기",
       "map": {
         "title": "위치 안내",
         "loading": "지도를 불러오는 중입니다...",
@@ -128,13 +64,7 @@
         "empty": "등록된 출근부 정보가 없습니다.",
         "topListTitle": "추천 아가씨 TOP 5",
         "topListEmpty": "추천 데이터가 없습니다.",
-        "topListScoreLabel": "합계",
-        "columns": {
-          "worker": "담당자",
-          "mentionCount": "멘션 수",
-          "insertCount": "입장 수",
-          "createdAt": "기록 시간"
-        }
+        "topListScoreLabel": "합계"
       },
       "pricingHighlight": {
         "badge": "업소 정보",
@@ -146,53 +76,72 @@
       "pricingTable": [
         {
           "label": "오후 9시 이전",
-          "charges": { "base": 9, "tc": 12, "rt": 5 },
+          "charges": {
+            "base": 9,
+            "tc": 12,
+            "rt": 5
+          },
           "guests": [
-            { "count": 1, "label": "1인" },
-            { "count": 2, "label": "2인" },
-            { "count": 3, "label": "3인" },
-            { "count": 4, "label": "4인" }
+            {
+              "count": 1,
+              "label": "1인"
+            },
+            {
+              "count": 2,
+              "label": "2인"
+            },
+            {
+              "count": 3,
+              "label": "3인"
+            },
+            {
+              "count": 4,
+              "label": "4인"
+            }
           ],
-          "amount": { "suffix": "만" }
+          "amount": {
+            "suffix": "만"
+          }
         },
         {
           "label": "오후 9시 이후",
-          "charges": { "base": 13, "tc": 12, "rt": 5 },
+          "charges": {
+            "base": 13,
+            "tc": 12,
+            "rt": 5
+          },
           "guests": [
-            { "count": 1, "label": "1인" },
-            { "count": 2, "label": "2인" },
-            { "count": 3, "label": "3인" },
-            { "count": 4, "label": "4인" }
+            {
+              "count": 1,
+              "label": "1인"
+            },
+            {
+              "count": 2,
+              "label": "2인"
+            },
+            {
+              "count": 3,
+              "label": "3인"
+            },
+            {
+              "count": 4,
+              "label": "4인"
+            }
           ],
-          "amount": { "suffix": "만" }
+          "amount": {
+            "suffix": "만"
+          }
         }
       ],
       "services": [
         "강남권 픽업 서비스",
         "발렛파킹 서비스"
       ],
-      "contact": {
-        "title": "담당자 상담 채널",
-        "manager": "담당자",
-        "phone": "연락처",
-        "kakao": "카카오톡"
-      },
-      "highlights": "핵심 포인트",
-      "seo": {
-        "title": "SEO 키워드 프리셋",
-        "description": "현재 등록된 키워드는 검색 노출 향상을 위해 메타 태그로 자동 반영됩니다. 필요에 따라 아래 편집기를 활용해 키워드를 다듬고, 저장을 위해 운영팀에 전달하세요.",
-        "editorLabel": "키워드 작성",
-        "copy": "키워드 복사",
-        "copySuccess": "키워드를 복사했습니다. 운영팀에 전달해 반영해주세요.",
-        "copyError": "복사에 실패했습니다. 직접 복사해주세요."
-      },
       "gallery": {
         "prev": "이전 이미지",
         "next": "다음 이미지",
         "dotLabel": "{{index}}번 이미지 보기"
-      },
-      "viewDetails": "자세히 보기",
-      "galleryAltFallback": "분위기"
+      }
     },
     "notFound": {
       "title": "페이지를 찾을 수 없습니다.",
@@ -211,109 +160,43 @@
       "shopTitleSuffix": " – Roombbang First"
     },
     "header": {
-      "tagline": "Premium room & lounge concierge platform",
-      "affiliate": "Partnership Inquiry",
-      "support": "Support 010-5733-8710",
-      "nav": {
-        "areas": "Featured Areas",
-        "categories": "Browse by Category",
-        "process": "How It Works",
-        "consult": "Partner Program"
-      },
-      "browseCta": "Explore Now",
-      "consultCta": "Quick Consultation",
       "languageLabel": "Language"
     },
     "quickRegions": {
-      "label": "Browse by area",
-      "all": "All",
-      "gangnam": "Gangnam",
-      "nonGangnam": "Other areas"
+      "label": "Browse by area"
     },
     "hero": {
-      "badge": "Seoul · Capital Area · Busan premium curation",
-      "headline": "From Gangnam to Haeundae, discover the hottest nightlife picks",
-      "description": "Use the region → district → category filters to instantly find a venue that matches your mood. Every partner is vetted in person by the Roombbang First concierge team.",
       "filters": {
-        "region": "Region",
-        "district": "District",
-        "category": "Category",
-        "all": "All",
-        "action": "Search"
-      },
-      "highlights": [
-        "Live reservation concierge",
-        "Dedicated specialist assigned",
-        "VIP-tailored course suggestions"
-      ],
-      "stats": {
-        "shops": "Partner premium venues",
-        "response": "Rapid support 24/7",
-        "concierge": "1:1 tailored concierge"
+        "all": "All"
       }
     },
     "areas": {
       "title": "Featured lounges & clubs by station",
-      "subtitle": "Combine the filters to quickly surface venues that meet your criteria.",
-      "cta": "Contact Partnerships"
-    },
-    "categories": {
-      "title": "Browse by category",
-      "subtitle": "Select a category in the filter to focus on the venues you want."
-    },
-    "process": {
-      "title": "How it works",
-      "steps": [
-        {
-          "number": "01",
-          "title": "Pick your ideal filters",
-          "description": "Set your preferred region and category to receive matching partner venues."
-        },
-        {
-          "number": "02",
-          "title": "Get matched with a concierge",
-          "description": "A dedicated concierge guides you through schedules and benefits the moment you tap consult."
-        },
-        {
-          "number": "03",
-          "title": "Reserve and arrive",
-          "description": "Once confirmed, enjoy a flawless night out with exclusive perks prepared for you."
-        }
-      ]
-    },
-    "cta": {
-      "title": "Become a partner venue",
-      "subtitle": "Join the Roombbang First network to meet more premium clientele.",
-      "button": "Call partnership concierge"
+      "subtitle": "Combine the filters to quickly surface venues that meet your criteria."
     },
     "footer": {
       "title": "Roombbang First",
       "description": "A one-stop concierge platform connecting premium rooms and lounges in Seoul, the capital region, and Busan.",
       "contactTitle": "Contact",
+      "contactHours": "12:00 – 03:00",
+      "kakaoId": "@gangnamking98",
+      "copyright": "© {year} Roombbang First. All rights reserved.",
       "contact": {
         "partner": "Partnership line",
         "hours": "Service hours",
         "kakao": "KakaoTalk"
       },
-      "contactHours": "12:00 – 03:00",
-      "kakaoId": "@gangnamking98",
       "quickLinksTitle": "Quick links",
       "links": {
-        "areas": "Featured areas",
-        "categories": "Browse by category",
-        "process": "How it works"
-      },
-      "copyright": "© {year} Roombbang First. All rights reserved."
+        "areas": "Featured areas"
+      }
     },
     "shop": {
       "back": "Back to home",
-      "call": "Call concierge",
       "address": "Address",
-      "postalCode": "Postal code",
-      "phone": "Main line",
-      "manager": "Concierge",
-      "managerContact": "Your dedicated manager answers reservations, perks, and event requests in real time.",
       "hours": "Business hours",
+      "viewDetails": "View details",
+      "galleryAltFallback": "ambience",
       "map": {
         "title": "Location",
         "loading": "Loading map...",
@@ -335,31 +218,40 @@
         "empty": "No attendance activity has been recorded yet.",
         "topListTitle": "Top Recommended",
         "topListEmpty": "No recommendation data is available.",
-        "topListScoreLabel": "Score",
-        "columns": {
-          "worker": "Manager",
-          "mentionCount": "Mentions",
-          "insertCount": "Check-ins",
-          "createdAt": "Logged at"
-        }
+        "topListScoreLabel": "Score"
       },
       "pricingHighlight": {
         "badge": "Pricing spotlight",
         "region": "Area",
         "category": "Category",
         "brand": "Venue",
-        "perPerson": "Per person",
         "perPersonContext": "Based on"
       },
       "pricingTable": [
         {
           "label": "Before 9 PM",
-          "charges": { "base": 10, "tc": 12, "rt": 5 },
+          "charges": {
+            "base": 10,
+            "tc": 12,
+            "rt": 5
+          },
           "guests": [
-            { "count": 1, "label": "1 guest" },
-            { "count": 2, "label": "2 guests" },
-            { "count": 3, "label": "3 guests" },
-            { "count": 4, "label": "4 guests" }
+            {
+              "count": 1,
+              "label": "1 guest"
+            },
+            {
+              "count": 2,
+              "label": "2 guests"
+            },
+            {
+              "count": 3,
+              "label": "3 guests"
+            },
+            {
+              "count": 4,
+              "label": "4 guests"
+            }
           ],
           "amount": {
             "multiplier": 10000,
@@ -367,16 +259,36 @@
             "locale": "en-US",
             "useGrouping": true
           },
-          "metaLabels": { "base": "Cover", "tc": "TC", "rt": "RT" }
+          "metaLabels": {
+            "base": "Cover",
+            "tc": "TC",
+            "rt": "RT"
+          }
         },
         {
           "label": "After 9 PM",
-          "charges": { "base": 13, "tc": 12, "rt": 5 },
+          "charges": {
+            "base": 13,
+            "tc": 12,
+            "rt": 5
+          },
           "guests": [
-            { "count": 1, "label": "1 guest" },
-            { "count": 2, "label": "2 guests" },
-            { "count": 3, "label": "3 guests" },
-            { "count": 4, "label": "4 guests" }
+            {
+              "count": 1,
+              "label": "1 guest"
+            },
+            {
+              "count": 2,
+              "label": "2 guests"
+            },
+            {
+              "count": 3,
+              "label": "3 guests"
+            },
+            {
+              "count": 4,
+              "label": "4 guests"
+            }
           ],
           "amount": {
             "multiplier": 10000,
@@ -384,35 +296,22 @@
             "locale": "en-US",
             "useGrouping": true
           },
-          "metaLabels": { "base": "Cover", "tc": "TC", "rt": "RT" }
+          "metaLabels": {
+            "base": "Cover",
+            "tc": "TC",
+            "rt": "RT"
+          }
         }
       ],
       "services": [
         "Gangnam pickup service",
         "Valet parking service"
       ],
-      "contact": {
-        "title": "Concierge contact",
-        "manager": "Manager",
-        "phone": "Phone",
-        "kakao": "KakaoTalk"
-      },
-      "highlights": "Highlights",
-      "seo": {
-        "title": "SEO keyword preset",
-        "description": "Registered keywords are automatically reflected in meta tags to improve search visibility. Refine them below and share with the operations team to update.",
-        "editorLabel": "Write keywords",
-        "copy": "Copy keywords",
-        "copySuccess": "Keywords copied. Share them with the ops team for publishing.",
-        "copyError": "Copy failed. Please copy them manually."
-      },
       "gallery": {
         "prev": "Previous image",
         "next": "Next image",
         "dotLabel": "View image {{index}}"
-      },
-      "viewDetails": "View details",
-      "galleryAltFallback": "ambience"
+      }
     },
     "notFound": {
       "title": "Page not found",
@@ -431,109 +330,43 @@
       "shopTitleSuffix": " – 房房一番地"
     },
     "header": {
-      "tagline": "精品包廂・酒廊專屬管家平台",
-      "affiliate": "合作洽詢",
-      "support": "客服 010-5733-8710",
-      "nav": {
-        "areas": "推薦地區",
-        "categories": "依類型搜尋",
-        "process": "服務流程",
-        "consult": "合作指南"
-      },
-      "browseCta": "立即瀏覽",
-      "consultCta": "快速諮詢",
       "languageLabel": "語言"
     },
     "quickRegions": {
-      "label": "快速選擇地區",
-      "all": "全部",
-      "gangnam": "江南",
-      "nonGangnam": "其他地區"
+      "label": "快速選擇地區"
     },
     "hero": {
-      "badge": "首爾・首都圈・釜山精品策展",
-      "headline": "從江南到海雲台，發現最熱門的夜生活場域",
-      "description": "運用「地區 → 行政區 → 類型」的進階篩選，即刻找到符合情境的空間。所有合作店家皆由房房一番地管家團隊親自審核。",
       "filters": {
-        "region": "地區",
-        "district": "行政區",
-        "category": "類型",
-        "all": "全部",
-        "action": "搜尋"
-      },
-      "highlights": [
-        "即時預約諮詢",
-        "專屬管家服務",
-        "VIP 客製行程"
-      ],
-      "stats": {
-        "shops": "合作精品場館",
-        "response": "全年無休即時回覆",
-        "concierge": "一對一貼身管家"
+        "all": "全部"
       }
     },
     "areas": {
       "title": "推薦站點酒廊與夜店",
-      "subtitle": "靈活組合篩選條件，快速找到理想店家。",
-      "cta": "合作洽談"
-    },
-    "categories": {
-      "title": "依類型快速瀏覽",
-      "subtitle": "在篩選器中選擇想要的類型，即可專注檢視相關店家。"
-    },
-    "process": {
-      "title": "服務流程",
-      "steps": [
-        {
-          "number": "01",
-          "title": "選擇條件",
-          "description": "設定地區與類型，立即獲得最匹配的合作店家。"
-        },
-        {
-          "number": "02",
-          "title": "連線專屬管家",
-          "description": "點擊諮詢後，專屬管家將細心說明行程與優惠。"
-        },
-        {
-          "number": "03",
-          "title": "預約與到訪",
-          "description": "確認預約後，即享有專屬禮遇與完美夜晚。"
-        }
-      ]
-    },
-    "cta": {
-      "title": "成為合作夥伴",
-      "subtitle": "加入房房一番地網絡，接觸更多高端客群。",
-      "button": "立即聯絡合作管家"
+      "subtitle": "靈活組合篩選條件，快速找到理想店家。"
     },
     "footer": {
       "title": "房房一番地",
       "description": "連結首爾、首都圈與釜山頂級包廂與酒廊的一站式管家平台。",
       "contactTitle": "聯絡資訊",
+      "contactHours": "12:00 – 03:00",
+      "kakaoId": "@gangnamking98",
+      "copyright": "© {year} 房房一番地. All rights reserved.",
       "contact": {
         "partner": "合作專線",
         "hours": "服務時間",
         "kakao": "KakaoTalk"
       },
-      "contactHours": "12:00 – 03:00",
-      "kakaoId": "@gangnamking98",
       "quickLinksTitle": "快速導覽",
       "links": {
-        "areas": "推薦地區",
-        "categories": "依類型搜尋",
-        "process": "服務流程"
-      },
-      "copyright": "© {year} 房房一番地. All rights reserved."
+        "areas": "推薦地區"
+      }
     },
     "shop": {
       "back": "返回首頁",
-      "call": "立即致電管家",
       "address": "地址",
-      "postalCode": "郵遞區號",
-      "phone": "聯絡電話",
-      "manager": "專屬管家",
-      "managerContact": "專屬管家即時為您處理預約、禮遇與活動諮詢。",
       "hours": "營業時間",
+      "viewDetails": "查看詳情",
+      "galleryAltFallback": "氛圍",
       "map": {
         "title": "位置指南",
         "loading": "正在載入地圖...",
@@ -555,31 +388,40 @@
         "empty": "尚無出勤紀錄。",
         "topListTitle": "推薦小姐 TOP 5",
         "topListEmpty": "尚無推薦資料。",
-        "topListScoreLabel": "總分",
-        "columns": {
-          "worker": "負責人",
-          "mentionCount": "提及次數",
-          "insertCount": "入場次數",
-          "createdAt": "紀錄時間"
-        }
+        "topListScoreLabel": "總分"
       },
       "pricingHighlight": {
         "badge": "價格指南",
         "region": "地區",
         "category": "類型",
         "brand": "商號",
-        "perPerson": "每人價格",
         "perPersonContext": "基準"
       },
       "pricingTable": [
         {
           "label": "晚9點前",
-          "charges": { "base": 10, "tc": 12, "rt": 5 },
+          "charges": {
+            "base": 10,
+            "tc": 12,
+            "rt": 5
+          },
           "guests": [
-            { "count": 1, "label": "1人" },
-            { "count": 2, "label": "2人" },
-            { "count": 3, "label": "3人" },
-            { "count": 4, "label": "4人" }
+            {
+              "count": 1,
+              "label": "1人"
+            },
+            {
+              "count": 2,
+              "label": "2人"
+            },
+            {
+              "count": 3,
+              "label": "3人"
+            },
+            {
+              "count": 4,
+              "label": "4人"
+            }
           ],
           "amount": {
             "multiplier": 10000,
@@ -590,12 +432,28 @@
         },
         {
           "label": "晚9點後",
-          "charges": { "base": 13, "tc": 12, "rt": 5 },
+          "charges": {
+            "base": 13,
+            "tc": 12,
+            "rt": 5
+          },
           "guests": [
-            { "count": 1, "label": "1人" },
-            { "count": 2, "label": "2人" },
-            { "count": 3, "label": "3人" },
-            { "count": 4, "label": "4人" }
+            {
+              "count": 1,
+              "label": "1人"
+            },
+            {
+              "count": 2,
+              "label": "2人"
+            },
+            {
+              "count": 3,
+              "label": "3人"
+            },
+            {
+              "count": 4,
+              "label": "4人"
+            }
           ],
           "amount": {
             "multiplier": 10000,
@@ -609,28 +467,11 @@
         "江南地區接送服務",
         "代客泊車服務"
       ],
-      "contact": {
-        "title": "管家聯絡方式",
-        "manager": "管家",
-        "phone": "電話",
-        "kakao": "KakaoTalk"
-      },
-      "highlights": "亮點特色",
-      "seo": {
-        "title": "SEO 關鍵字範本",
-        "description": "已登錄的關鍵字會自動寫入中繼資料以提升搜尋曝光。可在下方調整並回報營運團隊更新。",
-        "editorLabel": "撰寫關鍵字",
-        "copy": "複製關鍵字",
-        "copySuccess": "已複製關鍵字，請轉交營運團隊更新。",
-        "copyError": "複製失敗，請手動複製。"
-      },
       "gallery": {
         "prev": "上一張圖片",
         "next": "下一張圖片",
         "dotLabel": "檢視第 {{index}} 張圖片"
-      },
-      "viewDetails": "查看詳情",
-      "galleryAltFallback": "氛圍"
+      }
     },
     "notFound": {
       "title": "找不到頁面",
@@ -649,109 +490,43 @@
       "shopTitleSuffix": " – ルンパン一番地"
     },
     "header": {
-      "tagline": "プレミアム ルーム＆ラウンジのコンシェルジュプラットフォーム",
-      "affiliate": "提携のお問い合わせ",
-      "support": "サポート 010-5733-8710",
-      "nav": {
-        "areas": "おすすめエリア",
-        "categories": "業種で探す",
-        "process": "ご利用の流れ",
-        "consult": "提携ガイド"
-      },
-      "browseCta": "今すぐ見る",
-      "consultCta": "スピード相談",
       "languageLabel": "言語"
     },
     "quickRegions": {
-      "label": "エリアを選択",
-      "all": "すべて",
-      "gangnam": "カンナム",
-      "nonGangnam": "その他"
+      "label": "エリアを選択"
     },
     "hero": {
-      "badge": "ソウル・首都圏・釜山のプレミアム厳選",
-      "headline": "江南から海雲台まで、ルンパン一番地が選ぶ夜のホットスポット",
-      "description": "エリア → 区域 → 業種のフィルターで、ムードに合った店舗をすぐに見つけましょう。すべてのパートナーはルンパン一番地の専門チームが直接審査しています。",
       "filters": {
-        "region": "地域",
-        "district": "区・郡",
-        "category": "業種",
-        "all": "すべて",
-        "action": "検索"
-      },
-      "highlights": [
-        "リアルタイム予約コンシェルジュ",
-        "専任スペシャリストが対応",
-        "VIP向けカスタムコース"
-      ],
-      "stats": {
-        "shops": "提携プレミアム店舗",
-        "response": "365日迅速対応",
-        "concierge": "オーダーメイド予約サポート"
+        "all": "すべて"
       }
     },
     "areas": {
       "title": "おすすめ駅別ラウンジ＆クラブ",
-      "subtitle": "地域・区・業種のフィルターを組み合わせて、理想の店舗を素早く探しましょう。",
-      "cta": "提携の相談をする"
-    },
-    "categories": {
-      "title": "業種別クイック検索",
-      "subtitle": "フィルターで希望の業種を選べば、対象店舗だけをまとめて確認できます。"
-    },
-    "process": {
-      "title": "ご利用の流れ",
-      "steps": [
-        {
-          "number": "01",
-          "title": "フィルターで条件を選択",
-          "description": "地域と業種を指定すると、最適な提携店舗をご案内します。"
-        },
-        {
-          "number": "02",
-          "title": "専任コンシェルジュと連携",
-          "description": "相談ボタンからつながる専任コンシェルジュが、スケジュールや特典を丁寧にご紹介します。"
-        },
-        {
-          "number": "03",
-          "title": "予約して来店",
-          "description": "予約確定後は、特別な優待とともに完璧な夜をお楽しみいただけるようサポートします。"
-        }
-      ]
-    },
-    "cta": {
-      "title": "提携パートナーになりませんか",
-      "subtitle": "ルンパン一番地のネットワークに参加して、より多くのプレミアム顧客と出会いましょう。",
-      "button": "提携相談へ進む"
+      "subtitle": "地域・区・業種のフィルターを組み合わせて、理想の店舗を素早く探しましょう。"
     },
     "footer": {
       "title": "ルンパン一番地",
       "description": "江南・首都圏・釜山のプレミアムルームとラウンジをつなぐワンストップコンシェルジュプラットフォームです。",
       "contactTitle": "お問い合わせ",
+      "contactHours": "12:00 – 03:00",
+      "kakaoId": "@gangnamking98",
+      "copyright": "© {year} ルンパン一番地. All rights reserved.",
       "contact": {
         "partner": "提携窓口",
         "hours": "営業時間",
         "kakao": "KakaoTalk"
       },
-      "contactHours": "12:00 – 03:00",
-      "kakaoId": "@gangnamking98",
       "quickLinksTitle": "クイックリンク",
       "links": {
-        "areas": "おすすめエリア",
-        "categories": "業種で探す",
-        "process": "ご利用の流れ"
-      },
-      "copyright": "© {year} ルンパン一番地. All rights reserved."
+        "areas": "おすすめエリア"
+      }
     },
     "shop": {
       "back": "トップへ戻る",
-      "call": "今すぐ電話で相談",
       "address": "住所",
-      "postalCode": "郵便番号",
-      "phone": "代表番号",
-      "manager": "担当マネージャー",
-      "managerContact": "担当マネージャーが予約・特典・イベントのご相談にリアルタイムで対応します。",
       "hours": "営業時間",
+      "viewDetails": "詳細を見る",
+      "galleryAltFallback": "雰囲気",
       "map": {
         "title": "アクセス",
         "loading": "地図を読み込んでいます…",
@@ -773,31 +548,40 @@
         "empty": "出勤情報はまだ登録されていません。",
         "topListTitle": "おすすめキャスト TOP 5",
         "topListEmpty": "おすすめデータがありません。",
-        "topListScoreLabel": "合計",
-        "columns": {
-          "worker": "担当者",
-          "mentionCount": "メンション数",
-          "insertCount": "入場数",
-          "createdAt": "記録時間"
-        }
+        "topListScoreLabel": "合計"
       },
       "pricingHighlight": {
         "badge": "料金ハイライト",
         "region": "エリア",
         "category": "業種",
         "brand": "店舗名",
-        "perPerson": "お一人様料金",
         "perPersonContext": "目安"
       },
       "pricingTable": [
         {
           "label": "21時前",
-          "charges": { "base": 10, "tc": 12, "rt": 5 },
+          "charges": {
+            "base": 10,
+            "tc": 12,
+            "rt": 5
+          },
           "guests": [
-            { "count": 1, "label": "1名" },
-            { "count": 2, "label": "2名" },
-            { "count": 3, "label": "3名" },
-            { "count": 4, "label": "4名" }
+            {
+              "count": 1,
+              "label": "1名"
+            },
+            {
+              "count": 2,
+              "label": "2名"
+            },
+            {
+              "count": 3,
+              "label": "3名"
+            },
+            {
+              "count": 4,
+              "label": "4名"
+            }
           ],
           "amount": {
             "multiplier": 10000,
@@ -808,12 +592,28 @@
         },
         {
           "label": "21時以降",
-          "charges": { "base": 13, "tc": 12, "rt": 5 },
+          "charges": {
+            "base": 13,
+            "tc": 12,
+            "rt": 5
+          },
           "guests": [
-            { "count": 1, "label": "1名" },
-            { "count": 2, "label": "2名" },
-            { "count": 3, "label": "3名" },
-            { "count": 4, "label": "4名" }
+            {
+              "count": 1,
+              "label": "1名"
+            },
+            {
+              "count": 2,
+              "label": "2名"
+            },
+            {
+              "count": 3,
+              "label": "3名"
+            },
+            {
+              "count": 4,
+              "label": "4名"
+            }
           ],
           "amount": {
             "multiplier": 10000,
@@ -827,28 +627,11 @@
         "江南エリア送迎サービス",
         "バレーパーキングサービス"
       ],
-      "contact": {
-        "title": "担当者への連絡手段",
-        "manager": "担当者",
-        "phone": "電話",
-        "kakao": "KakaoTalk"
-      },
-      "highlights": "注目ポイント",
-      "seo": {
-        "title": "SEO キーワードプリセット",
-        "description": "登録済みのキーワードは検索露出向上のため自動でメタタグに反映されます。必要に応じて下のエディターで編集し、運営チームに共有してください。",
-        "editorLabel": "キーワード入力",
-        "copy": "キーワードをコピー",
-        "copySuccess": "キーワードをコピーしました。運営チームに共有して反映してください。",
-        "copyError": "コピーに失敗しました。手動でコピーしてください。"
-      },
       "gallery": {
         "prev": "前の画像",
         "next": "次の画像",
         "dotLabel": "{{index}}枚目の画像を見る"
-      },
-      "viewDetails": "詳細を見る",
-      "galleryAltFallback": "雰囲気"
+      }
     },
     "notFound": {
       "title": "ページが見つかりません",
