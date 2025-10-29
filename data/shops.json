@@ -68,11 +68,11 @@
     "image": "/images/shops/1runningrabbit/main.png",
     "translations": {
       "en": {
-        "id": "강남-달리는토끼-가라오케-하이퍼블릭",
+        "id": "gangnam-running-rabbit-karaoke-hyperpublic",
         "name": "Running Rabbit Hyperpublic",
         "region": "Seoul",
         "district": "Gangnam-gu",
-        "category": "하이퍼블릭",
+        "category": "Hyperpublic",
         "address": "604-11 Yeoksam-dong, Gangnam-gu, Seoul",
         "hours": "Open 24 hours",
         "description": "Gangnam's flagship Running Rabbit hyperpublic lounge featuring a top-tier lineup and concierge-managed experiences.",
@@ -91,11 +91,14 @@
           "Running Rabbit hyperpublic",
           "Gangnam shirt room",
           "Gangnam karaoke lounge"
-        ],
-
+        ]
       },
       "zh": {
+        "id": "江南-奔兔-卡拉OK-超級公關",
         "name": "奔兔超級公關",
+        "region": "首尔",
+        "district": "江南区",
+        "category": "超級公關",
         "address": "首爾市江南區驛三洞 604-11",
         "hours": "24 小時營業",
         "description": "江南指標性的奔兔超級公關會所，提供頂級陣容與專屬禮賓服務。",
@@ -114,12 +117,14 @@
           "奔兔超級公關",
           "江南襯衫房",
           "江南卡拉OK"
-        ],
-        "region": "首尔",
-        "district": "江南区"
+        ]
       },
       "ja": {
+        "id": "江南-ランニングラビット-カラオケ-ハイパーパブリック",
         "name": "ランニングラビット ハイパーパブリック",
+        "region": "ソウル",
+        "district": "江南区",
+        "category": "ハイパーパブリック",
         "address": "ソウル特別市 江南区 駅三洞 604-11",
         "hours": "24時間営業",
         "description": "江南を代表するランニングラビットのハイパーパブリックラウンジ。厳選キャストとコンシェルジュサービスが揃っています。",
@@ -138,9 +143,7 @@
           "ランニングラビット ハイパーパブリック",
           "江南 シャツルーム",
           "江南 カラオケラウンジ"
-        ],
-        "region": "ソウル",
-        "district": "江南区"
+        ]
       }
     },
     "storeNo": 1
@@ -215,7 +218,11 @@
     "image": "/images/shops/2elite/main.png",
     "translations": {
       "en": {
+        "id": "gangnam-elite-sara-itne-karaoke-hyperpublic",
         "name": "Elite (Sara-itne) Hyperpublic",
+        "region": "Seoul",
+        "district": "Gangnam-gu",
+        "category": "Hyperpublic",
         "address": "890-38 Daechi-dong, Gangnam-gu, Seoul",
         "hours": "Open 24 hours",
         "description": "Elite (Sara-itne) delivers Gangnam's signature hyperpublic experience with a curated premium lineup and private suites.",
@@ -234,12 +241,14 @@
           "Sara-itne lounge",
           "Gangnam shirt room",
           "Gangnam karaoke"
-        ],
-        "region": "Seoul",
-        "district": "Gangnam-gu"
+        ]
       },
       "zh": {
+        "id": "江南-ELITE-莎拉伊內-卡拉OK-超級公關",
         "name": "ELITE（莎拉伊內）超級公關",
+        "region": "首尔",
+        "district": "江南区",
+        "category": "超級公關",
         "address": "首爾市江南區大峙洞 890-38",
         "hours": "24 小時營業",
         "description": "ELITE（莎拉伊內）以精選頂級陣容與私人包廂，打造江南代表性的超級公關體驗。",
@@ -258,12 +267,14 @@
           "莎拉伊內超級公關",
           "江南襯衫房",
           "江南卡拉OK"
-        ],
-        "region": "首尔",
-        "district": "江南区"
+        ]
       },
       "ja": {
+        "id": "江南-エリート-サラインネ-カラオケ-ハイパーパブリック",
         "name": "エリート（サラインネ）ハイパーパブリック",
+        "region": "ソウル",
+        "district": "江南区",
+        "category": "ハイパーパブリック",
         "address": "ソウル特別市 江南区 大峙洞 890-38",
         "hours": "24時間営業",
         "description": "エリート（サラインネ）は、厳選されたプレミアムキャストとプライベートルームで江南ならではのハイパーパブリック体験を提供します。",
@@ -282,9 +293,7 @@
           "サラインネ ハイパーパブリック",
           "江南 シャツルーム",
           "江南 カラオケ"
-        ],
-        "region": "ソウル",
-        "district": "江南区"
+        ]
       }
     },
     "storeNo": 2
@@ -371,7 +380,11 @@
     "image": "/images/shops/3perfect/main.png",
     "translations": {
       "en": {
+        "id": "gangnam-perfect-karaoke-hyperpublic",
         "name": "Perfect Hyperpublic",
+        "region": "Seoul",
+        "district": "Gangnam-gu",
+        "category": "Hyperpublic",
         "address": "645 Nonhyeon-ro, Gangnam-gu, Seoul",
         "hours": "Open 24 hours",
         "description": "Perfect is a Nonhyeon-based hyperpublic house known for dynamic shows and flexible late-night courses.",
@@ -390,12 +403,14 @@
           "Perfect hyperpublic",
           "Nonhyeon shirt room",
           "Gangnam karaoke"
-        ],
-        "region": "Seoul",
-        "district": "Gangnam-gu"
+        ]
       },
       "zh": {
+        "id": "江南-PERFECT-卡拉OK-超級公關",
         "name": "PERFECT 超級公關",
+        "region": "首尔",
+        "district": "江南区",
+        "category": "超級公關",
         "address": "首爾市江南區論峴路 645",
         "hours": "24 小時營業",
         "description": "位於論峴路的 PERFECT，以動感舞台與多樣化夜間課程聞名的超級公關會所。",
@@ -414,12 +429,14 @@
           "PERFECT超級公關",
           "論峴襯衫房",
           "江南卡拉OK"
-        ],
-        "region": "首尔",
-        "district": "江南区"
+        ]
       },
       "ja": {
+        "id": "江南-パーフェクト-カラオケ-ハイパーパブリック",
         "name": "パーフェクト ハイパーパブリック",
+        "region": "ソウル",
+        "district": "江南区",
+        "category": "ハイパーパブリック",
         "address": "ソウル特別市 江南区 論峴路 645",
         "hours": "24時間営業",
         "description": "論峴路に位置するパーフェクトは、ダイナミックなショーと深夜コースで知られるハイパーパブリック店舗です。",
@@ -438,9 +455,7 @@
           "パーフェクト ハイパーパブリック",
           "論峴 シャツルーム",
           "江南 カラオケ"
-        ],
-        "region": "ソウル",
-        "district": "江南区"
+        ]
       }
     },
     "storeNo": 3
@@ -515,7 +530,11 @@
     "image": "/images/shops/4youandme/main.png",
     "translations": {
       "en": {
+        "id": "gangnam-you-and-me-karaoke-hyperpublic",
         "name": "You&Me Hyperpublic",
+        "region": "Seoul",
+        "district": "Gangnam-gu",
+        "category": "Hyperpublic",
         "address": "23-8 Jamwon-dong, Gangnam-gu, Seoul",
         "hours": "Open 24 hours",
         "description": "You&Me pairs boutique private rooms with a warm Gangnam concierge team for intimate hyperpublic gatherings.",
@@ -534,12 +553,14 @@
           "You and Me hyperpublic",
           "Jamwon shirt room",
           "Gangnam karaoke"
-        ],
-        "region": "Seoul",
-        "district": "Gangnam-gu"
+        ]
       },
       "zh": {
+        "id": "江南-YOU-AND-ME-卡拉OK-超級公關",
         "name": "YOU&ME 超級公關",
+        "region": "首尔",
+        "district": "江南区",
+        "category": "超級公關",
         "address": "首爾市江南區蠶院洞 23-8",
         "hours": "24 小時營業",
         "description": "YOU&ME 以精品包廂與親切禮賓團隊，打造私密的江南超級公關聚會。",
@@ -558,12 +579,14 @@
           "YOU&ME超級公關",
           "蠶院襯衫房",
           "江南卡拉OK"
-        ],
-        "region": "首尔",
-        "district": "江南区"
+        ]
       },
       "ja": {
+        "id": "江南-ユーアンドミー-カラオケ-ハイパーパブリック",
         "name": "ユーアンドミー ハイパーパブリック",
+        "region": "ソウル",
+        "district": "江南区",
+        "category": "ハイパーパブリック",
         "address": "ソウル特別市 江南区 蠶院洞 23-8",
         "hours": "24時間営業",
         "description": "ユーアンドミーは、ブティック個室と温かなコンシェルジュチームでプライベートなハイパーパブリックシーンを演出します。",
@@ -582,9 +605,7 @@
           "ユーアンドミー ハイパーパブリック",
           "蠶院 シャツルーム",
           "江南 カラオケ"
-        ],
-        "region": "ソウル",
-        "district": "江南区"
+        ]
       }
     },
     "storeNo": 4
@@ -659,7 +680,11 @@
     "image": "/images/shops/5dopamine/main.png",
     "translations": {
       "en": {
+        "id": "gangnam-dopamine-karaoke-hyperpublic",
         "name": "Dopamine Hyperpublic",
+        "region": "Seoul",
+        "district": "Gangnam-gu",
+        "category": "Hyperpublic",
         "address": "142-29 Samseong-dong, Gangnam-gu, Seoul",
         "hours": "Open 24 hours",
         "description": "Dopamine energizes Samseong-dong nights with upbeat hyperpublic performances and streamlined late-night service.",
@@ -678,12 +703,14 @@
           "Dopamine hyperpublic",
           "Samseong shirt room",
           "Gangnam karaoke"
-        ],
-        "region": "Seoul",
-        "district": "Gangnam-gu"
+        ]
       },
       "zh": {
+        "id": "江南-DOPAMINE-卡拉OK-超級公關",
         "name": "DOPAMINE 超級公關",
+        "region": "首尔",
+        "district": "江南区",
+        "category": "超級公關",
         "address": "首爾市江南區三成洞 142-29",
         "hours": "24 小時營業",
         "description": "DOPAMINE 以活力舞台與流暢服務，點亮三成洞的夜晚。",
@@ -702,12 +729,14 @@
           "DOPAMINE超級公關",
           "三成襯衫房",
           "江南卡拉OK"
-        ],
-        "region": "首尔",
-        "district": "江南区"
+        ]
       },
       "ja": {
+        "id": "江南-ドーパミン-カラオケ-ハイパーパブリック",
         "name": "ドーパミン ハイパーパブリック",
+        "region": "ソウル",
+        "district": "江南区",
+        "category": "ハイパーパブリック",
         "address": "ソウル特別市 江南区 三成洞 142-29",
         "hours": "24時間営業",
         "description": "ドーパミンは三成洞の夜を盛り上げる、テンポ感あるパフォーマンスとスムーズな深夜サービスが特徴のハイパーパブリックです。",
@@ -726,9 +755,7 @@
           "ドーパミン ハイパーパブリック",
           "三成 シャツルーム",
           "江南 カラオケ"
-        ],
-        "region": "ソウル",
-        "district": "江南区"
+        ]
       }
     },
     "storeNo": 5
