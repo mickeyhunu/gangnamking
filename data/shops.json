@@ -87,7 +87,9 @@
           "Running Rabbit hyperpublic",
           "Gangnam shirt room",
           "Gangnam karaoke lounge"
-        ]
+        ],
+        "region": "Seoul",
+        "district": "Gangnam-gu"
       },
       "zh": {
         "name": "奔兔超級公關",
@@ -109,7 +111,9 @@
           "奔兔超級公關",
           "江南襯衫房",
           "江南卡拉OK"
-        ]
+        ],
+        "region": "首尔",
+        "district": "江南区"
       },
       "ja": {
         "name": "ランニングラビット ハイパーパブリック",
@@ -131,7 +135,9 @@
           "ランニングラビット ハイパーパブリック",
           "江南 シャツルーム",
           "江南 カラオケラウンジ"
-        ]
+        ],
+        "region": "ソウル",
+        "district": "江南区"
       }
     },
     "storeNo": 1
@@ -225,7 +231,9 @@
           "Sara-itne lounge",
           "Gangnam shirt room",
           "Gangnam karaoke"
-        ]
+        ],
+        "region": "Seoul",
+        "district": "Gangnam-gu"
       },
       "zh": {
         "name": "ELITE（莎拉伊內）超級公關",
@@ -247,7 +255,9 @@
           "莎拉伊內超級公關",
           "江南襯衫房",
           "江南卡拉OK"
-        ]
+        ],
+        "region": "首尔",
+        "district": "江南区"
       },
       "ja": {
         "name": "エリート（サラインネ）ハイパーパブリック",
@@ -269,7 +279,9 @@
           "サラインネ ハイパーパブリック",
           "江南 シャツルーム",
           "江南 カラオケ"
-        ]
+        ],
+        "region": "ソウル",
+        "district": "江南区"
       }
     },
     "storeNo": 2
@@ -375,7 +387,9 @@
           "Perfect hyperpublic",
           "Nonhyeon shirt room",
           "Gangnam karaoke"
-        ]
+        ],
+        "region": "Seoul",
+        "district": "Gangnam-gu"
       },
       "zh": {
         "name": "PERFECT 超級公關",
@@ -397,7 +411,9 @@
           "PERFECT超級公關",
           "論峴襯衫房",
           "江南卡拉OK"
-        ]
+        ],
+        "region": "首尔",
+        "district": "江南区"
       },
       "ja": {
         "name": "パーフェクト ハイパーパブリック",
@@ -419,7 +435,9 @@
           "パーフェクト ハイパーパブリック",
           "論峴 シャツルーム",
           "江南 カラオケ"
-        ]
+        ],
+        "region": "ソウル",
+        "district": "江南区"
       }
     },
     "storeNo": 3
@@ -513,7 +531,9 @@
           "You and Me hyperpublic",
           "Jamwon shirt room",
           "Gangnam karaoke"
-        ]
+        ],
+        "region": "Seoul",
+        "district": "Gangnam-gu"
       },
       "zh": {
         "name": "YOU&ME 超級公關",
@@ -535,7 +555,9 @@
           "YOU&ME超級公關",
           "蠶院襯衫房",
           "江南卡拉OK"
-        ]
+        ],
+        "region": "首尔",
+        "district": "江南区"
       },
       "ja": {
         "name": "ユーアンドミー ハイパーパブリック",
@@ -557,7 +579,9 @@
           "ユーアンドミー ハイパーパブリック",
           "蠶院 シャツルーム",
           "江南 カラオケ"
-        ]
+        ],
+        "region": "ソウル",
+        "district": "江南区"
       }
     },
     "storeNo": 4
@@ -651,7 +675,9 @@
           "Dopamine hyperpublic",
           "Samseong shirt room",
           "Gangnam karaoke"
-        ]
+        ],
+        "region": "Seoul",
+        "district": "Gangnam-gu"
       },
       "zh": {
         "name": "DOPAMINE 超級公關",
@@ -673,7 +699,9 @@
           "DOPAMINE超級公關",
           "三成襯衫房",
           "江南卡拉OK"
-        ]
+        ],
+        "region": "首尔",
+        "district": "江南区"
       },
       "ja": {
         "name": "ドーパミン ハイパーパブリック",
@@ -695,7 +723,9 @@
           "ドーパミン ハイパーパブリック",
           "三成 シャツルーム",
           "江南 カラオケ"
-        ]
+        ],
+        "region": "ソウル",
+        "district": "江南区"
       }
     },
     "storeNo": 5
