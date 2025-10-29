@@ -777,11 +777,16 @@
   </div>
 
   <%
-    const resolvedLocation = shopLocation && typeof shopLocation === 'object' ? shopLocation : null;
-    const locationLat = resolvedLocation && Number.isFinite(resolvedLocation.lat) ? resolvedLocation.lat : null;
-    const locationLng = resolvedLocation && Number.isFinite(resolvedLocation.lng) ? resolvedLocation.lng : null;
-    const locationAddress = resolvedLocation && resolvedLocation.formattedAddress ? resolvedLocation.formattedAddress : '';
-  %>
+  const resolvedLocation = shopLocation && typeof shopLocation === 'object' ? shopLocation : null;
+  const locationLat = resolvedLocation && Number.isFinite(resolvedLocation.lat) ? resolvedLocation.lat : null;
+  const locationLng = resolvedLocation && Number.isFinite(resolvedLocation.lng) ? resolvedLocation.lng : null;
+  const resolvedMapAuthErrorCode = typeof mapAuthErrorCode === 'string' ? mapAuthErrorCode : '';
+  const mapAuthErrorMessage =
+    resolvedMapAuthErrorCode === 'NAVER_MAP_AUTH'
+      ? mapText.authError ||
+        'Naver Maps authentication failed. Please enable the API subscription in your Naver Cloud project.'
+      : '';
+%>
 
   <div class="detail-location">
     <section class="section detail-section">
@@ -798,6 +803,9 @@
             data-map-locale="<%= lang || 'ko' %>"
             data-loading-text="<%= mapText.loading || 'Loading map…' %>"
             data-error-text="<%= mapText.error || 'Unable to load map. Please check the address.' %>"
+            <% if (mapAuthErrorMessage) { %>
+              data-map-auth-error="<%= mapAuthErrorMessage %>"
+            <% } %>
             <% if (locationLat !== null && locationLng !== null) { %>
               data-shop-lat="<%= locationLat %>"
               data-shop-lng="<%= locationLng %>"
@@ -812,20 +820,6 @@
             <p class="shop-map__status" data-map-status aria-live="polite">
               <%= mapText.loading || 'Loading map…' %>
             </p>
-            <% if (locationAddress) { %>
-              <div class="shop-map__location-info">
-                <p>
-                  <strong><%= mapText.resolvedAddressLabel || 'Verified address' %></strong>
-                  <span><%= locationAddress %></span>
-                </p>
-                <% if (locationLat !== null && locationLng !== null) { %>
-                  <p>
-                    <strong><%= mapText.coordinatesLabel || 'Coordinates' %></strong>
-                    <span><%= locationLat %>, <%= locationLng %></span>
-                  </p>
-                <% } %>
-              </div>
-            <% } %>
           </div>
         </div>
       </div>

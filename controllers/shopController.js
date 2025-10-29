@@ -77,12 +77,27 @@ async function renderShopDetail(req, res, next) {
     }));
 
     let shopLocation = null;
+    let mapAuthErrorCode = '';
     try {
-      shopLocation = await fetchShopLocation({
+      const locationResult = await fetchShopLocation({
         address: localizedShop.address || shop.address,
         district: localizedShop.district || shop.district,
         region: localizedShop.region || shop.region,
       });
+
+      if (locationResult && typeof locationResult === 'object') {
+        if (locationResult.location && typeof locationResult.location === 'object') {
+          shopLocation = locationResult.location;
+        } else if (Number.isFinite(locationResult.lat) && Number.isFinite(locationResult.lng)) {
+          shopLocation = locationResult;
+        }
+
+        if (locationResult.authError && typeof locationResult.authError === 'object') {
+          mapAuthErrorCode = locationResult.authError.code || '';
+        }
+      } else {
+        shopLocation = locationResult;
+      }
     } catch (error) {
       console.warn('Failed to retrieve shop location details:', error);
     }
@@ -91,6 +106,7 @@ async function renderShopDetail(req, res, next) {
       shop: localizedShop,
       storeEntries,
       shopLocation,
+      mapAuthErrorCode,
       seoKeywords: Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : [],
       pageTitle: `${localizedShop.name}${(res.locals.t.meta && res.locals.t.meta.shopTitleSuffix) || ''}`,
       metaDescription: localizedShop.description || '',
