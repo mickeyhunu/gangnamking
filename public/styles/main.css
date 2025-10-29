@@ -87,6 +87,9 @@ img {
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
+  background: none;
+  border: none;
+  box-shadow: none;
 }
 
 .site-subheader__filters {
@@ -314,10 +317,10 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.25rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -339,10 +342,10 @@ img {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  padding: 0.4rem 0.5rem 0.6rem;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
 }
 
 .area-filter--districts[hidden] {
@@ -1883,6 +1886,7 @@ img {
   display: grid;
   gap: 2rem;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin: 3rem auto;
   padding: 3rem 1.5rem;
 }
 
