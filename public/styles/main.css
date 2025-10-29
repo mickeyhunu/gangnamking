@@ -904,6 +904,19 @@ img {
   white-space: nowrap;
 }
 
+.shop-card__meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.shop-card__meta-row .shop-card__link {
+  margin-top: 0;
+}
+
 @media (max-width: 1200px) {
   .shop-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -974,13 +987,17 @@ img {
   .shop-card__category {
     padding: 0.25rem 0.65rem;
     font-size: 0.78rem;
-    align-self: flex-start;
+    align-self: auto;
   }
 
   .shop-card__link {
-    align-self: flex-end;
+    align-self: auto;
     white-space: nowrap;
-    margin-top: 0.2rem;
+    margin-top: 0;
+  }
+
+  .shop-card__meta-row {
+    gap: 0.5rem;
   }
 }
 .shop-card__contact {
