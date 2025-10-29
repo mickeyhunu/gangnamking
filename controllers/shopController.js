@@ -116,10 +116,12 @@ function renderIndex(req, res) {
   const localizedShops = getLocalizedShops(lang);
   const regions = [...new Set(localizedShops.map((shop) => shop.region))];
   const categories = [...new Set(localizedShops.map((shop) => shop.category))];
-  const shopsByCategory = categories.map((category) => ({
-    category,
-    shops: localizedShops.filter((shop) => shop.category === category),
-  }));
+  const shopsByCategory = categories
+    .map((category) => ({
+      category,
+      shops: localizedShops.filter((shop) => shop.category === category),
+    }))
+    .filter((group) => Array.isArray(group.shops) && group.shops.length > 0);
   const districtMap = buildDistrictMap(localizedShops);
   const seoKeywords = buildSeoKeywords(localizedShops);
 
@@ -127,7 +129,7 @@ function renderIndex(req, res) {
     shops: localizedShops,
     shopsByCategory,
     regions,
-    categories,
+    categories: shopsByCategory.map((group) => group.category),
     districtMap,
     seoKeywords,
     pageTitle: (res.locals.t.meta && res.locals.t.meta.indexTitle) || 'Gangnam King',
