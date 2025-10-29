@@ -68,7 +68,11 @@
     "image": "/images/shops/1runningrabbit/main.png",
     "translations": {
       "en": {
+        "id": "강남-달리는토끼-가라오케-하이퍼블릭",
         "name": "Running Rabbit Hyperpublic",
+        "region": "Seoul",
+        "district": "Gangnam-gu",
+        "category": "하이퍼블릭",
         "address": "604-11 Yeoksam-dong, Gangnam-gu, Seoul",
         "hours": "Open 24 hours",
         "description": "Gangnam's flagship Running Rabbit hyperpublic lounge featuring a top-tier lineup and concierge-managed experiences.",
@@ -88,8 +92,7 @@
           "Gangnam shirt room",
           "Gangnam karaoke lounge"
         ],
-        "region": "Seoul",
-        "district": "Gangnam-gu"
+
       },
       "zh": {
         "name": "奔兔超級公關",
