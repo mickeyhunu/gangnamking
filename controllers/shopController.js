@@ -2,6 +2,7 @@ const { DEFAULT_LANGUAGE, LANGUAGE_LOCALES } = require('../lib/constants');
 const { localizeShop } = require('../lib/shopUtils');
 const { getShops } = require('../services/dataStore');
 const { fetchEntriesForStore } = require('../services/entryService');
+const { fetchShopLocation } = require('../services/naverMapService');
 
 function getLocalizedShops(lang) {
   const shops = getShops();
@@ -75,9 +76,21 @@ async function renderShopDetail(req, res, next) {
       createdAtLabel: entry.createdAt ? dateFormatter.format(entry.createdAt) : '',
     }));
 
+    let shopLocation = null;
+    try {
+      shopLocation = await fetchShopLocation({
+        address: localizedShop.address || shop.address,
+        district: localizedShop.district || shop.district,
+        region: localizedShop.region || shop.region,
+      });
+    } catch (error) {
+      console.warn('Failed to retrieve shop location details:', error);
+    }
+
     res.render('shop', {
       shop: localizedShop,
       storeEntries,
+      shopLocation,
       seoKeywords: Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : [],
       pageTitle: `${localizedShop.name}${(res.locals.t.meta && res.locals.t.meta.shopTitleSuffix) || ''}`,
       metaDescription: localizedShop.description || '',

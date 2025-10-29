@@ -162,6 +162,13 @@
     const venueName = mapHost.dataset.shopName || '';
     const loadingText = mapHost.dataset.loadingText || 'Loading map...';
     const errorText = mapHost.dataset.errorText || 'Unable to load map.';
+    const latValue = mapHost.dataset.shopLat;
+    const lngValue = mapHost.dataset.shopLng;
+    const presetLat =
+      typeof latValue === 'string' && latValue.trim() !== '' ? Number.parseFloat(latValue) : NaN;
+    const presetLng =
+      typeof lngValue === 'string' && lngValue.trim() !== '' ? Number.parseFloat(lngValue) : NaN;
+    const hasPresetCoordinates = Number.isFinite(presetLat) && Number.isFinite(presetLng);
 
     function setStatus(message, state) {
       if (state) {
@@ -181,7 +188,7 @@
       }
     }
 
-    if (!mapContainer || !address) {
+    if (!mapContainer || (!address && !hasPresetCoordinates)) {
       setStatus(errorText, 'error');
       return;
     }
@@ -190,8 +197,6 @@
       status.hidden = false;
     }
 
-    setStatus(loadingText, 'loading');
-
     const naverMaps = window.naver && window.naver.maps;
 
     if (!naverMaps || !naverMaps.Service || !naverMaps.LatLng) {
@@ -199,6 +204,54 @@
       setStatus(errorText, 'error');
       return;
     }
+
+    function renderMap(lat, lng) {
+      const center = new naverMaps.LatLng(lat, lng);
+      const map = new naverMaps.Map(mapContainer, {
+        center,
+        zoom: 16,
+        scaleControl: false,
+        mapDataControl: false,
+        logoControlOptions: {
+          position: naverMaps.Position.BOTTOM_RIGHT,
+        },
+        zoomControl: true,
+        zoomControlOptions: {
+          position: naverMaps.Position.TOP_RIGHT,
+        },
+      });
+
+      const marker = new naverMaps.Marker({
+        position: center,
+        map,
+        title: venueName || undefined,
+      });
+
+      if (venueName) {
+        const infoContent = document.createElement('div');
+        infoContent.className = 'shop-map__info-window';
+        infoContent.textContent = venueName;
+
+        const infoWindow = new naverMaps.InfoWindow({
+          content: infoContent,
+          backgroundColor: 'transparent',
+          borderColor: 'transparent',
+          borderWidth: 0,
+          disableAnchor: true,
+        });
+
+        infoWindow.open(map, marker);
+      }
+
+      setStatus('', 'ready');
+    }
+
+    if (hasPresetCoordinates) {
+      renderMap(presetLat, presetLng);
+      return;
+    }
+
+    setStatus(loadingText, 'loading');
 
     function normalizeQuery(query) {
       if (typeof query !== 'string') {
@@ -290,44 +343,7 @@
 
     geocodeNext([...geocodeQueue])
       .then(({ lat, lng }) => {
-        const center = new naverMaps.LatLng(lat, lng);
-        const map = new naverMaps.Map(mapContainer, {
-          center,
-          zoom: 16,
-          scaleControl: false,
-          mapDataControl: false,
-          logoControlOptions: {
-            position: naverMaps.Position.BOTTOM_RIGHT,
-          },
-          zoomControl: true,
-          zoomControlOptions: {
-            position: naverMaps.Position.TOP_RIGHT,
-          },
-        });
-
-        const marker = new naverMaps.Marker({
-          position: center,
-          map,
-          title: venueName || undefined,
-        });
-
-        if (venueName) {
-          const infoContent = document.createElement('div');
-          infoContent.className = 'shop-map__info-window';
-          infoContent.textContent = venueName;
-
-          const infoWindow = new naverMaps.InfoWindow({
-            content: infoContent,
-            backgroundColor: 'transparent',
-            borderColor: 'transparent',
-            borderWidth: 0,
-            disableAnchor: true,
-          });
-
-          infoWindow.open(map, marker);
-        }
-
-        setStatus('', 'ready');
+        renderMap(lat, lng);
       })
       .catch((error) => {
         console.warn('Failed to render map:', error);
