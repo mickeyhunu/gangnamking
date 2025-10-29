@@ -94,6 +94,10 @@ img {
   gap: 0.75rem;
 }
 
+.site-main {
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
 .area-menu-toggle {
   display: inline-flex;
   align-items: center;
@@ -1038,7 +1042,7 @@ img {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(8, 5, 18, 0.8);
   box-shadow: 0 25px 48px rgba(5, 0, 20, 0.55);
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 12 / 7;
 }
 
 .detail-gallery::after {
