@@ -42,6 +42,19 @@
 
   const primaryImage = highlightGallery.length ? highlightGallery[0] : null;
   const mapText = (t.shop && t.shop.map) || {};
+  const managerText = (t.shop && t.shop.manager) || {};
+  const managerTitleText = managerText.title || '담당자 정보';
+  const managerNameLabel = managerText.name || '담당자';
+  const managerPhoneLabel = managerText.phone || '전화번호';
+  const managerKakaoLabel = managerText.kakao || '카카오톡';
+  const manager = shop.manager && typeof shop.manager === 'object' ? shop.manager : {};
+  const managerName = manager.name;
+  const managerPhone = manager.phone;
+  const managerKakao = manager.kakao;
+  const managerPhoneHref = typeof managerPhone === 'string'
+    ? `tel:${managerPhone.replace(/[^0-9+]/g, '')}`
+    : '';
+  const hasManagerInfo = Boolean(managerName || managerPhone || managerKakao);
 
   function formatMapLabel(template) {
     if (typeof template !== 'string' || !template.trim()) {
@@ -79,6 +92,35 @@
             <dt><%= t.shop && t.shop.hours ? t.shop.hours : 'Hours' %></dt>
             <dd><%= shop.hours %></dd>
           </div>
+          <% if (hasManagerInfo) { %>
+            <div class="detail-hero__manager">
+              <dt><%= managerTitleText %></dt>
+              <dd>
+                <ul class="detail-hero__manager-list">
+                  <% if (managerName) { %>
+                    <li class="detail-hero__manager-item">
+                      <span class="detail-hero__manager-label"><%= managerNameLabel %></span>
+                      <span class="detail-hero__manager-value"><%= managerName %></span>
+                    </li>
+                  <% } %>
+                  <% if (managerPhone) { %>
+                    <li class="detail-hero__manager-item">
+                      <span class="detail-hero__manager-label"><%= managerPhoneLabel %></span>
+                      <a class="detail-hero__manager-link" href="<%= managerPhoneHref %>">
+                        <%= managerPhone %>
+                      </a>
+                    </li>
+                  <% } %>
+                  <% if (managerKakao) { %>
+                    <li class="detail-hero__manager-item">
+                      <span class="detail-hero__manager-label"><%= managerKakaoLabel %></span>
+                      <span class="detail-hero__manager-value"><%= managerKakao %></span>
+                    </li>
+                  <% } %>
+                </ul>
+              </dd>
+            </div>
+          <% } %>
         </dl>
         <div class="detail-hero__actions">
           <a class="back-link" href="/"><%= t.shop && t.shop.back ? t.shop.back : 'Back to home' %></a>
