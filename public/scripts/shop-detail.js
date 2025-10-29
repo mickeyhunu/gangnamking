@@ -164,6 +164,7 @@
     const errorText = mapHost.dataset.errorText || 'Unable to load map.';
     const latValue = mapHost.dataset.shopLat;
     const lngValue = mapHost.dataset.shopLng;
+    const authErrorMessage = (mapHost.dataset.mapAuthError || '').trim();
     const presetLat =
       typeof latValue === 'string' && latValue.trim() !== '' ? Number.parseFloat(latValue) : NaN;
     const presetLng =
@@ -189,7 +190,7 @@
     }
 
     if (!mapContainer || (!address && !hasPresetCoordinates)) {
-      setStatus(errorText, 'error');
+      setStatus(authErrorMessage || errorText, 'error');
       return;
     }
 
@@ -201,7 +202,7 @@
 
     if (!naverMaps || !naverMaps.Service || !naverMaps.LatLng) {
       console.warn('Naver Maps library is not available.');
-      setStatus(errorText, 'error');
+      setStatus(authErrorMessage || errorText, 'error');
       return;
     }
 
@@ -288,7 +289,7 @@
     const geocodeQueue = buildQueryQueue();
 
     if (!geocodeQueue.length) {
-      setStatus(errorText, 'error');
+      setStatus(authErrorMessage || errorText, 'error');
       return;
     }
 
@@ -347,7 +348,7 @@
       })
       .catch((error) => {
         console.warn('Failed to render map:', error);
-        setStatus(errorText, 'error');
+        setStatus(authErrorMessage || errorText, 'error');
       });
   }
 })();

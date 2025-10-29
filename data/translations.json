@@ -111,8 +111,7 @@
         "title": "위치 안내",
         "loading": "지도를 불러오는 중입니다...",
         "error": "지도를 불러오지 못했습니다. 주소 정보를 다시 확인해주세요.",
-        "resolvedAddressLabel": "확인된 주소",
-        "coordinatesLabel": "좌표",
+        "authError": "네이버 지도 Open API 인증이 완료되지 않았습니다. 네이버 클라우드 콘솔에서 지도 API 구독과 인증키를 설정해주세요.",
         "ariaLabel": "{{shopName}}의 지도 위치"
       },
       "pricing": {
@@ -303,8 +302,7 @@
         "title": "Location",
         "loading": "Loading map...",
         "error": "We couldn’t load the map. Please double-check the address.",
-        "resolvedAddressLabel": "Verified address",
-        "coordinatesLabel": "Coordinates",
+        "authError": "Naver Maps Open API authentication failed. Enable the Maps subscription in your Naver Cloud project to display the map.",
         "ariaLabel": "Map showing location of {{shopName}}"
       },
       "pricing": {
@@ -498,8 +496,7 @@
         "title": "位置指南",
         "loading": "正在載入地圖...",
         "error": "無法載入地圖。請確認地址資訊。",
-        "resolvedAddressLabel": "確認地址",
-        "coordinatesLabel": "座標",
+        "authError": "Naver 地圖 Open API 驗證失敗。請於 Naver Cloud 專案中啟用地圖 API 訂閱並設定金鑰。",
         "ariaLabel": "{{shopName}} 的位置地圖"
       },
       "pricing": {
@@ -691,8 +688,7 @@
         "title": "アクセス",
         "loading": "地図を読み込んでいます…",
         "error": "地図を表示できませんでした。住所をご確認ください。",
-        "resolvedAddressLabel": "確認済み住所",
-        "coordinatesLabel": "座標",
+        "authError": "Naverマップ Open API の認証に失敗しました。Naver Cloud コンソールでマップAPIの購読と認証キーを設定してください。",
         "ariaLabel": "{{shopName}} の位置を示す地図"
       },
       "pricing": {

@@ -1368,24 +1368,6 @@ img {
   font-size: 0.95rem;
 }
 
-.shop-map__location-info {
-  display: grid;
-  gap: 0.35rem;
-  font-size: 0.95rem;
-  color: var(--color-muted);
-}
-
-.shop-map__location-info p {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.shop-map__location-info strong {
-  color: var(--color-text);
-}
-
 .shop-map[data-map-state='loading'] .shop-map__map {
   filter: saturate(0.6) contrast(0.9);
 }

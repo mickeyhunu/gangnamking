@@ -205,6 +205,65 @@ function requestNominatimGeocode(query) {
   });
 }
 
+function parseErrorBody(error) {
+  if (!error || typeof error.body !== 'string') {
+    return null;
+  }
+
+  try {
+    return JSON.parse(error.body);
+  } catch (parseError) {
+    return null;
+  }
+}
+
+async function attemptProvider(queue, provider) {
+  const { name, request, formatResult, isAuthError, authErrorCode, extractAuthDetails } = provider;
+  let authError = null;
+
+          let parsed;
+          try {
+            parsed = rawBody ? JSON.parse(rawBody) : [];
+          } catch (error) {
+            const parseError = new Error('Failed to parse Nominatim response.');
+            parseError.cause = error;
+            reject(parseError);
+            return;
+          }
+
+          const first = Array.isArray(parsed) && parsed.length ? parsed[0] : null;
+
+          if (!first) {
+            reject(new Error('No geocoding results found from Nominatim.'));
+            return;
+          }
+
+          const lat = Number.parseFloat(first.lat);
+          const lng = Number.parseFloat(first.lon);
+
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            reject(new Error('Received invalid coordinates from Nominatim response.'));
+            return;
+          }
+
+          resolve({
+            lat,
+            lng,
+            displayName: first.display_name || '',
+            query,
+          });
+        });
+      }
+    );
+
+    request.on('error', (error) => {
+      reject(error);
+    });
+
+    request.end();
+  });
+}
+
 async function attemptProvider(queue, { name, request, formatResult, isAuthError }) {
   for (const query of queue) {
     try {
@@ -212,11 +271,31 @@ async function attemptProvider(queue, { name, request, formatResult, isAuthError
       const formatted = formatResult(result);
 
       if (formatted) {
-        return formatted;
+        return { location: formatted, authError: null };
       }
     } catch (error) {
-      if (typeof isAuthError === 'function' && isAuthError(error)) {
-        console.warn(`[${name}] Authentication error for query "${query}":`, error);
+      const isAuthIssue = typeof isAuthError === 'function' && isAuthError(error);
+
+      if (isAuthIssue) {
+        let details = null;
+        let logMessage = '';
+
+        if (typeof extractAuthDetails === 'function') {
+          const extracted = extractAuthDetails(error) || {};
+          details = extracted.details || null;
+          logMessage = extracted.logMessage || '';
+        }
+
+        if (logMessage) {
+          console.warn(`[${name}] ${logMessage}`);
+        } else {
+          console.warn(`[${name}] Authentication error for query "${query}":`, error);
+        }
+
+        authError = {
+          code: authErrorCode || 'AUTH_ERROR',
+          details,
+        };
         break;
       }
 
@@ -226,13 +305,23 @@ async function attemptProvider(queue, { name, request, formatResult, isAuthError
     }
   }
 
-  return null;
+  return { location: null, authError };
 }
 
 async function fetchShopLocation({ address, district, region }) {
   const queue = buildQueryQueue({ address, district, region });
 
   const providers = [];
+  let authError = null;
+
+  if (!hasCredentials()) {
+    authError = {
+      code: 'NAVER_MAP_AUTH',
+      details: {
+        reason: 'missing_credentials',
+      },
+    };
+  }
 
   if (hasCredentials()) {
     providers.push({
@@ -248,7 +337,38 @@ async function fetchShopLocation({ address, district, region }) {
         englishAddress: result.englishAddress,
         queryUsed: result.query,
       }),
-      isAuthError: (error) => Number(error && error.statusCode) === 401,
+      isAuthError: (error) =>
+        Number(error && error.statusCode) === 401 ||
+        (error && error.message === 'Naver Map credentials are not configured.'),
+      authErrorCode: 'NAVER_MAP_AUTH',
+      extractAuthDetails: (error) => {
+        if (!error) {
+          return null;
+        }
+
+        if (error.message === 'Naver Map credentials are not configured.') {
+          return {
+            logMessage: 'Naver Map credentials are missing. Falling back to alternative provider.',
+            details: {
+              reason: 'missing_credentials',
+            },
+          };
+        }
+
+        const parsed = parseErrorBody(error);
+        const responseError = parsed && parsed.error ? parsed.error : null;
+
+        return {
+          logMessage: responseError
+            ? `Authentication failed: ${responseError.message || 'Permission denied'} (code ${responseError.errorCode || 'unknown'})`
+            : 'Authentication failed with status 401. Falling back to alternative provider.',
+          details: {
+            statusCode: Number(error.statusCode) || null,
+            errorCode: responseError && responseError.errorCode ? responseError.errorCode : null,
+            providerMessage: responseError && responseError.message ? responseError.message : null,
+          },
+        };
+      },
     });
   }
 
@@ -267,14 +387,24 @@ async function fetchShopLocation({ address, district, region }) {
   });
 
   for (const provider of providers) {
-    const location = await attemptProvider(queue, provider);
+    const { location, authError: providerAuthError } = await attemptProvider(queue, provider);
+
+    if (providerAuthError && !authError) {
+      authError = providerAuthError;
+    }
 
     if (location) {
-      return location;
+      return {
+        location,
+        authError,
+      };
     }
   }
 
-  return null;
+  return {
+    location: null,
+    authError,
+  };
 }
 
 module.exports = {
