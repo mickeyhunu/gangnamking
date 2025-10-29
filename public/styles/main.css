@@ -1359,30 +1359,16 @@ img {
   opacity: 0.6;
 }
 
-.shop-map__map .leaflet-control-container .leaflet-control-attribution {
-  background: rgba(5, 3, 16, 0.8);
-  color: var(--color-muted);
-}
-
-.shop-map__map .leaflet-control a {
-  color: var(--color-primary);
-}
-
-.shop-map__map .leaflet-popup-content-wrapper,
-.shop-map__map .leaflet-popup-tip {
+.shop-map__info-window {
+  padding: 0.65rem 0.8rem;
   background: rgba(8, 5, 18, 0.92);
   color: var(--color-text);
+  border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
-}
-
-.shop-map__map .leaflet-popup-content {
-  margin: 0.65rem 0.8rem;
+  font-weight: 600;
   line-height: 1.4;
-}
-
-.shop-map__map .leaflet-popup-tip {
-  background-clip: padding-box;
+  white-space: nowrap;
 }
 
 .rate-table {

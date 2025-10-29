@@ -157,11 +157,9 @@
     const mapContainer = mapHost.querySelector('[data-map-region]');
     const status = mapHost.querySelector('[data-map-status]');
     const address = (mapHost.dataset.shopAddress || '').trim();
-    const postalCode = (mapHost.dataset.shopPostalCode || '').trim();
     const district = (mapHost.dataset.shopDistrict || '').trim();
     const region = (mapHost.dataset.shopRegion || '').trim();
     const venueName = mapHost.dataset.shopName || '';
-    const locale = mapHost.dataset.mapLocale || document.documentElement.lang || 'en';
     const loadingText = mapHost.dataset.loadingText || 'Loading map...';
     const errorText = mapHost.dataset.errorText || 'Unable to load map.';
 
@@ -183,9 +181,6 @@
       }
     }
 
-    const normalizedLocale = typeof locale === 'string' ? locale.toLowerCase() : 'en';
-    const countryToken = normalizedLocale.startsWith('ko') ? '대한민국' : 'South Korea';
-
     if (!mapContainer || !address) {
       setStatus(errorText, 'error');
       return;
@@ -197,8 +192,10 @@
 
     setStatus(loadingText, 'loading');
 
-    if (typeof L === 'undefined') {
-      console.warn('Leaflet library is not available.');
+    const naverMaps = window.naver && window.naver.maps;
+
+    if (!naverMaps || !naverMaps.Service || !naverMaps.LatLng) {
+      console.warn('Naver Maps library is not available.');
       setStatus(errorText, 'error');
       return;
     }
@@ -211,25 +208,11 @@
       return query.replace(/\s+/g, ' ').trim();
     }
 
-    function ensureCountry(query) {
-      const normalized = normalizeQuery(query);
-
-      if (!normalized) {
-        return '';
-      }
-
-      if (/대한민국|한국|South\s*Korea|Republic\s*of\s*Korea/i.test(normalized)) {
-        return normalized;
-      }
-
-      return `${normalized} ${countryToken}`.trim();
-    }
-
     function buildQueryQueue() {
       const queries = [];
       const seen = new Set();
 
-      function enqueue(value, { includeCountryVariant = true } = {}) {
+      function enqueue(value) {
         const normalized = normalizeQuery(value);
 
         if (!normalized || seen.has(normalized)) {
@@ -238,32 +221,13 @@
 
         seen.add(normalized);
         queries.push(normalized);
-
-        if (includeCountryVariant) {
-          const withCountry = ensureCountry(normalized);
-
-          if (withCountry && !seen.has(withCountry)) {
-            seen.add(withCountry);
-            queries.push(withCountry);
-          }
-        }
       }
 
-      enqueue(address);
-      if (postalCode) {
-        enqueue([address, postalCode].filter(Boolean).join(' '));
-      }
       enqueue([region, district, address].filter(Boolean).join(' '));
-      if (postalCode) {
-        enqueue([region, district, address, postalCode].filter(Boolean).join(' '));
-      }
-      enqueue([address, district, region].filter(Boolean).join(', '));
-      if (postalCode) {
-        enqueue([address, district, region, postalCode].filter(Boolean).join(', '));
-        enqueue([postalCode, district, region].filter(Boolean).join(' '));
-        enqueue(postalCode);
-      }
-      enqueue([district, region].filter(Boolean).join(' '), { includeCountryVariant: true });
+      enqueue([district, address].filter(Boolean).join(' '));
+      enqueue([region, address].filter(Boolean).join(' '));
+      enqueue(address);
+      enqueue([district, region].filter(Boolean).join(' '));
 
       return queries;
     }
@@ -275,82 +239,95 @@
       return;
     }
 
+    function geocode(query) {
+      return new Promise((resolve, reject) => {
+        naverMaps.Service.geocode({ query }, (serviceStatus, response) => {
+          if (serviceStatus !== naverMaps.Service.Status.OK) {
+            reject(new Error(`Geocoding failed with status ${serviceStatus}`));
+            return;
+          }
+
+          const addresses =
+            response && response.v2 && Array.isArray(response.v2.addresses)
+              ? response.v2.addresses
+              : [];
+
+          if (!addresses.length) {
+            reject(new Error('No geocoding results found.'));
+            return;
+          }
+
+          const first = addresses[0];
+          const lat = parseFloat(first.y);
+          const lng = parseFloat(first.x);
+
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            reject(new Error('Invalid coordinates received.'));
+            return;
+          }
+
+          resolve({ lat, lng });
+        });
+      });
+    }
+
     function geocodeNext(queue) {
       if (!queue.length) {
         return Promise.reject(new Error('No geocoding results found.'));
       }
 
       const currentQuery = queue.shift();
-      const queryParam = encodeURIComponent(currentQuery);
 
-      return fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${queryParam}`, {
-        headers: {
-          'Accept-Language': locale,
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Geocoding request failed with status ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((results) => {
-          if (!Array.isArray(results) || !results.length) {
-            if (queue.length) {
-              return geocodeNext(queue);
-            }
-            throw new Error('No geocoding results found.');
-          }
+      return geocode(currentQuery).catch((error) => {
+        if (queue.length) {
+          console.warn(`Geocoding attempt failed for query "${currentQuery}":`, error);
+          return geocodeNext(queue);
+        }
 
-          const [firstResult] = results;
-          const lat = parseFloat(firstResult.lat);
-          const lon = parseFloat(firstResult.lon);
-
-          if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-            if (queue.length) {
-              return geocodeNext(queue);
-            }
-            throw new Error('Invalid coordinates received.');
-          }
-
-          return { lat, lon };
-        })
-        .catch((error) => {
-          if (queue.length) {
-            console.warn(`Geocoding attempt failed for query "${currentQuery}":`, error);
-            return geocodeNext(queue);
-          }
-
-          throw error;
-        });
+        throw error;
+      });
     }
 
     geocodeNext([...geocodeQueue])
-      .then(({ lat, lon }) => {
-        const map = L.map(mapContainer, {
-          scrollWheelZoom: false,
-        }).setView([lat, lon], 16);
+      .then(({ lat, lng }) => {
+        const center = new naverMaps.LatLng(lat, lng);
+        const map = new naverMaps.Map(mapContainer, {
+          center,
+          zoom: 16,
+          scaleControl: false,
+          mapDataControl: false,
+          logoControlOptions: {
+            position: naverMaps.Position.BOTTOM_RIGHT,
+          },
+          zoomControl: true,
+          zoomControlOptions: {
+            position: naverMaps.Position.TOP_RIGHT,
+          },
+        });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        }).addTo(map);
-
-        const marker = L.marker([lat, lon]).addTo(map);
+        const marker = new naverMaps.Marker({
+          position: center,
+          map,
+          title: venueName || undefined,
+        });
 
         if (venueName) {
-          marker.bindPopup(venueName);
+          const infoContent = document.createElement('div');
+          infoContent.className = 'shop-map__info-window';
+          infoContent.textContent = venueName;
+
+          const infoWindow = new naverMaps.InfoWindow({
+            content: infoContent,
+            backgroundColor: 'transparent',
+            borderColor: 'transparent',
+            borderWidth: 0,
+            disableAnchor: true,
+          });
+
+          infoWindow.open(map, marker);
         }
 
         setStatus('', 'ready');
-
-        window.setTimeout(() => {
-          map.invalidateSize();
-          if (venueName) {
-            marker.openPopup();
-          }
-        }, 250);
       })
       .catch((error) => {
         console.warn('Failed to render map:', error);
