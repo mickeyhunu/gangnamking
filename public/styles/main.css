@@ -855,7 +855,6 @@ img {
   aspect-ratio: 4 / 3;
   background: rgba(255, 255, 255, 0.02);
   overflow: hidden;
-  border-radius: 16px;
 }
 
 .shop-card__image img {
@@ -1042,6 +1041,8 @@ img {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(8, 5, 18, 0.8);
   box-shadow: 0 25px 48px rgba(5, 0, 20, 0.55);
+  width: min(100%, 960px);
+  max-height: 560px;
   aspect-ratio: 12 / 7;
 }
 
@@ -1299,7 +1300,8 @@ img {
 }
 
 .detail-card--hero .detail-gallery {
-  width: 100%;
+  width: min(100%, 960px);
+  max-height: 560px;
 }
 
 .detail-card--hero .detail-hero__info {
