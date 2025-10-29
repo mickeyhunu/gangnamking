@@ -932,14 +932,15 @@ img {
 
   .shop-card {
     flex-direction: row;
-    align-items: center;
+    align-items: stretch;
     padding: 0.75rem 1.25rem 0.75rem 1.45rem;
     column-gap: 1.1rem;
+    --shop-card-thumb-size: 92px;
   }
 
   .shop-card__image {
-    flex: 0 0 92px;
-    max-width: 92px;
+    flex: 0 0 var(--shop-card-thumb-size);
+    max-width: var(--shop-card-thumb-size);
     aspect-ratio: 1 / 1;
     border-right: none;
     border-radius: 16px;
@@ -947,10 +948,11 @@ img {
 
   .shop-card__body {
     flex: 1;
+    height: var(--shop-card-thumb-size);
     padding: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.45rem;
   }
 
