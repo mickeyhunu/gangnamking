@@ -885,9 +885,9 @@ img {
 .shop-card__name {
   margin: 0;
   font-size: 1.3rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
 }
 
 .shop-card__body p {
