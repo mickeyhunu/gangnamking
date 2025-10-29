@@ -550,8 +550,9 @@
       }
 
       const amountConfig = block && block.amount ? block.amount : {};
-      const multiplier = toNumeric(amountConfig.multiplier);
-      const resolvedMultiplier = Number.isFinite(multiplier) ? multiplier : 1;
+      const hasCustomFormat = typeof amountConfig.format === 'string'
+        && amountConfig.format.includes('{value}');
+      const explicitMultiplier = toNumeric(amountConfig.multiplier);
       const decimalsRaw = typeof amountConfig.decimals === 'string'
         ? parseInt(amountConfig.decimals, 10)
         : amountConfig.decimals;
@@ -559,7 +560,41 @@
       const locale = typeof amountConfig.locale === 'string'
         ? amountConfig.locale
         : getLocaleForLang(activeLang);
-      const useGrouping = amountConfig.useGrouping === true;
+      const hasExplicitPrefix = Object.prototype.hasOwnProperty.call(amountConfig, 'prefix');
+      const hasExplicitSuffix = Object.prototype.hasOwnProperty.call(amountConfig, 'suffix');
+      const hasExplicitUseGrouping = Object.prototype.hasOwnProperty.call(amountConfig, 'useGrouping');
+      const isNonKorean = activeLang !== 'ko';
+      const manSuffixes = ['만', '萬韓元', '万ウォン'];
+
+      let resolvedMultiplier = Number.isFinite(explicitMultiplier) ? explicitMultiplier : 1;
+      let resolvedPrefix = hasExplicitPrefix ? amountConfig.prefix : '';
+      let resolvedSuffix = hasExplicitSuffix ? amountConfig.suffix : getDefaultAmountSuffix(activeLang);
+      let resolvedUseGrouping = amountConfig.useGrouping === true;
+
+      if (amountConfig.useGrouping === false) {
+        resolvedUseGrouping = false;
+      }
+
+      const usesManSuffix = typeof resolvedSuffix === 'string' && manSuffixes.indexOf(resolvedSuffix) !== -1;
+
+      if (isNonKorean && !hasCustomFormat) {
+        if (!Number.isFinite(explicitMultiplier) || usesManSuffix) {
+          resolvedMultiplier = 10000;
+        }
+
+        if (!hasExplicitSuffix || usesManSuffix) {
+          resolvedSuffix = '₩';
+        }
+
+        if (!hasExplicitUseGrouping) {
+          resolvedUseGrouping = true;
+        }
+
+        if (!hasExplicitPrefix) {
+          resolvedPrefix = '';
+        }
+      }
+
       const scaledValue = value * resolvedMultiplier;
 
       let formattedNumber;
@@ -568,24 +603,17 @@
         formattedNumber = new Intl.NumberFormat(locale, {
           minimumFractionDigits: decimals,
           maximumFractionDigits: decimals,
-          useGrouping,
+          useGrouping: resolvedUseGrouping,
         }).format(scaledValue);
       } catch (error) {
         formattedNumber = scaledValue.toFixed(decimals);
       }
 
-      if (typeof amountConfig.format === 'string' && amountConfig.format.includes('{value}')) {
+      if (hasCustomFormat) {
         return amountConfig.format.replace('{value}', formattedNumber);
       }
 
-      const prefix = Object.prototype.hasOwnProperty.call(amountConfig, 'prefix')
-        ? amountConfig.prefix
-        : '';
-      const suffix = Object.prototype.hasOwnProperty.call(amountConfig, 'suffix')
-        ? amountConfig.suffix
-        : getDefaultAmountSuffix(activeLang);
-
-      return `${prefix}${formattedNumber}${suffix}`;
+      return `${resolvedPrefix}${formattedNumber}${resolvedSuffix}`;
     }
 
     function formatMeta(baseCharge, tcCharge, rtCharge, block) {
