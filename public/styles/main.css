@@ -944,17 +944,17 @@ img {
     flex: 1;
     padding: 1rem 1.2rem;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    align-items: center;
-    column-gap: 1rem;
-    row-gap: 0.35rem;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: flex-start;
+    row-gap: 0.45rem;
   }
 
   .shop-card__info {
-    order: 1;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
+    order: 0;
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
   }
 
   .shop-card__name {
@@ -962,21 +962,23 @@ img {
   }
 
   .shop-card__meta {
-    display: none;
+    display: block;
+    font-size: 0.82rem;
   }
 
   .shop-card__category {
-    order: 2;
+    order: 1;
     padding: 0.25rem 0.65rem;
-    font-size: 0.8rem;
-    align-self: center;
+    font-size: 0.78rem;
+    align-self: flex-start;
+    justify-self: start;
   }
 
   .shop-card__link {
-    order: 3;
+    order: 2;
     justify-self: end;
     white-space: nowrap;
-    margin-top: 0;
+    margin-top: 0.2rem;
   }
 }
 .shop-card__contact {

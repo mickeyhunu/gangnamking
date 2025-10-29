@@ -60,6 +60,43 @@
 
   let lastSelectionSignature = '';
 
+  function updateCategoryFilterOptions(availableCategories, currentValue) {
+    if (!categoryFilter) {
+      return currentValue;
+    }
+
+    const normalizedCurrent =
+      typeof currentValue === 'string' && currentValue.length ? currentValue : 'all';
+    let hasCurrent = normalizedCurrent === 'all';
+
+    const options = Array.from(categoryFilter.options || []);
+
+    options.forEach((option) => {
+      const optionValue = option.value || '';
+
+      if (!optionValue || optionValue === 'all') {
+        option.hidden = false;
+        option.disabled = false;
+        return;
+      }
+
+      const isAvailable = availableCategories.has(optionValue);
+      option.hidden = !isAvailable;
+      option.disabled = !isAvailable;
+
+      if (optionValue === normalizedCurrent) {
+        hasCurrent = isAvailable;
+      }
+    });
+
+    if (!hasCurrent) {
+      categoryFilter.value = 'all';
+      return 'all';
+    }
+
+    return normalizedCurrent;
+  }
+
   function notifySelectionChange(regionValue, districtValue, categoryValue) {
     const signature = `${regionValue}|${districtValue}|${categoryValue}`;
 
@@ -104,19 +141,36 @@
       typeof activeDistrict === 'string' && activeDistrict.length
         ? activeDistrict
         : 'all';
-    const categoryValue = categoryFilter ? categoryFilter.value : 'all';
+    const rawCategoryValue = categoryFilter ? categoryFilter.value : 'all';
 
     const sectionVisibility = new Map();
+    const availableCategories = new Set();
+    const cardStates = Array.from(cards || [], (card) => {
+      const dataset = card.dataset || {};
+      const category = dataset.category || '';
+      const matchesRegion = regionValue === 'all' || dataset.region === regionValue;
+      const matchesDistrict = districtValue === 'all' || dataset.district === districtValue;
 
-    cards.forEach((card) => {
-      const matchesRegion = regionValue === 'all' || card.dataset.region === regionValue;
-      const matchesDistrict = districtValue === 'all' || card.dataset.district === districtValue;
-      const matchesCategory = categoryValue === 'all' || card.dataset.category === categoryValue;
+      if (matchesRegion && matchesDistrict && category) {
+        availableCategories.add(category);
+      }
 
-      const isVisible = matchesRegion && matchesDistrict && matchesCategory;
-      card.style.display = isVisible ? 'flex' : 'none';
+      return {
+        card,
+        category,
+        matchesRegion,
+        matchesDistrict,
+      };
+    });
 
-      const section = card.closest('[data-category-section]');
+    const categoryValue = updateCategoryFilterOptions(availableCategories, rawCategoryValue);
+
+    cardStates.forEach((state) => {
+      const matchesCategory = categoryValue === 'all' || state.category === categoryValue;
+      const isVisible = state.matchesRegion && state.matchesDistrict && matchesCategory;
+      state.card.style.display = isVisible ? 'flex' : 'none';
+
+      const section = state.card.closest('[data-category-section]');
       if (section) {
         if (!sectionVisibility.has(section)) {
           sectionVisibility.set(section, false);
@@ -129,11 +183,8 @@
     });
 
     categorySections.forEach((section) => {
-      if (sectionVisibility.get(section)) {
-        section.removeAttribute('hidden');
-      } else {
-        section.setAttribute('hidden', '');
-      }
+      const shouldShow = Boolean(sectionVisibility.get(section));
+      section.hidden = !shouldShow;
     });
 
     notifySelectionChange(regionValue, districtValue, categoryValue);
