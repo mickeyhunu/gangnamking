@@ -965,7 +965,7 @@ img {
 
   .shop-card__body {
     flex: 1;
-    height: var(--shop-card-thumb-size);
+    min-height: var(--shop-card-thumb-size);
     padding: 0;
     display: flex;
     flex-direction: column;
