@@ -4,6 +4,89 @@ const { getShops } = require('../services/dataStore');
 const { fetchEntriesForStore, fetchEntryWorkerNames } = require('../services/entryService');
 const { fetchShopLocation } = require('../services/naverMapService');
 
+function toFiniteNumber(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
+function chunkArray(items, size) {
+  if (!Array.isArray(items) || !size || size <= 0) {
+    return [];
+  }
+
+  const chunks = [];
+  for (let index = 0; index < items.length; index += size) {
+    const chunk = items.slice(index, index + size);
+    if (chunk.length) {
+      chunks.push(chunk);
+    }
+  }
+
+  return chunks;
+}
+
+function buildEntryTopList(entries, limit = 5) {
+  if (!Array.isArray(entries) || !entries.length) {
+    return [];
+  }
+
+  return entries
+    .map((entry) => {
+      const workerName = typeof entry.workerName === 'string' ? entry.workerName.trim() : '';
+      if (!workerName) {
+        return null;
+      }
+
+      const mentionCount = toFiniteNumber(entry.mentionCount);
+      const insertCount = toFiniteNumber(entry.insertCount);
+      const totalScore = mentionCount * 5 + insertCount;
+      const displayScore = Math.max(totalScore - 6, 0);
+
+      return {
+        workerName,
+        mentionCount,
+        insertCount,
+        totalScore,
+        displayScore,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => {
+      if (b.totalScore !== a.totalScore) {
+        return b.totalScore - a.totalScore;
+      }
+
+      if (b.mentionCount !== a.mentionCount) {
+        return b.mentionCount - a.mentionCount;
+      }
+
+      if (b.insertCount !== a.insertCount) {
+        return b.insertCount - a.insertCount;
+      }
+
+      return a.workerName.localeCompare(b.workerName, 'ko');
+    })
+    .slice(0, Math.max(0, limit));
+}
+
+function buildEntrySummary(entries, workerNames) {
+  const normalizedWorkerNames = Array.isArray(workerNames)
+    ? workerNames
+        .map((name) => (typeof name === 'string' ? name.trim() : ''))
+        .filter(Boolean)
+    : [];
+
+  const workerRows = chunkArray(normalizedWorkerNames, 10);
+
+  return {
+    enabled: false,
+    totalCount: Array.isArray(entries) ? entries.length : 0,
+    workerRows,
+    hasWorkerRows: workerRows.some((row) => Array.isArray(row) && row.length),
+    topEntries: buildEntryTopList(entries),
+  };
+}
+
 function getLocalizedShops(lang) {
   const shops = getShops();
   return shops.map((shop) => localizeShop(shop, lang));
@@ -64,21 +147,42 @@ async function renderShopDetail(req, res, next) {
       dateStyle: 'medium',
       timeStyle: 'short',
     });
-    const storeNo = localizedShop.storeNo || shop.storeNo;
-    const rawEntries = await fetchEntriesForStore(storeNo, { shopId: shop.id });
-    const entryWorkerNames = await fetchEntryWorkerNames(storeNo, {
-      shopId: shop.id,
-      entries: rawEntries,
-    });
-    const storeEntries = rawEntries.map((entry) => ({
-      workerName: entry.workerName,
-      mentionCount: entry.mentionCount,
-      mentionCountLabel: numberFormatter.format(entry.mentionCount || 0),
-      insertCount: entry.insertCount,
-      insertCountLabel: numberFormatter.format(entry.insertCount || 0),
-      createdAt: entry.createdAt,
-      createdAtLabel: entry.createdAt ? dateFormatter.format(entry.createdAt) : '',
-    }));
+    const storeNoRaw = localizedShop.storeNo ?? shop.storeNo;
+    const normalizedStoreNo = Number(storeNoRaw);
+    const hasStoreNo = Number.isFinite(normalizedStoreNo) && normalizedStoreNo > 0;
+
+    let storeEntries = [];
+    let entryWorkerNames = [];
+    let entrySummary = {
+      enabled: false,
+      totalCount: 0,
+      workerRows: [],
+      hasWorkerRows: false,
+      topEntries: [],
+    };
+
+    if (hasStoreNo) {
+      const rawEntries = await fetchEntriesForStore(normalizedStoreNo, { shopId: shop.id });
+      entryWorkerNames = await fetchEntryWorkerNames(normalizedStoreNo, {
+        shopId: shop.id,
+        entries: rawEntries,
+      });
+
+      storeEntries = rawEntries.map((entry) => ({
+        workerName: entry.workerName,
+        mentionCount: entry.mentionCount,
+        mentionCountLabel: numberFormatter.format(entry.mentionCount || 0),
+        insertCount: entry.insertCount,
+        insertCountLabel: numberFormatter.format(entry.insertCount || 0),
+        createdAt: entry.createdAt,
+        createdAtLabel: entry.createdAt ? dateFormatter.format(entry.createdAt) : '',
+      }));
+
+      entrySummary = {
+        ...buildEntrySummary(storeEntries, entryWorkerNames),
+        enabled: true,
+      };
+    }
 
     let shopLocation = null;
     let mapAuthErrorCode = '';
@@ -110,6 +214,7 @@ async function renderShopDetail(req, res, next) {
       shop: localizedShop,
       storeEntries,
       entryWorkerNames,
+      entrySummary,
       shopLocation,
       mapAuthErrorCode,
       seoKeywords: Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : [],
