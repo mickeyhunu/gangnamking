@@ -786,6 +786,14 @@
       ? mapText.authError ||
         'Naver Maps authentication failed. Please enable the API subscription in your Naver Cloud project.'
       : '';
+  const staticMapEndpoint =
+    shop && shop.id ? `/shops/${encodeURIComponent(shop.id)}/map/static` : '';
+  const staticMapMessage =
+    mapText.staticFallback ||
+    'Showing static map preview while interactive map is unavailable.';
+  const staticMapAlt = formatMapLabel(
+    mapText.staticAlt || 'Static map showing location of {{shopName}}'
+  );
 %>
 
   <div class="detail-location">
@@ -803,6 +811,9 @@
             data-map-locale="<%= lang || 'ko' %>"
             data-loading-text="<%= mapText.loading || 'Loading map…' %>"
             data-error-text="<%= mapText.error || 'Unable to load map. Please check the address.' %>"
+            data-static-map-endpoint="<%= staticMapEndpoint %>"
+            data-static-map-message="<%= staticMapMessage %>"
+            data-static-map-alt="<%= staticMapAlt %>"
             <% if (mapAuthErrorMessage) { %>
               data-map-auth-error="<%= mapAuthErrorMessage %>"
             <% } %>

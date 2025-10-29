@@ -165,11 +165,17 @@
     const latValue = mapHost.dataset.shopLat;
     const lngValue = mapHost.dataset.shopLng;
     const authErrorMessage = (mapHost.dataset.mapAuthError || '').trim();
+    const mapLocale = (mapHost.dataset.mapLocale || '').trim();
+    const staticMapEndpoint = (mapHost.dataset.staticMapEndpoint || '').trim();
+    const staticMapMessage = mapHost.dataset.staticMapMessage || '';
+    const staticMapAlt = mapHost.dataset.staticMapAlt || '';
     const presetLat =
       typeof latValue === 'string' && latValue.trim() !== '' ? Number.parseFloat(latValue) : NaN;
     const presetLng =
       typeof lngValue === 'string' && lngValue.trim() !== '' ? Number.parseFloat(lngValue) : NaN;
     const hasPresetCoordinates = Number.isFinite(presetLat) && Number.isFinite(presetLng);
+    let staticMapObjectUrl = '';
+    let staticMapAbortController = null;
 
     function setStatus(message, state) {
       if (state) {
@@ -189,6 +195,141 @@
       }
     }
 
+    function cancelStaticMapRequest() {
+      if (staticMapAbortController && typeof staticMapAbortController.abort === 'function') {
+        staticMapAbortController.abort();
+      }
+
+      staticMapAbortController = null;
+    }
+
+    function releaseStaticMapObjectUrl() {
+      if (staticMapObjectUrl) {
+        URL.revokeObjectURL(staticMapObjectUrl);
+        staticMapObjectUrl = '';
+      }
+    }
+
+    function removeExistingStaticImage() {
+      if (!mapContainer) {
+        return;
+      }
+
+      const existingImage = mapContainer.querySelector('.shop-map__static-image');
+      if (existingImage) {
+        existingImage.remove();
+      }
+    }
+
+    function getStaticMapSize() {
+      if (!mapContainer) {
+        return { width: 600, height: 360 };
+      }
+
+      const rect = mapContainer.getBoundingClientRect();
+      const width = Math.max(Math.round(rect.width), 200);
+      const height = Math.max(Math.round(rect.height), 200);
+
+      return { width, height };
+    }
+
+    async function loadStaticMap(lat, lng) {
+      if (!staticMapEndpoint) {
+        throw new Error('Static map endpoint is not configured.');
+      }
+
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        throw new Error('Static map coordinates are not available.');
+      }
+
+      const { width, height } = getStaticMapSize();
+      const url = new URL(staticMapEndpoint, window.location.origin);
+      url.searchParams.set('lat', String(lat));
+      url.searchParams.set('lng', String(lng));
+      url.searchParams.set('w', String(width));
+      url.searchParams.set('h', String(height));
+      url.searchParams.set('zoom', '16');
+      url.searchParams.set('scale', window.devicePixelRatio >= 1.5 ? '2' : '1');
+      if (mapLocale) {
+        url.searchParams.set('lang', mapLocale);
+      }
+
+      const controller = typeof AbortController === 'function' ? new AbortController() : null;
+
+      if (controller) {
+        cancelStaticMapRequest();
+        staticMapAbortController = controller;
+      }
+
+      setStatus(loadingText, 'loading');
+
+      try {
+        const response = await fetch(url.toString(), controller ? { signal: controller.signal } : undefined);
+
+        if (!response.ok) {
+          throw new Error(`Static map request failed with status ${response.status}`);
+        }
+
+        const blob = await response.blob();
+
+        if (controller && controller.signal.aborted) {
+          return;
+        }
+
+        if (staticMapAbortController === controller) {
+          staticMapAbortController = null;
+        } else {
+          cancelStaticMapRequest();
+        }
+
+        releaseStaticMapObjectUrl();
+
+        staticMapObjectUrl = URL.createObjectURL(blob);
+
+        removeExistingStaticImage();
+        mapContainer.innerHTML = '';
+
+        const image = document.createElement('img');
+        image.className = 'shop-map__static-image';
+        image.src = staticMapObjectUrl;
+        image.alt = staticMapAlt || '';
+        image.decoding = 'async';
+        mapContainer.appendChild(image);
+
+        if (staticMapMessage) {
+          setStatus(staticMapMessage, 'static');
+        } else {
+          setStatus('', 'static');
+        }
+      } catch (error) {
+        if (error && error.name === 'AbortError') {
+          return;
+        }
+
+        throw error;
+      }
+    }
+
+    function attemptStaticFallback(lat, lng) {
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        return;
+      }
+
+      loadStaticMap(lat, lng).catch((error) => {
+        console.warn('Failed to load static map fallback:', error);
+        setStatus(authErrorMessage || errorText, 'error');
+      });
+    }
+
+    function releaseStaticMap() {
+      cancelStaticMapRequest();
+      releaseStaticMapObjectUrl();
+      removeExistingStaticImage();
+    }
+
+    window.addEventListener('pagehide', releaseStaticMap);
+    window.addEventListener('beforeunload', releaseStaticMap);
+
     if (!mapContainer || (!address && !hasPresetCoordinates)) {
       setStatus(authErrorMessage || errorText, 'error');
       return;
@@ -202,11 +343,17 @@
 
     if (!naverMaps || !naverMaps.Service || !naverMaps.LatLng) {
       console.warn('Naver Maps library is not available.');
-      setStatus(authErrorMessage || errorText, 'error');
+      if (hasPresetCoordinates) {
+        attemptStaticFallback(presetLat, presetLng);
+      } else {
+        setStatus(authErrorMessage || errorText, 'error');
+      }
       return;
     }
 
     function renderMap(lat, lng) {
+      releaseStaticMap();
+
       const center = new naverMaps.LatLng(lat, lng);
       const map = new naverMaps.Map(mapContainer, {
         center,
@@ -348,7 +495,11 @@
       })
       .catch((error) => {
         console.warn('Failed to render map:', error);
-        setStatus(authErrorMessage || errorText, 'error');
+        if (hasPresetCoordinates) {
+          attemptStaticFallback(presetLat, presetLng);
+        } else {
+          setStatus(authErrorMessage || errorText, 'error');
+        }
       });
   }
 })();
