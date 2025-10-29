@@ -70,15 +70,6 @@
       <div class="detail-hero__info">
         <p class="detail-hero__meta"><%= shop.region %> · <%= shop.district %> · <%= shop.category %></p>
         <h1><%= shop.name %></h1>
-        <% const defaultServices = ['강남권 픽업 서비스', '발렛파킹 서비스']; %>
-        <% const serviceBadges = Array.isArray(t.shop && t.shop.services) && (t.shop.services.length ? t.shop.services : defaultServices) || defaultServices; %>
-        <% if (serviceBadges.length) { %>
-          <div class="detail-hero__services">
-            <% serviceBadges.forEach(function(service) { %>
-              <span class="detail-hero__service"><%= service %></span>
-            <% }) %>
-          </div>
-        <% } %>
         <dl class="detail-hero__list">
           <div>
             <dt><%= t.shop && t.shop.address ? t.shop.address : 'Address' %></dt>

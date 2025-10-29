@@ -1018,26 +1018,6 @@ img {
   margin: 0.75rem 0 1.25rem;
 }
 
-.detail-hero__services {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-bottom: 1.75rem;
-}
-
-.detail-hero__service {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  background: rgba(255, 46, 139, 0.18);
-  color: #ff9bd1;
-  font-weight: 600;
-  font-size: 0.85rem;
-  letter-spacing: 0.02em;
-}
-
 .detail-hero__list {
   display: grid;
   gap: 1.1rem;
