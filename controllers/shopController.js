@@ -65,7 +65,7 @@ async function renderShopDetail(req, res, next) {
       timeStyle: 'short',
     });
     const storeNo = localizedShop.storeNo || shop.storeNo;
-    const rawEntries = await fetchEntriesForStore(storeNo);
+    const rawEntries = await fetchEntriesForStore(storeNo, { shopId: shop.id });
     const storeEntries = rawEntries.map((entry) => ({
       workerName: entry.workerName,
       mentionCount: entry.mentionCount,
