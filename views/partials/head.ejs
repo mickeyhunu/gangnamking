@@ -34,6 +34,13 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-roompang.png" />
     <link rel="apple-touch-icon" href="/images/favicon-roompang.png" />
     <link rel="stylesheet" href="/styles/main.css" />
+    <% if (Array.isArray(extraStyles) && extraStyles.length) { %>
+      <% extraStyles.forEach(function (href) { %>
+        <% if (typeof href === 'string' && href.trim()) { %>
+          <link rel="stylesheet" href="<%= href %>" />
+        <% } %>
+      <% }) %>
+    <% } %>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
