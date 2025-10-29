@@ -32,10 +32,12 @@
                       <span class="shop-card__meta"><%= shop.region %> · <%= shop.district %></span>
                       <h3 class="shop-card__name"><%= shop.name %></h3>
                     </div>
-                    <span class="shop-card__category"><%= shop.category %></span>
-                    <a class="shop-card__link" href="/shops/<%= shop.id %>">
-                      <%= t.shop && t.shop.viewDetails ? t.shop.viewDetails : '' %>
-                    </a>
+                    <div class="shop-card__footer">
+                      <span class="shop-card__category"><%= shop.category %></span>
+                      <a class="shop-card__link" href="/shops/<%= shop.id %>">
+                        <%= t.shop && t.shop.viewDetails ? t.shop.viewDetails : '' %>
+                      </a>
+                    </div>
                   </div>
                 </article>
               <% }) %>
