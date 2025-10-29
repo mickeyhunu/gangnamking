@@ -757,36 +757,18 @@
           <div class="store-entry-workers">
             <h3 class="store-entry-workers__title"><%= entriesWorkerListTitle %></h3>
             <ul class="store-entry-workers__list">
-              <% workerNameList.forEach(function (name) { %>
-                <li class="store-entry-workers__item"><%= name %></li>
-              <% }) %>
+              <% for (let index = 0; index < workerNameList.length; index += 10) { %>
+                <% const rowNames = workerNameList.slice(index, index + 10); %>
+                <li class="store-entry-workers__item">
+                  <% rowNames.forEach(function (name) { %>
+                    <span class="store-entry-workers__name"><%= name %></span>
+                  <% }) %>
+                </li>
+              <% } %>
             </ul>
           </div>
         <% } %>
-        <% if (Array.isArray(storeEntries) && storeEntries.length) { %>
-          <div class="store-entries__table-wrapper">
-            <table class="store-entries__table">
-              <thead>
-                <tr>
-                  <th scope="col"><%= entriesWorkerLabel %></th>
-                  <th scope="col"><%= entriesColumnText.mentionCount || '멘션 수' %></th>
-                  <th scope="col"><%= entriesColumnText.insertCount || '입장 수' %></th>
-                  <th scope="col"><%= entriesColumnText.createdAt || '기록 시간' %></th>
-                </tr>
-              </thead>
-              <tbody>
-                <% storeEntries.forEach(function (entry) { %>
-                  <tr>
-                    <td><%= entry.workerName || '-' %></td>
-                    <td><%= entry.mentionCountLabel %></td>
-                    <td><%= entry.insertCountLabel %></td>
-                    <td><%= entry.createdAtLabel %></td>
-                  </tr>
-                <% }) %>
-              </tbody>
-            </table>
-          </div>
-        <% } else { %>
+        <% if (!Array.isArray(storeEntries) || !storeEntries.length) { %>
           <p class="store-entries__empty"><%= entriesEmptyText %></p>
         <% } %>
       </div>
