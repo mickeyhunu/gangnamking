@@ -157,6 +157,7 @@
     const mapContainer = mapHost.querySelector('[data-map-region]');
     const status = mapHost.querySelector('[data-map-status]');
     const address = (mapHost.dataset.shopAddress || '').trim();
+    const postalCode = (mapHost.dataset.shopPostalCode || '').trim();
     const district = (mapHost.dataset.shopDistrict || '').trim();
     const region = (mapHost.dataset.shopRegion || '').trim();
     const venueName = mapHost.dataset.shopName || '';
@@ -249,8 +250,19 @@
       }
 
       enqueue(address);
+      if (postalCode) {
+        enqueue([address, postalCode].filter(Boolean).join(' '));
+      }
       enqueue([region, district, address].filter(Boolean).join(' '));
+      if (postalCode) {
+        enqueue([region, district, address, postalCode].filter(Boolean).join(' '));
+      }
       enqueue([address, district, region].filter(Boolean).join(', '));
+      if (postalCode) {
+        enqueue([address, district, region, postalCode].filter(Boolean).join(', '));
+        enqueue([postalCode, district, region].filter(Boolean).join(' '));
+        enqueue(postalCode);
+      }
       enqueue([district, region].filter(Boolean).join(' '), { includeCountryVariant: true });
 
       return queries;
