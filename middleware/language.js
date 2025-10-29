@@ -1,6 +1,11 @@
 const { URLSearchParams } = require('url');
-const { detectLanguage } = require('../lib/language');
-const { SUPPORTED_LANGUAGES, LANGUAGE_FLAGS, DEFAULT_LANGUAGE } = require('../lib/constants');
+const { detectLanguage, getCookieLanguage } = require('../lib/language');
+const {
+  SUPPORTED_LANGUAGES,
+  LANGUAGE_FLAGS,
+  DEFAULT_LANGUAGE,
+  LANGUAGE_COOKIE_NAME,
+} = require('../lib/constants');
 const { buildAreaFilterConfig } = require('../lib/shopUtils');
 const { getTranslations } = require('../services/dataStore');
 
@@ -36,6 +41,14 @@ function languageMiddleware(req, res, next) {
   const lang = detectLanguage(req);
   const activeLang = translations[lang] ? lang : DEFAULT_LANGUAGE;
   const translation = translations[activeLang] || {};
+  const cookieLang = getCookieLanguage(req);
+  if (cookieLang !== activeLang) {
+    res.cookie(LANGUAGE_COOKIE_NAME, activeLang, {
+      maxAge: 365 * 24 * 60 * 60 * 1000,
+      httpOnly: false,
+      sameSite: 'lax',
+    });
+  }
   const languageOptions = buildLanguageOptions(req, activeLang, translations);
   const currentLanguageOption = languageOptions.find((item) => item.isCurrent) || languageOptions[0];
 
