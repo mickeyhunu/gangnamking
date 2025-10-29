@@ -3,9 +3,11 @@ const path = require('path');
 
 const shopsPath = path.join(__dirname, '..', 'data', 'shops.json');
 const translationsPath = path.join(__dirname, '..', 'data', 'translations.json');
+const entrySnapshotsPath = path.join(__dirname, '..', 'data', 'entrySnapshots.json');
 
 let shops = [];
 let translations = {};
+let entrySnapshots = {};
 let isWatching = false;
 
 function readJsonFile(filePath, fallback) {
@@ -28,6 +30,11 @@ function loadTranslations() {
   return translations;
 }
 
+function loadEntrySnapshots() {
+  entrySnapshots = readJsonFile(entrySnapshotsPath, {});
+  return entrySnapshots;
+}
+
 function initializeWatchers() {
   if (isWatching) {
     return;
@@ -43,12 +50,18 @@ function initializeWatchers() {
     loadTranslations();
   });
 
+  fs.watchFile(entrySnapshotsPath, { interval: 1000 }, () => {
+    console.log('Detected change in entry snapshots. Reloading...');
+    loadEntrySnapshots();
+  });
+
   isWatching = true;
 }
 
 function initializeDataStore() {
   loadShops();
   loadTranslations();
+  loadEntrySnapshots();
   initializeWatchers();
 }
 
@@ -60,8 +73,17 @@ function getTranslations() {
   return translations;
 }
 
+function getEntrySnapshots() {
+  if (!entrySnapshots || (typeof entrySnapshots === 'object' && !Object.keys(entrySnapshots).length)) {
+    loadEntrySnapshots();
+  }
+
+  return entrySnapshots;
+}
+
 module.exports = {
   initializeDataStore,
   getShops,
   getTranslations,
+  getEntrySnapshots,
 };

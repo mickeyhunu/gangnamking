@@ -1,18 +1,91 @@
 const { pool } = require('../config/db');
+const { getEntrySnapshots } = require('./dataStore');
 
-async function fetchEntriesForStore(storeNo) {
-  if (!storeNo) {
+function toNumber(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
+function toDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value;
+  }
+
+  const parsed = new Date(value);
+
+  if (!Number.isNaN(parsed.getTime())) {
+    return parsed;
+  }
+
+  return null;
+}
+
+function normalizeEntry(row) {
+  if (!row || typeof row !== 'object') {
+    return null;
+  }
+
+  const workerName = typeof row.workerName === 'string' ? row.workerName : '';
+  const mentionCount = toNumber(row.mentionCount ?? row.mentions ?? row.mention);
+  const insertCount = toNumber(row.insertCount ?? row.inserts ?? row.insert);
+  const createdAt = toDate(row.createdAt ?? row.timestamp ?? row.loggedAt);
+
+  return {
+    workerName,
+    mentionCount,
+    insertCount,
+    createdAt,
+  };
+}
+
+function getSnapshotEntries(storeNo, shopId) {
+  const snapshots = getEntrySnapshots();
+
+  if (!snapshots || typeof snapshots !== 'object') {
     return [];
   }
 
+  const candidateKeys = [storeNo, shopId]
+    .map((key) => {
+      if (key === null || key === undefined) {
+        return '';
+      }
+
+      return String(key).trim();
+    })
+    .filter(Boolean);
+
+  for (const key of candidateKeys) {
+    const snapshot = snapshots[key];
+
+    if (Array.isArray(snapshot) && snapshot.length) {
+      return snapshot.map(normalizeEntry).filter(Boolean);
+    }
+  }
+
+  return [];
+}
+
+async function fetchEntriesForStore(storeNo, options = {}) {
+  const { shopId } = options;
+  const fallbackEntries = () => getSnapshotEntries(storeNo, shopId);
+
+  if (!storeNo) {
+    return fallbackEntries();
+  }
+
   if (!pool || typeof pool.query !== 'function') {
-    return [];
+    return fallbackEntries();
   }
 
   const requiredEnv = [process.env.DB_HOST, process.env.DB_USER, process.env.DB_NAME];
 
   if (requiredEnv.some((value) => !value)) {
-    return [];
+    return fallbackEntries();
   }
 
   try {
@@ -24,42 +97,18 @@ async function fetchEntriesForStore(storeNo) {
       [storeNo]
     );
 
-    return rows
-      .map((row) => {
-        if (!row || typeof row !== 'object') {
-          return null;
-        }
+    const normalized = Array.isArray(rows)
+      ? rows.map(normalizeEntry).filter(Boolean)
+      : [];
 
-        const workerName = typeof row.workerName === 'string' ? row.workerName : '';
-        const mentionCount = Number.isFinite(Number(row.mentionCount))
-          ? Number(row.mentionCount)
-          : 0;
-        const insertCount = Number.isFinite(Number(row.insertCount))
-          ? Number(row.insertCount)
-          : 0;
-        let createdAt = null;
+    if (normalized.length) {
+      return normalized;
+    }
 
-        if (row.createdAt instanceof Date) {
-          createdAt = row.createdAt;
-        } else if (row.createdAt) {
-          const parsed = new Date(row.createdAt);
-
-          if (!Number.isNaN(parsed.getTime())) {
-            createdAt = parsed;
-          }
-        }
-
-        return {
-          workerName,
-          mentionCount,
-          insertCount,
-          createdAt,
-        };
-      })
-      .filter(Boolean);
+    return fallbackEntries();
   } catch (error) {
     console.error('Failed to fetch entries for store', storeNo, error);
-    return [];
+    return fallbackEntries();
   }
 }
 
