@@ -20,10 +20,6 @@
         "all": "전체"
       }
     },
-    "areas": {
-      "title": "강남 핵심 역별 최저가 매장",
-      "subtitle": "강남 지역, 구, 업종 필터로 원하는 조건의 최저가 제휴처를 바로 확인하세요."
-    },
     "footer": {
       "title": "룸빵1번지",
       "description": "전국 핵심 상권의 룸과 라운지를 최저가로 연결하는 원스톱 컨시어지 플랫폼입니다.",
@@ -133,10 +129,6 @@
           }
         }
       ],
-      "services": [
-        "강남권 픽업 서비스",
-        "발렛파킹 서비스"
-      ],
       "gallery": {
         "prev": "이전 이미지",
         "next": "다음 이미지",
@@ -169,10 +161,6 @@
       "filters": {
         "all": "All"
       }
-    },
-    "areas": {
-      "title": "Lowest-price venues by key Gangnam stations",
-      "subtitle": "Use the Gangnam area, district, and category filters to instantly find partner venues that meet your criteria."
     },
     "footer": {
       "title": "Roombbang First",
@@ -303,10 +291,6 @@
           }
         }
       ],
-      "services": [
-        "Gangnam-area pickup service",
-        "Valet parking service"
-      ],
       "gallery": {
         "prev": "Previous image",
         "next": "Next image",
@@ -339,10 +323,6 @@
       "filters": {
         "all": "全部"
       }
-    },
-    "areas": {
-      "title": "江南核心車站最低價店家",
-      "subtitle": "運用江南地區、區域與業種篩選，立即找到符合條件的最低價合作店家。"
     },
     "footer": {
       "title": "房房一番地",
@@ -463,10 +443,6 @@
           }
         }
       ],
-      "services": [
-        "江南地區接送服務",
-        "代客泊車服務"
-      ],
       "gallery": {
         "prev": "上一張圖片",
         "next": "下一張圖片",
@@ -499,10 +475,6 @@
       "filters": {
         "all": "すべて"
       }
-    },
-    "areas": {
-      "title": "江南主要駅別 最安値店舗",
-      "subtitle": "江南エリア・区・業種フィルターで条件に合う最安値の提携店をすぐに確認できます。"
     },
     "footer": {
       "title": "ルンパン一番地",
@@ -622,10 +594,6 @@
             "useGrouping": true
           }
         }
-      ],
-      "services": [
-        "江南エリア送迎サービス",
-        "バレーパーキングサービス"
       ],
       "gallery": {
         "prev": "前の画像",
