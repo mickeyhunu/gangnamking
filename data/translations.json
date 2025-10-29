@@ -121,9 +121,14 @@
         "rt": "RT"
       },
       "entries": {
-        "title": "엔트리 현황",
-        "workerListTitle": "엔트리 목록",
-        "empty": "등록된 엔트리 정보가 없습니다.",
+        "title": "출근부 현황",
+        "workerListTitle": "출근부 목록",
+        "summaryLabel": "총 출근인원",
+        "summaryUnit": "명",
+        "empty": "등록된 출근부 정보가 없습니다.",
+        "topListTitle": "추천 아가씨 TOP 5",
+        "topListEmpty": "추천 데이터가 없습니다.",
+        "topListScoreLabel": "합계",
         "columns": {
           "worker": "담당자",
           "mentionCount": "멘션 수",
@@ -323,9 +328,14 @@
         "rt": "RT"
       },
       "entries": {
-        "title": "Entry Status",
-        "workerListTitle": "Entry Roster",
-        "empty": "No entry activity has been recorded yet.",
+        "title": "Attendance Overview",
+        "workerListTitle": "Attendance Roster",
+        "summaryLabel": "Total on duty",
+        "summaryUnit": "staff",
+        "empty": "No attendance activity has been recorded yet.",
+        "topListTitle": "Top Recommended",
+        "topListEmpty": "No recommendation data is available.",
+        "topListScoreLabel": "Score",
         "columns": {
           "worker": "Manager",
           "mentionCount": "Mentions",
@@ -528,9 +538,14 @@
         "rt": "RT"
       },
       "entries": {
-        "title": "入場紀錄",
-        "workerListTitle": "入場名單",
-        "empty": "尚無入場紀錄。",
+        "title": "出勤概況",
+        "workerListTitle": "出勤名單",
+        "summaryLabel": "總出勤人數",
+        "summaryUnit": "人",
+        "empty": "尚無出勤紀錄。",
+        "topListTitle": "推薦小姐 TOP 5",
+        "topListEmpty": "尚無推薦資料。",
+        "topListScoreLabel": "總分",
         "columns": {
           "worker": "負責人",
           "mentionCount": "提及次數",
@@ -731,9 +746,14 @@
         "rt": "RT"
       },
       "entries": {
-        "title": "エントリー状況",
-        "workerListTitle": "エントリー担当者一覧",
-        "empty": "エントリー情報はまだ登録されていません。",
+        "title": "出勤状況",
+        "workerListTitle": "出勤リスト",
+        "summaryLabel": "総出勤人数",
+        "summaryUnit": "名",
+        "empty": "出勤情報はまだ登録されていません。",
+        "topListTitle": "おすすめキャスト TOP 5",
+        "topListEmpty": "おすすめデータがありません。",
+        "topListScoreLabel": "合計",
         "columns": {
           "worker": "担当者",
           "mentionCount": "メンション数",

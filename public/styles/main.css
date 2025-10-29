@@ -1086,6 +1086,64 @@ img {
   gap: 1.5rem;
 }
 
+.store-entry-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .store-entry-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.store-entry-header__title {
+  margin: 0;
+}
+
+.store-entry-summary {
+  margin: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.store-entry-summary__label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-muted);
+}
+
+.store-entry-summary__value {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.store-entry-summary__unit {
+  font-size: 0.95rem;
+  color: var(--color-muted);
+}
+
+.store-entry-overview {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 860px) {
+  .store-entry-overview {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    align-items: flex-start;
+  }
+}
+
 .store-entry-workers {
   margin-bottom: 0.5rem;
 }
@@ -1094,6 +1152,69 @@ img {
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 1rem;
+}
+
+.store-entry-top {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.store-entry-top__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.store-entry-top__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.store-entry-top__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 32px rgba(5, 0, 20, 0.28);
+}
+
+.store-entry-top__rank {
+  font-weight: 700;
+  color: var(--color-primary);
+  font-size: 1.1rem;
+  min-width: 1.75rem;
+}
+
+.store-entry-top__name {
+  flex: 1 1 auto;
+  font-weight: 600;
+}
+
+.store-entry-top__score {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.store-entry-top__score strong {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.store-entry-top__empty {
+  text-align: center;
 }
 
 .store-entry-workers__list {

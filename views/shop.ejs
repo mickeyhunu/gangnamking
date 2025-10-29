@@ -177,21 +177,19 @@
     const perPersonNote = perPersonNoteParts.join(' · ');
 
     const entriesText = (t.shop && t.shop.entries) || {};
-    const entriesColumnText = entriesText.columns || {};
-    const entriesTitleText = entriesText.title || '엔트리 현황';
-    const entriesEmptyText = entriesText.empty || '등록된 엔트리 정보가 없습니다.';
-    const entriesWorkerLabel = entriesColumnText.worker || '담당자';
-    const entriesWorkerListTitle = entriesText.workerListTitle || '엔트리 목록';
-    const workerNameList = Array.isArray(entryWorkerNames)
-      ? entryWorkerNames
-          .map(function (name) {
-            return typeof name === 'string' ? name.trim() : '';
-          })
-          .filter(function (name) {
-            return Boolean(name);
-          })
-      : [];
-    const hasWorkerNameList = workerNameList.length > 0;
+    const entriesTitleText = entriesText.title || '출근부 현황';
+    const entriesEmptyText = entriesText.empty || '등록된 출근부 정보가 없습니다.';
+    const entriesWorkerListTitle = entriesText.workerListTitle || '출근부 목록';
+    const entriesSummaryLabel = entriesText.summaryLabel || '총 출근인원';
+    const entriesSummaryUnit = entriesText.summaryUnit || '명';
+    const entriesTopListTitle = entriesText.topListTitle || '추천 아가씨 TOP 5';
+    const entriesTopListEmptyText = entriesText.topListEmpty || '추천 데이터가 없습니다.';
+    const entriesTopListScoreLabel = entriesText.topListScoreLabel || '합계';
+    const entryOverview = entrySummary && typeof entrySummary === 'object' ? entrySummary : {};
+    const showEntrySection = Boolean(entryOverview.enabled);
+    const workerNameRows = Array.isArray(entryOverview.workerRows) ? entryOverview.workerRows : [];
+    const hasWorkerNameRows = Boolean(entryOverview.hasWorkerRows);
+    const topEntryList = Array.isArray(entryOverview.topEntries) ? entryOverview.topEntries : [];
 
     function buildPricingTable(blocks) {
       if (!Array.isArray(blocks)) {
@@ -749,31 +747,56 @@
     </div>
   </section>
 
-  <section class="section detail-section store-entries">
-    <div class="container detail-section__grid">
-      <div class="detail-card detail-card--full">
-        <h2><%= entriesTitleText %></h2>
-        <% if (hasWorkerNameList) { %>
-          <div class="store-entry-workers">
-            <h3 class="store-entry-workers__title"><%= entriesWorkerListTitle %></h3>
-            <ul class="store-entry-workers__list">
-              <% for (let index = 0; index < workerNameList.length; index += 10) { %>
-                <% const rowNames = workerNameList.slice(index, index + 10); %>
-                <li class="store-entry-workers__item">
-                  <% rowNames.forEach(function (name) { %>
-                    <span class="store-entry-workers__name"><%= name %></span>
-                  <% }) %>
-                </li>
-              <% } %>
-            </ul>
+  <% if (showEntrySection) { %>
+    <section class="section detail-section store-entries">
+      <div class="container detail-section__grid">
+        <div class="detail-card detail-card--full">
+          <div class="store-entry-header">
+            <h2 class="store-entry-header__title"><%= entriesTitleText %></h2>
+            <p class="store-entry-summary">
+              <span class="store-entry-summary__label"><%= entriesSummaryLabel %></span>
+              <strong class="store-entry-summary__value"><%= entryOverview.totalCount || 0 %></strong>
+              <span class="store-entry-summary__unit"><%= entriesSummaryUnit %></span>
+            </p>
           </div>
-        <% } %>
-        <% if (!Array.isArray(storeEntries) || !storeEntries.length) { %>
-          <p class="store-entries__empty"><%= entriesEmptyText %></p>
-        <% } %>
+          <div class="store-entry-overview">
+            <div class="store-entry-workers">
+              <h3 class="store-entry-workers__title"><%= entriesWorkerListTitle %></h3>
+              <% if (hasWorkerNameRows) { %>
+                <ul class="store-entry-workers__list">
+                  <% workerNameRows.forEach(function (row) { %>
+                    <li class="store-entry-workers__item">
+                      <% row.forEach(function (name) { %>
+                        <span class="store-entry-workers__name"><%= name %></span>
+                      <% }); %>
+                    </li>
+                  <% }); %>
+                </ul>
+              <% } else { %>
+                <p class="store-entries__empty"><%= entriesEmptyText %></p>
+              <% } %>
+            </div>
+            <div class="store-entry-top">
+              <h3 class="store-entry-top__title"><%= entriesTopListTitle %></h3>
+              <% if (topEntryList.length) { %>
+                <ol class="store-entry-top__list">
+                  <% topEntryList.forEach(function (item, index) { %>
+                    <li class="store-entry-top__item">
+                      <span class="store-entry-top__rank"><%= index + 1 %>.</span>
+                      <span class="store-entry-top__name"><%= item.workerName %></span>
+                      <span class="store-entry-top__score"><%= entriesTopListScoreLabel %> <strong><%= item.displayScore %></strong></span>
+                    </li>
+                  <% }); %>
+                </ol>
+              <% } else { %>
+                <p class="store-entries__empty store-entry-top__empty"><%= entriesTopListEmptyText %></p>
+              <% } %>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  <% } %>
 
   <div class="seo-keywords" aria-hidden="true">
     <%- (seoKeywords || []).join(', ') %>
