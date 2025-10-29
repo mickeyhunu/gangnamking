@@ -868,6 +868,7 @@ img {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .shop-card__meta {
@@ -878,6 +879,9 @@ img {
 .shop-card__name {
   margin: 0;
   font-size: 1.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .shop-card__body p {
@@ -895,6 +899,7 @@ img {
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 @media (max-width: 1200px) {
@@ -947,6 +952,9 @@ img {
 
   .shop-card__info {
     order: 1;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .shop-card__name {
