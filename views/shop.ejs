@@ -85,6 +85,12 @@
             <dt><%= t.shop && t.shop.address ? t.shop.address : 'Address' %></dt>
             <dd><%= shop.address %></dd>
           </div>
+          <% if (shop.postalCode) { %>
+            <div>
+              <dt><%= t.shop && t.shop.postalCode ? t.shop.postalCode : 'Postal code' %></dt>
+              <dd><%= shop.postalCode %></dd>
+            </div>
+          <% } %>
           <div>
             <dt><%= t.shop && t.shop.hours ? t.shop.hours : 'Hours' %></dt>
             <dd><%= shop.hours %></dd>
@@ -106,6 +112,7 @@
           data-shop-map
           data-shop-name="<%= shop.name %>"
           data-shop-address="<%= shop.address %>"
+          data-shop-postal-code="<%= shop.postalCode || '' %>"
           data-shop-district="<%= shop.district %>"
           data-shop-region="<%= shop.region %>"
           data-map-locale="<%= lang || 'ko' %>"
