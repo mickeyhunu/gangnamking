@@ -10,8 +10,15 @@
     />
     <meta name="robots" content="index, follow" />
     <meta name="googlebot" content="index, follow" />
-    <% if (seoKeywords && seoKeywords.length) { %>
-      <meta name="keywords" content="<%= seoKeywords.join(', ') %>" />
+    <% const resolvedSeoKeywords =
+      typeof seoKeywords === 'string'
+        ? [seoKeywords]
+        : (Array.isArray(seoKeywords) ? seoKeywords.filter(function (keyword) {
+            return typeof keyword === 'string' && keyword.trim();
+          }) : []);
+    %>
+    <% if (resolvedSeoKeywords.length) { %>
+      <meta name="keywords" content="<%= resolvedSeoKeywords.join(', ') %>" />
     <% } %>
     <meta property="og:type" content="website" />
     <meta property="og:title" content="<%= title || (t.meta && t.meta.defaultTitle) || 'Gangnam King' %>" />
@@ -34,11 +41,16 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-roompang.png" />
     <link rel="apple-touch-icon" href="/images/favicon-roompang.png" />
     <link rel="stylesheet" href="/styles/main.css" />
-    <% if (Array.isArray(extraStyles) && extraStyles.length) { %>
-      <% extraStyles.forEach(function (href) { %>
-        <% if (typeof href === 'string' && href.trim()) { %>
-          <link rel="stylesheet" href="<%= href %>" />
-        <% } %>
+    <% const resolvedExtraStyles =
+      typeof extraStyles === 'string'
+        ? [extraStyles]
+        : (Array.isArray(extraStyles) ? extraStyles.filter(function (href) {
+            return typeof href === 'string' && href.trim();
+          }) : []);
+    %>
+    <% if (resolvedExtraStyles.length) { %>
+      <% resolvedExtraStyles.forEach(function (href) { %>
+        <link rel="stylesheet" href="<%= href %>" />
       <% }) %>
     <% } %>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
