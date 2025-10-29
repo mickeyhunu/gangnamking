@@ -157,6 +157,8 @@
     const mapContainer = mapHost.querySelector('[data-map-region]');
     const status = mapHost.querySelector('[data-map-status]');
     const address = (mapHost.dataset.shopAddress || '').trim();
+    const district = (mapHost.dataset.shopDistrict || '').trim();
+    const region = (mapHost.dataset.shopRegion || '').trim();
     const venueName = mapHost.dataset.shopName || '';
     const locale = mapHost.dataset.mapLocale || document.documentElement.lang || 'en';
     const loadingText = mapHost.dataset.loadingText || 'Loading map...';
@@ -180,6 +182,9 @@
       }
     }
 
+    const normalizedLocale = typeof locale === 'string' ? locale.toLowerCase() : 'en';
+    const countryToken = normalizedLocale.startsWith('ko') ? '대한민국' : 'South Korea';
+
     if (!mapContainer || !address) {
       setStatus(errorText, 'error');
       return;
@@ -197,32 +202,119 @@
       return;
     }
 
-    const query = encodeURIComponent(address);
+    function normalizeQuery(query) {
+      if (typeof query !== 'string') {
+        return '';
+      }
 
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${query}`, {
-      headers: {
-        'Accept-Language': locale,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Geocoding request failed with status ${response.status}`);
+      return query.replace(/\s+/g, ' ').trim();
+    }
+
+    function ensureCountry(query) {
+      const normalized = normalizeQuery(query);
+
+      if (!normalized) {
+        return '';
+      }
+
+      if (/대한민국|한국|South\s*Korea|Republic\s*of\s*Korea/i.test(normalized)) {
+        return normalized;
+      }
+
+      return `${normalized} ${countryToken}`.trim();
+    }
+
+    function buildQueryQueue() {
+      const queries = [];
+      const seen = new Set();
+
+      function enqueue(value, { includeCountryVariant = true } = {}) {
+        const normalized = normalizeQuery(value);
+
+        if (!normalized || seen.has(normalized)) {
+          return;
         }
-        return response.json();
+
+        seen.add(normalized);
+        queries.push(normalized);
+
+        if (includeCountryVariant) {
+          const withCountry = ensureCountry(normalized);
+
+          if (withCountry && !seen.has(withCountry)) {
+            seen.add(withCountry);
+            queries.push(withCountry);
+          }
+        }
+      }
+
+      enqueue(address);
+      enqueue([region, district, address].filter(Boolean).join(' '));
+      enqueue([address, district, region].filter(Boolean).join(', '));
+      enqueue([district, region].filter(Boolean).join(' '), { includeCountryVariant: true });
+
+      return queries;
+    }
+
+    const geocodeQueue = buildQueryQueue();
+
+    if (!geocodeQueue.length) {
+      setStatus(errorText, 'error');
+      return;
+    }
+
+    function geocodeNext(queue) {
+      if (!queue.length) {
+        return Promise.reject(new Error('No geocoding results found.'));
+      }
+
+      const currentQuery = queue.shift();
+      const queryParam = encodeURIComponent(currentQuery);
+
+      return fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${queryParam}`, {
+        headers: {
+          'Accept-Language': locale,
+        },
       })
-      .then((results) => {
-        if (!Array.isArray(results) || !results.length) {
-          throw new Error('No geocoding results found.');
-        }
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Geocoding request failed with status ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((results) => {
+          if (!Array.isArray(results) || !results.length) {
+            if (queue.length) {
+              return geocodeNext(queue);
+            }
+            throw new Error('No geocoding results found.');
+          }
 
-        const [firstResult] = results;
-        const lat = parseFloat(firstResult.lat);
-        const lon = parseFloat(firstResult.lon);
+          const [firstResult] = results;
+          const lat = parseFloat(firstResult.lat);
+          const lon = parseFloat(firstResult.lon);
 
-        if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-          throw new Error('Invalid coordinates received.');
-        }
+          if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+            if (queue.length) {
+              return geocodeNext(queue);
+            }
+            throw new Error('Invalid coordinates received.');
+          }
 
+          return { lat, lon };
+        })
+        .catch((error) => {
+          if (queue.length) {
+            console.warn(`Geocoding attempt failed for query "${currentQuery}":`, error);
+            return geocodeNext(queue);
+          }
+
+          throw error;
+        });
+    }
+
+    geocodeNext([...geocodeQueue])
+      .then(({ lat, lon }) => {
         const map = L.map(mapContainer, {
           scrollWheelZoom: false,
         }).setView([lat, lon], 16);
