@@ -56,14 +56,6 @@
       "subtitle": "강남 지역, 구, 업종 필터로 원하는 조건의 최저가 제휴처를 바로 확인하세요.",
       "cta": "최저가 제휴 문의"
     },
-    "mapOverview": {
-      "title": "전국 제휴 매장 지도",
-      "subtitle": "shops.json의 주소 정보를 바탕으로 제휴 매장의 위치를 한눈에 확인하세요.",
-      "loading": "지도를 불러오는 중입니다...",
-      "error": "지도를 불러오지 못했습니다. 주소 정보를 다시 확인해주세요.",
-      "linkLabel": "자세히 보기",
-      "ariaLabel": "룸빵1번지 제휴 매장 위치 지도"
-    },
     "categories": {
       "title": "업종별 강남 최저가",
       "subtitle": "업종 필터를 통해 원하는 강남 업소의 최저가 혜택만 모아보세요."
@@ -246,14 +238,6 @@
       "title": "Featured lounges & clubs by station",
       "subtitle": "Combine the filters to quickly surface venues that meet your criteria.",
       "cta": "Contact Partnerships"
-    },
-    "mapOverview": {
-      "title": "Partner locations on the map",
-      "subtitle": "Explore verified partner venues plotted from their shop addresses.",
-      "loading": "Loading map...",
-      "error": "We couldn’t load the map. Please double-check the address.",
-      "linkLabel": "View details",
-      "ariaLabel": "Map showing partner locations"
     },
     "categories": {
       "title": "Browse by category",
@@ -447,14 +431,6 @@
       "subtitle": "靈活組合篩選條件，快速找到理想店家。",
       "cta": "合作洽談"
     },
-    "mapOverview": {
-      "title": "合作門店地圖",
-      "subtitle": "根據 shops.json 的地址資訊，將合作門店標註在地圖上。",
-      "loading": "正在載入地圖...",
-      "error": "無法載入地圖。請確認地址資訊。",
-      "linkLabel": "查看詳情",
-      "ariaLabel": "顯示合作門店位置的地圖"
-    },
     "categories": {
       "title": "依類型快速瀏覽",
       "subtitle": "在篩選器中選擇想要的類型，即可專注檢視相關店家。"
@@ -644,14 +620,6 @@
       "title": "おすすめ駅別ラウンジ＆クラブ",
       "subtitle": "地域・区・業種のフィルターを組み合わせて、理想の店舗を素早く探しましょう。",
       "cta": "提携の相談をする"
-    },
-    "mapOverview": {
-      "title": "提携店舗マップ",
-      "subtitle": "shops.jsonの住所情報をもとに、提携店舗の場所を地図で確認できます。",
-      "loading": "地図を読み込んでいます…",
-      "error": "地図を表示できませんでした。住所をご確認ください。",
-      "linkLabel": "詳細を見る",
-      "ariaLabel": "提携店舗の位置を示す地図"
     },
     "categories": {
       "title": "業種別クイック検索",

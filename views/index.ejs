@@ -1,37 +1,4 @@
-<%- include('partials/head', {
-  title: pageTitle,
-  description: metaDescription,
-  seoKeywords,
-  extraStyles: ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css']
-}) %>
-  <section class="section" id="map-overview">
-    <div class="container">
-      <div class="section__header">
-        <div>
-          <h2 class="section__title"><%= (t.mapOverview && t.mapOverview.title) || '' %></h2>
-          <p class="section__subtitle"><%= (t.mapOverview && t.mapOverview.subtitle) || '' %></p>
-        </div>
-      </div>
-      <div
-        class="shop-map"
-        data-shops-map
-        data-map-locale="<%= lang || 'ko' %>"
-        data-loading-text="<%= (t.mapOverview && t.mapOverview.loading) || 'Loading map…' %>"
-        data-error-text="<%= (t.mapOverview && t.mapOverview.error) || 'Unable to load map. Please check the address.' %>"
-        data-link-label="<%= (t.mapOverview && t.mapOverview.linkLabel) || t.shop && t.shop.viewDetails || 'View details' %>"
-      >
-        <div
-          class="shop-map__map"
-          data-map-region
-          role="img"
-          aria-label="<%= (t.mapOverview && t.mapOverview.ariaLabel) || 'Map showing partner locations' %>"
-        ></div>
-        <p class="shop-map__status" data-map-status aria-live="polite">
-          <%= (t.mapOverview && t.mapOverview.loading) || 'Loading map…' %>
-        </p>
-      </div>
-    </div>
-  </section>
+<%- include('partials/head', { title: pageTitle, description: metaDescription, seoKeywords }) %>
   <section class="section" id="areas">
     <div class="container">
       <div class="section__header">
@@ -68,25 +35,7 @@
   <script id="region-district-data" type="application/json">
     <%- JSON.stringify(districtMap) %>
   </script>
-  <script id="shop-map-data" type="application/json">
-    <%- JSON.stringify(shops.map(function (shop) {
-      return {
-        id: shop.id,
-        name: shop.name,
-        address: shop.address,
-        district: shop.district,
-        region: shop.region,
-        category: shop.category,
-        url: `/shops/${encodeURIComponent(shop.id)}`
-      };
-    })) %>
-  </script>
   <div class="seo-keywords" aria-hidden="true">
     <%- seoKeywords.join(', ') %>
   </div>
-<%- include('partials/footer', {
-  scripts: [
-    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
-    '/scripts/index-map.js'
-  ]
-}) %>
+<%- include('partials/footer') %>
