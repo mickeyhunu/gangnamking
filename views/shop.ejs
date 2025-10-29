@@ -96,35 +96,6 @@
     </div>
   </section>
 
-  <section class="section detail-section">
-    <div class="container detail-section__grid">
-      <div class="detail-card detail-card--full">
-        <h2><%= mapText.title || 'Location' %></h2>
-        <div
-          class="shop-map"
-          data-shop-map
-          data-shop-name="<%= shop.name %>"
-          data-shop-address="<%= shop.address %>"
-          data-shop-district="<%= shop.district %>"
-          data-shop-region="<%= shop.region %>"
-          data-map-locale="<%= lang || 'ko' %>"
-          data-loading-text="<%= mapText.loading || 'Loading map…' %>"
-          data-error-text="<%= mapText.error || 'Unable to load map. Please check the address.' %>"
-        >
-          <div
-            class="shop-map__map"
-            data-map-region
-            role="img"
-            aria-label="<%= formatMapLabel(mapText.ariaLabel || 'Map showing location of {{shopName}}') %>"
-          ></div>
-          <p class="shop-map__status" data-map-status aria-live="polite">
-            <%= mapText.loading || 'Loading map…' %>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <%
     const activeLang = typeof lang === 'string' && lang ? lang : 'ko';
 
@@ -803,6 +774,62 @@
 
   <div class="seo-keywords" aria-hidden="true">
     <%- (seoKeywords || []).join(', ') %>
+  </div>
+
+  <%
+    const resolvedLocation = shopLocation && typeof shopLocation === 'object' ? shopLocation : null;
+    const locationLat = resolvedLocation && Number.isFinite(resolvedLocation.lat) ? resolvedLocation.lat : null;
+    const locationLng = resolvedLocation && Number.isFinite(resolvedLocation.lng) ? resolvedLocation.lng : null;
+    const locationAddress = resolvedLocation && resolvedLocation.formattedAddress ? resolvedLocation.formattedAddress : '';
+  %>
+
+  <div class="detail-location">
+    <section class="section detail-section">
+      <div class="container detail-section__grid">
+        <div class="detail-card detail-card--full">
+          <h2><%= mapText.title || 'Location' %></h2>
+          <div
+            class="shop-map"
+            data-shop-map
+            data-shop-name="<%= shop.name %>"
+            data-shop-address="<%= shop.address %>"
+            data-shop-district="<%= shop.district %>"
+            data-shop-region="<%= shop.region %>"
+            data-map-locale="<%= lang || 'ko' %>"
+            data-loading-text="<%= mapText.loading || 'Loading map…' %>"
+            data-error-text="<%= mapText.error || 'Unable to load map. Please check the address.' %>"
+            <% if (locationLat !== null && locationLng !== null) { %>
+              data-shop-lat="<%= locationLat %>"
+              data-shop-lng="<%= locationLng %>"
+            <% } %>
+          >
+            <div
+              class="shop-map__map"
+              data-map-region
+              role="img"
+              aria-label="<%= formatMapLabel(mapText.ariaLabel || 'Map showing location of {{shopName}}') %>"
+            ></div>
+            <p class="shop-map__status" data-map-status aria-live="polite">
+              <%= mapText.loading || 'Loading map…' %>
+            </p>
+            <% if (locationAddress) { %>
+              <div class="shop-map__location-info">
+                <p>
+                  <strong><%= mapText.resolvedAddressLabel || 'Verified address' %></strong>
+                  <span><%= locationAddress %></span>
+                </p>
+                <% if (locationLat !== null && locationLng !== null) { %>
+                  <p>
+                    <strong><%= mapText.coordinatesLabel || 'Coordinates' %></strong>
+                    <span><%= locationLat %>, <%= locationLng %></span>
+                  </p>
+                <% } %>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 <%
   const resolvedClientId = typeof naverMapClientId === 'string' ? naverMapClientId.trim() : '';
