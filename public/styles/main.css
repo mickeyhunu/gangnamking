@@ -1029,8 +1029,6 @@ img {
 .detail-hero__grid {
   display: grid;
   gap: 2.5rem;
-  align-items: center;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 .detail-gallery {
@@ -1280,6 +1278,52 @@ img {
   display: grid;
   gap: 2rem;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.detail-hero__grid {
+  grid-template-columns: 1fr;
+}
+
+.detail-card--hero {
+  display: grid;
+  gap: clamp(1.75rem, 3vw, 2.5rem);
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.detail-card--hero .detail-hero__media {
+  display: flex;
+}
+
+.detail-card--hero .detail-gallery {
+  width: 100%;
+}
+
+.detail-card--hero .detail-hero__info {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 2.5vw, 2rem);
+}
+
+.detail-hero__actions {
+  margin-top: auto;
+}
+
+@media (min-width: 720px) {
+  .detail-card--hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    align-items: center;
+  }
+}
+
+@media (min-width: 1024px) {
+  .detail-card--hero {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.1fr);
+    align-items: stretch;
+  }
+
+  .detail-card--hero .detail-hero__media {
+    align-self: stretch;
+  }
 }
 
 .store-entries .detail-card--full {
