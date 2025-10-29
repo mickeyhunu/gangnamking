@@ -1,5 +1,4 @@
 const { pool } = require('../config/db');
-const { getEntrySnapshots } = require('./dataStore');
 
 function toNumber(value) {
   const numeric = Number(value);
@@ -42,50 +41,19 @@ function normalizeEntry(row) {
   };
 }
 
-function getSnapshotEntries(storeNo, shopId) {
-  const snapshots = getEntrySnapshots();
-
-  if (!snapshots || typeof snapshots !== 'object') {
+async function fetchEntriesForStore(storeNo, options = {}) {
+  if (!storeNo) {
     return [];
   }
 
-  const candidateKeys = [storeNo, shopId]
-    .map((key) => {
-      if (key === null || key === undefined) {
-        return '';
-      }
-
-      return String(key).trim();
-    })
-    .filter(Boolean);
-
-  for (const key of candidateKeys) {
-    const snapshot = snapshots[key];
-
-    if (Array.isArray(snapshot) && snapshot.length) {
-      return snapshot.map(normalizeEntry).filter(Boolean);
-    }
-  }
-
-  return [];
-}
-
-async function fetchEntriesForStore(storeNo, options = {}) {
-  const { shopId } = options;
-  const fallbackEntries = () => getSnapshotEntries(storeNo, shopId);
-
-  if (!storeNo) {
-    return fallbackEntries();
-  }
-
   if (!pool || typeof pool.query !== 'function') {
-    return fallbackEntries();
+    return [];
   }
 
   const requiredEnv = [process.env.DB_HOST, process.env.DB_USER, process.env.DB_NAME];
 
   if (requiredEnv.some((value) => !value)) {
-    return fallbackEntries();
+    return [];
   }
 
   try {
@@ -101,14 +69,10 @@ async function fetchEntriesForStore(storeNo, options = {}) {
       ? rows.map(normalizeEntry).filter(Boolean)
       : [];
 
-    if (normalized.length) {
-      return normalized;
-    }
-
-    return fallbackEntries();
+    return normalized;
   } catch (error) {
     console.error('Failed to fetch entries for store', storeNo, error);
-    return fallbackEntries();
+    return [];
   }
 }
 
