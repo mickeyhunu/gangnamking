@@ -10,10 +10,16 @@
     />
     <meta name="robots" content="index, follow" />
     <meta name="googlebot" content="index, follow" />
+    <% const viewLocals = (typeof locals === 'object' && locals !== null) ? locals : {}; %>
+    <% const rawSeoKeywords =
+      Object.prototype.hasOwnProperty.call(viewLocals, 'seoKeywords')
+        ? viewLocals.seoKeywords
+        : [];
+    %>
     <% const resolvedSeoKeywords =
-      typeof seoKeywords === 'string'
-        ? [seoKeywords]
-        : (Array.isArray(seoKeywords) ? seoKeywords.filter(function (keyword) {
+      typeof rawSeoKeywords === 'string'
+        ? [rawSeoKeywords]
+        : (Array.isArray(rawSeoKeywords) ? rawSeoKeywords.filter(function (keyword) {
             return typeof keyword === 'string' && keyword.trim();
           }) : []);
     %>
@@ -27,13 +33,24 @@
       content="<%= (typeof description === 'string' && description.length) ? description : ((t.meta && t.meta.description) || '') %>"
     />
     <meta property="og:site_name" content="<%= (t.meta && t.meta.siteName) || 'Gangnam King' %>" />
-    <meta property="og:url" content="<%= canonicalUrl %>" />
-    <link rel="canonical" href="<%= canonicalUrl %>" />
-    <% if (languageOptions && languageOptions.length) { %>
-      <% languageOptions.forEach(function(option) { %>
+    <% const resolvedCanonicalUrl =
+      typeof viewLocals.canonicalUrl === 'string' && viewLocals.canonicalUrl.trim()
+        ? viewLocals.canonicalUrl
+        : '/';
+    %>
+    <meta property="og:url" content="<%= resolvedCanonicalUrl %>" />
+    <link rel="canonical" href="<%= resolvedCanonicalUrl %>" />
+    <% const resolvedLanguageOptions = Array.isArray(viewLocals.languageOptions) ? viewLocals.languageOptions : []; %>
+    <% const resolvedDefaultLanguage =
+      typeof viewLocals.defaultLanguage === 'string' && viewLocals.defaultLanguage.trim()
+        ? viewLocals.defaultLanguage
+        : '';
+    %>
+    <% if (resolvedLanguageOptions.length) { %>
+      <% resolvedLanguageOptions.forEach(function(option) { %>
         <link rel="alternate" hreflang="<%= option.code %>" href="<%= option.absoluteUrl %>" />
       <% }) %>
-      <% const defaultOption = languageOptions.find(function(option) { return option.code === defaultLanguage; }) || languageOptions[0]; %>
+      <% const defaultOption = resolvedLanguageOptions.find(function(option) { return option.code === resolvedDefaultLanguage; }) || resolvedLanguageOptions[0]; %>
       <% if (defaultOption) { %>
         <link rel="alternate" hreflang="x-default" href="<%= defaultOption.absoluteUrl %>" />
       <% } %>
@@ -41,10 +58,15 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-roompang.png" />
     <link rel="apple-touch-icon" href="/images/favicon-roompang.png" />
     <link rel="stylesheet" href="/styles/main.css" />
+    <% const rawExtraStyles =
+      Object.prototype.hasOwnProperty.call(viewLocals, 'extraStyles')
+        ? viewLocals.extraStyles
+        : [];
+    %>
     <% const resolvedExtraStyles =
-      typeof extraStyles === 'string'
-        ? [extraStyles]
-        : (Array.isArray(extraStyles) ? extraStyles.filter(function (href) {
+      typeof rawExtraStyles === 'string'
+        ? [rawExtraStyles]
+        : (Array.isArray(rawExtraStyles) ? rawExtraStyles.filter(function (href) {
             return typeof href === 'string' && href.trim();
           }) : []);
     %>
@@ -61,9 +83,13 @@
     />
   </head>
   <body>
-    <% const currentLanguageOption = (languageOptions || []).find(function(option) { return option.isCurrent; }) || (languageOptions || [])[0]; %>
+    <% const currentLanguageOption = resolvedLanguageOptions.find(function(option) { return option.isCurrent; }) || resolvedLanguageOptions[0]; %>
     <% const languageSelectId = 'language-select'; %>
-    <% const cityFilterOptions = Array.isArray(areaFilterConfig && areaFilterConfig.cities) ? areaFilterConfig.cities : []; %>
+    <% const resolvedAreaFilterConfig = (typeof viewLocals.areaFilterConfig === 'object' && viewLocals.areaFilterConfig !== null)
+      ? viewLocals.areaFilterConfig
+      : {};
+    %>
+    <% const cityFilterOptions = Array.isArray(resolvedAreaFilterConfig.cities) ? resolvedAreaFilterConfig.cities : []; %>
     <header class="site-header">
       <div class="container site-header__main">
         <a class="branding" href="/">
@@ -84,7 +110,7 @@
                   <nav
                     class="area-filter area-filter--cities"
                     data-area-filter
-                    data-all-label="<%= areaFilterConfig.allLabel || '전체' %>"
+                    data-all-label="<%= resolvedAreaFilterConfig.allLabel || '전체' %>"
                   >
                     <% cityFilterOptions.forEach(function(option) { %>
                       <button
@@ -110,7 +136,7 @@
           <div class="area-menu__overlay" data-area-menu-close></div>
           <div class="area-menu__panel" role="dialog" aria-modal="true" aria-labelledby="area-menu-title">
             <header class="area-menu__header">
-              <h2 class="area-menu__title" id="area-menu-title"><%= areaFilterConfig.label || '지역 선택' %></h2>
+              <h2 class="area-menu__title" id="area-menu-title"><%= resolvedAreaFilterConfig.label || '지역 선택' %></h2>
               <button type="button" class="area-menu__close" data-area-menu-close aria-label="닫기">×</button>
             </header>
             <div class="area-menu__body">
@@ -119,9 +145,9 @@
                   type="button"
                   class="area-menu__group-button is-active"
                   data-area-group="all"
-                  data-area-group-label="<%= areaFilterConfig.allLabel || '전체' %>"
+                  data-area-group-label="<%= resolvedAreaFilterConfig.allLabel || '전체' %>"
                 >
-                  <%= areaFilterConfig.allLabel || '전체' %>
+                  <%= resolvedAreaFilterConfig.allLabel || '전체' %>
                 </button>
                 <% cityFilterOptions.forEach(function(option) { %>
                   <button
@@ -138,7 +164,7 @@
                 <div
                   class="area-menu__list is-active"
                   data-area-group-panel="all"
-                  data-area-group-label="<%= areaFilterConfig.allLabel || '전체' %>"
+                  data-area-group-label="<%= resolvedAreaFilterConfig.allLabel || '전체' %>"
                 >
                   <button
                     type="button"
@@ -147,7 +173,7 @@
                     data-region="all"
                     data-district="all"
                   >
-                    <%= areaFilterConfig.allLabel || '전체' %>
+                    <%= resolvedAreaFilterConfig.allLabel || '전체' %>
                   </button>
                 </div>
                 <% cityFilterOptions.forEach(function(option) { %>
@@ -164,7 +190,7 @@
                       data-region="<%= option.value %>"
                       data-district="all"
                     >
-                      <%= areaFilterConfig.allLabel || '전체' %>
+                      <%= resolvedAreaFilterConfig.allLabel || '전체' %>
                     </button>
                     <% if (Array.isArray(option.districts) && option.districts.length) { %>
                       <% option.districts.forEach(function(district) { %>
@@ -197,7 +223,7 @@
         </script>
       <% } %>
     </header>
-    <% if (Array.isArray(languageOptions) && languageOptions.length) { %>
+    <% if (resolvedLanguageOptions.length) { %>
       <% const languageLabel = (t && t.header && t.header.languageLabel) || 'Language'; %>
       <div class="language-select language-select--floating" data-language-select>
         <button
@@ -226,7 +252,7 @@
           aria-label="<%= languageLabel %>"
           hidden
         >
-          <% languageOptions.forEach(function(option) { %>
+          <% resolvedLanguageOptions.forEach(function(option) { %>
             <li>
               <button
                 type="button"
