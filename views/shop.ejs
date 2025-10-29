@@ -652,20 +652,23 @@
   <section class="pricing-highlight">
     <div class="container">
       <div class="pricing-highlight__panel">
-        <% if (highlightGallery.length) { %>
+        <% const filteredHighlightGallery = highlightGallery.filter(function (image) {
+          return !(image && typeof image.src === 'string' && image.src.includes('main.'));
+        }); %>
+        <% if (filteredHighlightGallery.length) { %>
           <div
             class="pricing-highlight__media"
             data-slider
             data-dot-label="<%= t.shop && t.shop.gallery ? t.shop.gallery.dotLabel : 'View image {{index}}' %>"
           >
             <div class="detail-gallery__track" data-slider-track>
-              <% highlightGallery.forEach(function (image) { %>
+              <% filteredHighlightGallery.forEach(function (image) { %>
                 <figure class="detail-gallery__slide pricing-highlight__media-slide">
                   <img src="<%= image.src %>" alt="<%= image.alt || fallbackAltText %>" />
                 </figure>
               <% }) %>
             </div>
-            <% if (highlightGallery.length > 1) { %>
+            <% if (filteredHighlightGallery.length > 1) { %>
               <button
                 class="detail-gallery__control detail-gallery__control--prev pricing-highlight__control"
                 type="button"
