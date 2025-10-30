@@ -23,6 +23,28 @@
             return typeof keyword === 'string' && keyword.trim();
           }) : []);
     %>
+    <% const rawSubheaderNavItems =
+      Array.isArray(viewLocals.subheaderNavItems)
+        ? viewLocals.subheaderNavItems
+        : [];
+    %>
+    <% const resolvedSubheaderNavItems = rawSubheaderNavItems
+      .map(function (item) {
+        if (!item || typeof item !== 'object') {
+          return null;
+        }
+
+        const href = typeof item.href === 'string' ? item.href.trim() : '';
+        const label = typeof item.label === 'string' ? item.label.trim() : '';
+
+        if (!href || !label) {
+          return null;
+        }
+
+        return { href: href, label: label };
+      })
+      .filter(Boolean);
+    %>
     <% if (resolvedSeoKeywords.length) { %>
       <meta name="keywords" content="<%= resolvedSeoKeywords.join(', ') %>" />
     <% } %>
@@ -90,6 +112,7 @@
       : {};
     %>
     <% const cityFilterOptions = Array.isArray(resolvedAreaFilterConfig.cities) ? resolvedAreaFilterConfig.cities : []; %>
+    <% const subheaderNavLabel = (t && t.header && t.header.sectionNavLabel) || '상세 정보 바로가기'; %>
     <header class="site-header">
       <div class="container site-header__main">
         <a class="branding" href="/">
@@ -101,7 +124,7 @@
           <span class="branding__text">룸빵1번지</span>
         </a>
       </div>
-      <% if (cityFilterOptions.length || currentLanguageOption) { %>
+      <% if (cityFilterOptions.length || currentLanguageOption || resolvedSubheaderNavItems.length) { %>
         <div class="site-subheader">
           <div class="container site-subheader__container">
             <div class="site-subheader__top-row">
@@ -123,6 +146,13 @@
                     <% }) %>
                   </nav>
                 </div>
+              <% } %>
+              <% if (resolvedSubheaderNavItems.length) { %>
+                <nav class="site-subheader__nav" aria-label="<%= subheaderNavLabel %>">
+                  <% resolvedSubheaderNavItems.forEach(function (item) { %>
+                    <a class="site-subheader__nav-link" href="<%= item.href %>"><%= item.label %></a>
+                  <% }) %>
+                </nav>
               <% } %>
             </div>
             <% if (cityFilterOptions.length) { %>
