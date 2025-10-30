@@ -502,4 +502,164 @@
         }
       });
   }
+
+  const sectionNav = document.querySelector('[data-section-nav]');
+  if (sectionNav) {
+    const navLinks = Array.from(sectionNav.querySelectorAll('[data-section-nav-link]'));
+    const sections = [];
+
+    navLinks.forEach((link) => {
+      const href = link.getAttribute('href');
+      if (!href || href.charAt(0) !== '#') {
+        return;
+      }
+
+      const target = document.querySelector(href);
+      if (!target) {
+        return;
+      }
+
+      sections.push({ link, target });
+    });
+
+    const count = sections.length;
+
+    if (!count) {
+      return;
+    }
+
+    const ratioBySection = new Map();
+    let activeIndex = -1;
+    let scrollUpdateHandle = null;
+
+    function setActive(index) {
+      if (index < 0 || index >= count || index === activeIndex) {
+        return;
+      }
+
+      activeIndex = index;
+
+      sections.forEach((item, itemIndex) => {
+        const isActive = itemIndex === index;
+        item.link.classList.toggle('section-progress-nav__link--active', isActive);
+        if (isActive) {
+          item.link.setAttribute('aria-current', 'true');
+        } else {
+          item.link.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    function setActiveClosestToViewportCenter() {
+      const viewportCenter = window.scrollY + window.innerHeight / 2;
+      let closestIndex = 0;
+      let minDistance = Number.POSITIVE_INFINITY;
+
+      sections.forEach((item, index) => {
+        const rect = item.target.getBoundingClientRect();
+        const sectionCenter = window.scrollY + rect.top + rect.height / 2;
+        const distance = Math.abs(sectionCenter - viewportCenter);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      setActive(closestIndex);
+    }
+
+    function scheduleInactiveFallback() {
+      if (scrollUpdateHandle) {
+        return;
+      }
+
+      scrollUpdateHandle = window.requestAnimationFrame(() => {
+        scrollUpdateHandle = null;
+
+        const hasVisible = sections.some((item) => {
+          const ratio = ratioBySection.get(item.target) || 0;
+          return ratio > 0.05;
+        });
+
+        if (!hasVisible) {
+          setActiveClosestToViewportCenter();
+        }
+      });
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          ratioBySection.set(entry.target, entry.intersectionRatio);
+        });
+
+        const visible = sections
+          .map((item, index) => ({
+            index,
+            ratio: ratioBySection.get(item.target) || 0,
+          }))
+          .filter((entry) => entry.ratio > 0.05)
+          .sort((a, b) => b.ratio - a.ratio);
+
+        if (visible.length) {
+          setActive(visible[0].index);
+        } else {
+          scheduleInactiveFallback();
+        }
+      },
+      {
+        threshold: [0, 0.15, 0.35, 0.5, 0.7, 0.9],
+        rootMargin: '-45% 0px -45% 0px',
+      }
+    );
+
+    sections.forEach((item, index) => {
+      observer.observe(item.target);
+
+      item.link.addEventListener('click', (event) => {
+        event.preventDefault();
+        const hash = item.link.hash;
+
+        item.target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setActive(index);
+
+        if (hash && typeof window.history.replaceState === 'function') {
+          try {
+            window.history.replaceState(null, '', hash);
+          } catch (error) {
+            // Ignore history errors silently.
+          }
+        }
+      });
+    });
+
+    function handleHashChange() {
+      if (!window.location.hash) {
+        return;
+      }
+
+      const index = sections.findIndex((item) => item.link.hash === window.location.hash);
+      if (index >= 0) {
+        setActive(index);
+      }
+    }
+
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('scroll', scheduleInactiveFallback, { passive: true });
+    window.addEventListener('resize', scheduleInactiveFallback);
+
+    const initialHash = window.location.hash;
+    if (initialHash) {
+      const initialIndex = sections.findIndex((item) => item.link.hash === initialHash);
+      if (initialIndex >= 0) {
+        setActive(initialIndex);
+      } else {
+        setActive(0);
+      }
+    } else {
+      setActive(0);
+    }
+
+    scheduleInactiveFallback();
+  }
 })();

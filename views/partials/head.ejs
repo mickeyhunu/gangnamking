@@ -149,10 +149,24 @@
               </div>
             <% } %>
             <% if (resolvedSubheaderNavItems.length) { %>
-              <nav class="site-subheader__nav" aria-label="<%= subheaderNavLabel %>">
-                <% resolvedSubheaderNavItems.forEach(function (item) { %>
-                  <a class="site-subheader__nav-link" href="<%= item.href %>"><%= item.label %></a>
-                <% }) %>
+              <nav
+                class="site-subheader__nav section-progress-nav"
+                aria-label="<%= subheaderNavLabel %>"
+                data-section-nav
+              >
+                <ul class="section-progress-nav__list">
+                  <% resolvedSubheaderNavItems.forEach(function (item) { %>
+                    <li class="section-progress-nav__item">
+                      <a
+                        class="section-progress-nav__link"
+                        href="<%= item.href %>"
+                        data-section-nav-link
+                      >
+                        <span class="section-progress-nav__label"><%= item.label %></span>
+                      </a>
+                    </li>
+                  <% }) %>
+                </ul>
               </nav>
             <% } %>
           </div>
