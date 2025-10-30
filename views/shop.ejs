@@ -76,6 +76,11 @@
   const pricingNavLabel = (t.shop && t.shop.pricing && t.shop.pricing.title) || 'Pricing';
   const locationNavLabel = mapText.title || 'Location';
   const subheaderNavItems = [];
+  const backToMainLabel = (t.shop && t.shop.back) || '메인으로 돌아가기';
+
+  if (backToMainLabel) {
+    subheaderNavItems.push({ href: '/', label: backToMainLabel });
+  }
 
   if (overviewNavLabel) {
     subheaderNavItems.push({ href: '#shop-overview', label: overviewNavLabel });
@@ -105,7 +110,8 @@
   title: pageTitle,
   description: metaDescription,
   seoKeywords,
-  subheaderNavItems
+  subheaderNavItems,
+  areaFilterConfig: null
 }) %>
   <section class="section detail-section detail-hero">
     <div class="container">
