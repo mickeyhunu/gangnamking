@@ -1,5 +1,55 @@
 (function () {
   const components = document.querySelectorAll('[data-language-select]');
+  const floatingComponents = Array.from(components).filter((component) => {
+    return component.classList.contains('language-select--floating');
+  });
+  const stackedBreakpoint = window.matchMedia('(max-width: 960px)');
+
+  const updateFloatingPositions = () => {
+    if (!floatingComponents.length) {
+      return;
+    }
+
+    const shouldStack = stackedBreakpoint.matches;
+
+    if (!shouldStack) {
+      floatingComponents.forEach((component) => {
+        if (component instanceof HTMLElement) {
+          component.style.removeProperty('--language-select-top');
+          component.classList.remove('language-select--stacked');
+        }
+      });
+
+      return;
+    }
+
+    const header = document.querySelector('.site-header');
+    const subheader = document.querySelector('.site-subheader');
+    const headerHeight = header instanceof HTMLElement ? header.offsetHeight : 0;
+    const subheaderHeight = subheader instanceof HTMLElement ? subheader.offsetHeight : 0;
+    const baseOffset = 16;
+    const offset = Math.max(baseOffset, headerHeight + subheaderHeight + baseOffset);
+
+    floatingComponents.forEach((component) => {
+      if (!(component instanceof HTMLElement)) {
+        return;
+      }
+
+      component.style.setProperty('--language-select-top', `${offset}px`);
+      component.classList.add('language-select--stacked');
+    });
+  };
+
+  updateFloatingPositions();
+
+  if (typeof stackedBreakpoint.addEventListener === 'function') {
+    stackedBreakpoint.addEventListener('change', updateFloatingPositions);
+  } else if (typeof stackedBreakpoint.addListener === 'function') {
+    stackedBreakpoint.addListener(updateFloatingPositions);
+  }
+  window.addEventListener('resize', updateFloatingPositions);
+  window.addEventListener('orientationchange', updateFloatingPositions);
+  window.addEventListener('load', updateFloatingPositions);
 
   if (!components.length) {
     return;
