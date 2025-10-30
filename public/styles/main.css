@@ -106,48 +106,25 @@ img {
 }
 
 .section-progress-nav {
-  position: relative;
   display: flex;
-  align-items: stretch;
+  flex-wrap: nowrap;
+  align-items: flex-start;
   justify-content: center;
   width: 100%;
-  padding: 0.4rem 0.5rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-}
-
-.section-progress-nav__indicator {
-  position: absolute;
-  top: 6px;
-  bottom: 6px;
-  left: 0;
-  width: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
-  box-shadow: 0 12px 32px rgba(8, 4, 20, 0.45);
-  opacity: 0;
-  transform: translateX(0);
-  transition: transform 0.3s ease, width 0.3s ease, opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.section-progress-nav__indicator--visible {
-  opacity: 1;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
 }
 
 .section-progress-nav__list {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 0.25rem;
+  gap: 0;
   width: 100%;
   margin: 0;
   padding: 0;
   list-style: none;
-  z-index: 1;
 }
 
 .section-progress-nav__item {
@@ -159,23 +136,35 @@ img {
 .section-progress-nav__link {
   position: relative;
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 0.35rem;
-  width: 100%;
-  padding: 0.55rem 0.95rem;
-  color: rgba(255, 255, 255, 0.68);
+  padding: 0.4rem 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.01em;
   text-align: center;
   text-decoration: none;
   border-radius: 999px;
-  transition: color 0.25s ease, transform 0.25s ease;
+  transition: color 0.25s ease, background-color 0.25s ease, transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.section-progress-nav__link::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  content: '';
 }
 
 .section-progress-nav__link:is(:hover, :focus-visible) {
   color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .section-progress-nav__link:focus-visible {
@@ -185,7 +174,13 @@ img {
 
 .section-progress-nav__link--active {
   color: #ffffff;
-  transform: translateY(-1px);
+  background-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 20px rgba(8, 4, 20, 0.45);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.section-progress-nav__link--active::after {
+  opacity: 1;
 }
 
 .section-progress-nav__label {
@@ -194,32 +189,11 @@ img {
 
 @media (prefers-reduced-motion: reduce) {
   .section-progress-nav__link {
-    transition: color 0.25s ease;
+    transition: color 0.25s ease, background-color 0.25s ease;
   }
 
   .section-progress-nav__link--active {
     transform: none;
-  }
-}
-
-@media (max-width: 640px) {
-  .section-progress-nav {
-    padding: 0.35rem;
-  }
-
-  .section-progress-nav__list {
-    justify-content: flex-start;
-    gap: 0.5rem;
-    overflow-x: auto;
-    scrollbar-width: thin;
-  }
-
-  .section-progress-nav__item {
-    flex: 0 0 auto;
-  }
-
-  .section-progress-nav__link {
-    white-space: nowrap;
   }
 }
 
