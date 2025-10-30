@@ -139,18 +139,32 @@ img {
   flex-direction: column;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.25rem 0;
-  color: rgba(255, 255, 255, 0.72);
+  padding: 0.4rem 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.01em;
   text-align: center;
   text-decoration: none;
-  transition: color 0.25s ease;
+  border-radius: 999px;
+  transition: color 0.25s ease, background-color 0.25s ease, transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.section-progress-nav__link::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  content: '';
 }
 
 .section-progress-nav__link:is(:hover, :focus-visible) {
   color: rgba(255, 255, 255, 0.92);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .section-progress-nav__link:focus-visible {
@@ -160,10 +174,27 @@ img {
 
 .section-progress-nav__link--active {
   color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 20px rgba(8, 4, 20, 0.45);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.section-progress-nav__link--active::after {
+  opacity: 1;
 }
 
 .section-progress-nav__label {
   line-height: 1.1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-progress-nav__link {
+    transition: color 0.25s ease, background-color 0.25s ease;
+  }
+
+  .section-progress-nav__link--active {
+    transform: none;
+  }
 }
 
 #shop-overview,
