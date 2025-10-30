@@ -42,6 +42,7 @@
 
   const primaryImage = highlightGallery.length ? highlightGallery[0] : null;
   const mapText = (t.shop && t.shop.map) || {};
+  const pricingHighlight = (t.shop && t.shop.pricingHighlight) || {};
   const managerText = (t.shop && t.shop.manager) || {};
   const managerTitleText = managerText.title || '담당자 정보';
   const managerNameLabel = managerText.name || '담당자';
@@ -55,6 +56,47 @@
     ? `tel:${managerPhone.replace(/[^0-9+]/g, '')}`
     : '';
   const hasManagerInfo = Boolean(managerName || managerPhone || managerKakao);
+  const entriesText = (t.shop && t.shop.entries) || {};
+  const entriesTitleText = entriesText.title || '출근부 현황';
+  const entriesEmptyText = entriesText.empty || '등록된 출근부 정보가 없습니다.';
+  const entriesWorkerListTitle = entriesText.workerListTitle || '출근부 목록';
+  const entriesSummaryLabel = entriesText.summaryLabel || '총 출근인원';
+  const entriesSummaryUnit = entriesText.summaryUnit || '명';
+  const entriesTopListTitle = entriesText.topListTitle || '추천 아가씨 TOP 5';
+  const entriesTopListEmptyText = entriesText.topListEmpty || '추천 데이터가 없습니다.';
+  const entriesTopListScoreLabel = entriesText.topListScoreLabel || '합계';
+  const entryOverview = entrySummary && typeof entrySummary === 'object' ? entrySummary : {};
+  const showEntrySection = Boolean(entryOverview.enabled);
+  const workerNameRows = Array.isArray(entryOverview.workerRows) ? entryOverview.workerRows : [];
+  const hasWorkerNameRows = Boolean(entryOverview.hasWorkerRows);
+  const topEntryList = Array.isArray(entryOverview.topEntries) ? entryOverview.topEntries : [];
+  const overviewNavLabel = (t.shop && t.shop.nav && t.shop.nav.overview)
+    || pricingHighlight.badge
+    || '업소 정보';
+  const pricingNavLabel = (t.shop && t.shop.pricing && t.shop.pricing.title) || 'Pricing';
+  const locationNavLabel = mapText.title || 'Location';
+  const subheaderNavItems = [];
+  const backToMainLabel = (t.shop && t.shop.back) || '메인으로 돌아가기';
+
+  if (backToMainLabel) {
+    subheaderNavItems.push({ href: '/', label: backToMainLabel });
+  }
+
+  if (overviewNavLabel) {
+    subheaderNavItems.push({ href: '#shop-overview', label: overviewNavLabel });
+  }
+
+  if (pricingNavLabel) {
+    subheaderNavItems.push({ href: '#shop-pricing', label: pricingNavLabel });
+  }
+
+  if (showEntrySection && entriesTitleText) {
+    subheaderNavItems.push({ href: '#shop-entries', label: entriesTitleText });
+  }
+
+  if (locationNavLabel) {
+    subheaderNavItems.push({ href: '#shop-location', label: locationNavLabel });
+  }
 
   function formatMapLabel(template) {
     if (typeof template !== 'string' || !template.trim()) {
@@ -67,7 +109,9 @@
 <%- include('partials/head', {
   title: pageTitle,
   description: metaDescription,
-  seoKeywords
+  seoKeywords,
+  subheaderNavItems,
+  areaFilterConfig: null
 }) %>
   <section class="section detail-section detail-hero">
     <div class="container">
@@ -164,7 +208,6 @@
     ];
 
     const pricingText = (t.shop && t.shop.pricing) || {};
-    const pricingHighlight = (t.shop && t.shop.pricingHighlight) || {};
     const pricingSchedule = shop.pricingSchedule || null;
     const scheduleTableBlocks = buildBlocksFromSchedule(pricingSchedule);
     const scheduleDefaultBlockId = pricingSchedule && typeof pricingSchedule.defaultSegmentId === 'string'
@@ -214,21 +257,6 @@
     }
 
     const perPersonNote = perPersonNoteParts.join(' · ');
-
-    const entriesText = (t.shop && t.shop.entries) || {};
-    const entriesTitleText = entriesText.title || '출근부 현황';
-    const entriesEmptyText = entriesText.empty || '등록된 출근부 정보가 없습니다.';
-    const entriesWorkerListTitle = entriesText.workerListTitle || '출근부 목록';
-    const entriesSummaryLabel = entriesText.summaryLabel || '총 출근인원';
-    const entriesSummaryUnit = entriesText.summaryUnit || '명';
-    const entriesTopListTitle = entriesText.topListTitle || '추천 아가씨 TOP 5';
-    const entriesTopListEmptyText = entriesText.topListEmpty || '추천 데이터가 없습니다.';
-    const entriesTopListScoreLabel = entriesText.topListScoreLabel || '합계';
-    const entryOverview = entrySummary && typeof entrySummary === 'object' ? entrySummary : {};
-    const showEntrySection = Boolean(entryOverview.enabled);
-    const workerNameRows = Array.isArray(entryOverview.workerRows) ? entryOverview.workerRows : [];
-    const hasWorkerNameRows = Boolean(entryOverview.hasWorkerRows);
-    const topEntryList = Array.isArray(entryOverview.topEntries) ? entryOverview.topEntries : [];
 
     function buildPricingTable(blocks) {
       if (!Array.isArray(blocks)) {
@@ -697,7 +725,7 @@
     }
   %>
 
-  <section class="pricing-highlight">
+  <section class="pricing-highlight" id="shop-overview">
     <div class="container">
       <div class="pricing-highlight__panel">
         <% const filteredHighlightGallery = highlightGallery.filter(function (image) {
@@ -789,7 +817,7 @@
     </div>
   </section>
 
-  <section class="section detail-section">
+  <section class="section detail-section" id="shop-pricing">
     <div class="container detail-section__grid">
       <div class="detail-card detail-card--full">
         <h2><%= t.shop && t.shop.pricing ? t.shop.pricing.title : 'Pricing' %></h2>
@@ -818,7 +846,7 @@
   </section>
 
   <% if (showEntrySection) { %>
-    <section class="section detail-section store-entries">
+    <section class="section detail-section store-entries" id="shop-entries">
       <div class="container detail-section__grid">
         <div class="detail-card detail-card--full">
           <div class="store-entry-header">
@@ -909,7 +937,7 @@
 %>
 
   <div class="detail-location">
-    <section class="section detail-section">
+    <section class="section detail-section" id="shop-location">
       <div class="container detail-section__grid">
         <div class="detail-card detail-card--full">
           <h2><%= mapText.title || 'Location' %></h2>
