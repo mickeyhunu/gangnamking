@@ -1,0 +1,48 @@
+.branding {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  text-align: center;
+}
+
+.branding__logo {
+  height: 120px;
+  width: auto;
+  filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.45));
+}
+
+.branding__text {
+  font-size: 1.85rem;
+  letter-spacing: -0.01em;
+  text-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 960px) {
+  .branding__logo {
+    height: clamp(100px, 14vw, 114px);
+  }
+
+  .branding__text {
+    font-size: clamp(1.65rem, 3.2vw, 1.78rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .branding__logo {
+    height: clamp(72px, 18vw, 88px);
+  }
+
+  .branding__text {
+    font-size: clamp(1.25rem, 4.5vw, 1.42rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .branding__logo {
+    height: clamp(68px, 20vw, 80px);
+  }
+}
