@@ -506,6 +506,8 @@
   const sectionNav = document.querySelector('[data-section-nav]');
   if (sectionNav) {
     const navLinks = Array.from(sectionNav.querySelectorAll('[data-section-nav-link]'));
+    const indicator = sectionNav.querySelector('[data-section-nav-indicator]');
+    const listHost = sectionNav.querySelector('.section-progress-nav__list');
     const sections = [];
 
     navLinks.forEach((link) => {
@@ -525,16 +527,75 @@
     const count = sections.length;
 
     if (!count) {
+      if (indicator) {
+        indicator.style.width = '0px';
+        indicator.classList.remove('section-progress-nav__indicator--visible');
+      }
       return;
     }
 
     let activeIndex = -1;
     let scrollUpdateHandle = null;
-    const requestFrame = (window.requestAnimationFrame && window.requestAnimationFrame.bind(window)) ||
-      ((callback) => window.setTimeout(callback, 16));
+    let sectionMetrics = sections.map(() => null);
 
-    function setActive(index) {
-      if (index < 0 || index >= count || index === activeIndex) {
+    const requestFrame =
+      (window.requestAnimationFrame && window.requestAnimationFrame.bind(window)) ||
+      ((callback) => window.setTimeout(callback, 16));
+    const cancelFrame =
+      (window.cancelAnimationFrame && window.cancelAnimationFrame.bind(window)) ||
+      window.clearTimeout.bind(window);
+
+    function updateIndicator(index) {
+      if (!indicator) {
+        return;
+      }
+
+      if (index < 0 || index >= count) {
+        indicator.style.width = '0px';
+        indicator.classList.remove('section-progress-nav__indicator--visible');
+        return;
+      }
+
+      const { link } = sections[index];
+      const linkRect = link.getBoundingClientRect();
+      const navRect = sectionNav.getBoundingClientRect();
+      const width = Math.max(linkRect.width, 0);
+
+      if (!width) {
+        indicator.style.width = '0px';
+        indicator.classList.remove('section-progress-nav__indicator--visible');
+        return;
+      }
+
+      indicator.style.width = `${width}px`;
+      indicator.style.transform = `translateX(${linkRect.left - navRect.left}px)`;
+      indicator.classList.add('section-progress-nav__indicator--visible');
+    }
+
+    function ensureActiveLinkVisible() {
+      if (!listHost || activeIndex < 0 || activeIndex >= count) {
+        return;
+      }
+
+      if (listHost.scrollWidth <= listHost.clientWidth + 1) {
+        return;
+      }
+
+      const { link } = sections[activeIndex];
+      const linkRect = link.getBoundingClientRect();
+      const listRect = listHost.getBoundingClientRect();
+
+      if (linkRect.left < listRect.left) {
+        listHost.scrollLeft += Math.floor(linkRect.left - listRect.left - 16);
+      } else if (linkRect.right > listRect.right) {
+        listHost.scrollLeft += Math.ceil(linkRect.right - listRect.right + 16);
+      }
+    }
+
+    function setActive(index, options = {}) {
+      const { force = false } = options;
+
+      if (index < 0 || index >= count || (!force && index === activeIndex)) {
         return;
       }
 
@@ -549,51 +610,82 @@
           item.link.removeAttribute('aria-current');
         }
       });
+
+      updateIndicator(index);
+      ensureActiveLinkVisible();
+    }
+
+    function measureSections() {
+      sectionMetrics = sections.map(({ target }) => {
+        const rect = target.getBoundingClientRect();
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        return {
+          top: rect.top + scrollY,
+          bottom: rect.bottom + scrollY,
+        };
+      });
+    }
+
+    function getHeaderOffset() {
+      const header = sectionNav.closest('.site-subheader');
+      const headerHeight = header ? header.offsetHeight : 0;
+      return headerHeight + 16;
     }
 
     function updateActiveFromScrollPosition() {
-      scrollUpdateHandle = null;
+      if (!sectionMetrics.length || sectionMetrics.some((metrics) => !metrics)) {
+        measureSections();
+      }
 
       const doc = document.documentElement;
+      const scrollY = window.pageYOffset || doc.scrollTop || 0;
       const docHeight = doc ? doc.scrollHeight : 0;
-      const scrollBottom = window.scrollY + window.innerHeight;
+      const viewportBottom = scrollY + window.innerHeight;
 
-      if (docHeight && scrollBottom >= docHeight - 1) {
+      if (docHeight && viewportBottom >= docHeight - 2) {
         setActive(count - 1);
         return;
       }
 
-      const activationLine = Math.min(window.innerHeight * 0.35, 280);
+      const activationPoint = scrollY + getHeaderOffset();
       let targetIndex = 0;
 
       for (let index = 0; index < count; index += 1) {
-        const { target } = sections[index];
-        const rect = target.getBoundingClientRect();
-        const top = rect.top;
-        const bottom = rect.bottom;
-
-        if (top <= activationLine && bottom > activationLine) {
-          targetIndex = index;
-          break;
+        const metrics = sectionMetrics[index];
+        if (!metrics) {
+          continue;
         }
 
-        if (top > activationLine) {
+        if (activationPoint >= metrics.top - 1) {
           targetIndex = index;
+        } else {
           break;
         }
-
-        targetIndex = index;
       }
 
       setActive(targetIndex);
     }
 
-    function scheduleScrollUpdate() {
+    function scheduleScrollUpdate(options = {}) {
+      const { immediate = false } = options;
+
+      if (immediate) {
+        if (scrollUpdateHandle !== null) {
+          cancelFrame(scrollUpdateHandle);
+          scrollUpdateHandle = null;
+        }
+        updateActiveFromScrollPosition();
+        return;
+      }
+
       if (scrollUpdateHandle !== null) {
         return;
       }
 
-      scrollUpdateHandle = requestFrame(updateActiveFromScrollPosition);
+      scrollUpdateHandle = requestFrame(() => {
+        scrollUpdateHandle = null;
+        updateActiveFromScrollPosition();
+      });
     }
 
     sections.forEach((item, index) => {
@@ -603,7 +695,7 @@
 
         item.target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         setActive(index);
-        scheduleScrollUpdate();
+        scheduleScrollUpdate({ immediate: true });
 
         if (hash && typeof window.history.replaceState === 'function') {
           try {
@@ -623,27 +715,49 @@
       const index = sections.findIndex((item) => item.link.hash === window.location.hash);
       if (index >= 0) {
         setActive(index);
-        scheduleScrollUpdate();
+        scheduleScrollUpdate({ immediate: true });
+      }
+    }
+
+    function refreshLayout() {
+      measureSections();
+      if (activeIndex < 0) {
+        setActive(0, { force: true });
+      } else {
+        setActive(activeIndex, { force: true });
       }
     }
 
     window.addEventListener('hashchange', handleHashChange);
-    window.addEventListener('scroll', scheduleScrollUpdate, { passive: true });
-    window.addEventListener('resize', scheduleScrollUpdate);
+    window.addEventListener('scroll', () => scheduleScrollUpdate(), { passive: true });
+    window.addEventListener('resize', () => {
+      refreshLayout();
+      scheduleScrollUpdate({ immediate: true });
+    });
 
     const initialHash = window.location.hash;
+    refreshLayout();
+
     if (initialHash) {
       const initialIndex = sections.findIndex((item) => item.link.hash === initialHash);
       if (initialIndex >= 0) {
-        setActive(initialIndex);
+        setActive(initialIndex, { force: true });
       } else {
-        setActive(0);
+        setActive(0, { force: true });
       }
     } else {
-      setActive(0);
+      setActive(0, { force: true });
     }
 
-    scheduleScrollUpdate();
-    window.setTimeout(scheduleScrollUpdate, 200);
+    scheduleScrollUpdate({ immediate: true });
+    window.setTimeout(() => {
+      refreshLayout();
+      scheduleScrollUpdate({ immediate: true });
+    }, 250);
+
+    window.addEventListener('load', () => {
+      refreshLayout();
+      scheduleScrollUpdate({ immediate: true });
+    });
   }
 })();
