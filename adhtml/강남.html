@@ -1,0 +1,216 @@
+<style>
+  /* ✅ 텍스트 공통 스타일 */
+  .text {
+    text-align: center;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  /* ✅ 전화번호 스타일 */
+  .text.phone {
+    color: #0066cc;
+    text-decoration: underline;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  .text.phone:hover {
+    color: #e60023;
+  }
+
+  /* ✅ 깜빡임 효과 */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ===== 모바일 전용 ===== */
+  @media (min-width: 769px) {
+    #rainbow-frame,
+    .ddoong-frame {
+      display: none;
+    }
+  }
+
+  @media (max-width: 769px) {
+    /* 무지개 테두리 */
+    #rainbow-frame {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border: 7px solid red;       /* 기본 두께와 초기색 */
+      border-radius: 0;            /* 필요시 20px 등으로 조정 */
+      pointer-events: none;        /* 클릭 방해 안 함 */
+      z-index: 99999;
+      box-sizing: border-box;
+      animation: rainbow 1s linear infinite;
+    }
+
+    /* 빨주노초파남보 순환 */
+    @keyframes rainbow {
+      0%   { border-color: #ff0000; } /* 빨강 */
+      15%  { border-color: #ff7a00; } /* 주황 */
+      30%  { border-color: #ffee00; } /* 노랑 */
+      45%  { border-color: #00ff00; } /* 초록 */
+      60%  { border-color: #007bff; } /* 파랑 */
+      75%  { border-color: #4b0082; } /* 남(인디고) */
+      90%  { border-color: #8a2be2; } /* 보라 */
+      100% { border-color: #ff0000; } /* 다시 빨강 */
+    }
+
+    /* 우리만 아는 하단 프레임 */
+    .ddoong-frame {
+      position: fixed;
+      bottom: 2px;
+      left: 5px;
+      right: 5px;
+      height: 5.7%;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 99999;
+      background: transparent;
+    }
+
+    .ddoong-frame .cell {
+      flex-grow: 0;
+      height: 100%;
+      box-sizing: border-box currentColor;
+      border: 5px solid;
+      background: transparent;
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    .ddoong-frame .left,
+    .ddoong-frame .right {
+      flex-grow: 1.25;
+      width: 25%;
+      color: #ff0000;                    /* 시작은 빨강 */
+      animation: rainbow 2.4s linear infinite;
+    }
+
+    .ddoong-frame .center {
+      flex-grow: 3;
+      width: 50%;
+      color: #00d200;                    /* 시작은 초록 */
+      animation: rainbow 2.4s linear infinite;
+      /* 중앙을 항상 '초록 타이밍'에서 시작하게 약간 지연 */
+      animation-delay: calc(2.4s * 0.42);  /* 42% ≈ 초록 구간에 맞춤 */
+    }
+  }
+</style>
+</head>
+
+<div id="rainbow-frame"></div>
+
+<div class="ddoong-frame" aria-hidden="true">
+  <div class="cell left"></div>
+  <div class="cell center"></div>
+  <div class="cell right"></div>
+</div>
+
+<!-- ✅ 중앙에 깜빡이는 전화연결 버튼 -->
+ <div
+  style="
+    position:fixed;
+    top:5%;
+    left:50%;
+    transform:translate(-50%, 50%);
+    z-index:9999;
+    padding:18px 28px;
+    border-radius:999px;
+    background:#00ff15;
+    color:#fff;
+    font-weight:800;
+    font-size:20px;
+    text-decoration:none;
+    line-height:1;
+    box-shadow:0 6px 18px rgba(255,45,85,0.35);
+    animation:blink 0.3s infinite;
+  ">
+  <a href='tel:01080319616'
+     aria-label='전화 연결'
+     style='color:#fff;text-decoration:none;display:inline-block;'>
+    강남 최저가 ALL타임 10만원
+  </a>
+</div>
+
+<div
+  style="
+    position:fixed;
+    bottom:10%;
+    left:50%;
+    transform:translate(-50%, 50%);
+    z-index:9999;
+    padding:18px 28px;
+    border-radius:999px;
+    background:#ff2d55;
+    color:#fff;
+    font-weight:800;
+    font-size:20px;
+    text-decoration:none;
+    line-height:1;
+    box-shadow:0 6px 18px rgba(255,45,85,0.35);
+    animation:blink 0.3s infinite;
+  ">
+  <a href='tel:01080319616'
+     aria-label='전화 연결'
+     style='color:#fff;text-decoration:none;display:inline-block;'>
+    클릭시 전화연결
+  </a>
+</div>
+
+<a href="tel:01080319616"><div class="text phone">010-8031-9616</div></a>
+
+<br><br><br>
+
+<div class="text">⚡진짜 10만원 맞습니다⚡</div>
+<br>
+<div class="text">⚡가.격.폭.행⚡</div>
+<br>
+<div class="text">전화주세요.</div>
+
+<br><br><br>
+
+<a href="tel:01080319616"><div class="text phone">010-8031-9616</div></a>
+
+<br><br><br>
+
+<div class="text">⚡가격만 싸다? No⚡</div>
+<br>
+<div class="text">⚡자신있습니다.⚡</div>
+<br>
+<div class="text">전화주세요.</div>
+
+<br><br><br>
+
+<a href="tel:01080319616"><div class="text phone">010-8031-9616</div></a>
+
+<br><br><br>
+
+<div class="text phone">#20대 #수위룸 #룸떡집 #진짜임</div>
+
+<p style="text-align:center;">
+  <a href="tel:01080319616">
+    <img src="/data/editor/2510/749ae9b1924d21215bd7d4a815dff48e_1760958602_4776.gif" alt="">
+  </a>
+</p>
+
+<!-- ✅ 트래킹 픽셀 -->
+<img src="https://www.adplus.store/api/track?adCode=og_2_3" alt="" style="width:1px;height:1px;border:0;display:none;" />
+
+<!-- ✅ 배경 음악 -->
+<audio id="bgm" autoplay loop>
+  <source src="https://storage.googleapis.com/legend_audio/gogogogo.mp3" type="audio/mpeg">
+</audio>
+
+<div style="position:absolute; left:-9999px; top:-9999px;">
+  강남, 논현, 삼성, 서초, 선릉, 수서, 신논현, 양재, 역삼, 가락, 가산, 강동, 강북, 강서, 건대, 관악구, 광진, 구로, 
+  구의, 군자, 금천, 길동, 노원, 답십리, 도봉구, 동대문, 동작구, 마곡, 마포, 면목동, 명동, 목동, 미아, 방이, 방이동, 
+  봉천, 북창, 사가정, 사당, 상봉, 서대문, 서울대, 석계, 성동구, 성북, 성수동, 송파, 수유, 신길, 신당, 신도림, 신림, 신촌, 
+  쌍문, 양천, 여의도, 연신내, 영등포, 왕십리, 용산, 은평, 을지로, 잠실, 장안, 제기, 종로, 중구, 중랑, 창동, 천호, 청량리, 태릉, 합정, 홍대, 화곡
+
+  달토, 달리는 토끼, 사라있네, 엘리트, 퍼펙트, 유앤미, 유엔미, 도파민, 드라마, 줄리아나, 다소다, 트렌드, 
+  쩜오, 하퍼, 하이퍼블릭, 셔츠, 셔츠룸, 오피
+</div>
