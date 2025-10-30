@@ -177,7 +177,20 @@
 }
 
 .detail-hero__manager {
-  margin-top: 0.5rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.detail-hero__manager dt {
+  font-weight: 600;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.detail-hero__manager dd {
+  margin: 0;
 }
 
 .detail-hero__manager-list {
@@ -189,26 +202,31 @@
 }
 
 .detail-hero__manager-item {
-  display: grid;
-  grid-template-columns: minmax(0, 120px) minmax(0, 1fr);
-  gap: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
   align-items: center;
 }
 
 .detail-hero__manager-label {
   font-size: 0.85rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: var(--color-muted);
 }
 
 .detail-hero__manager-value {
-  font-weight: 600;
+  font-size: 1.05rem;
 }
 
 .detail-hero__manager-link {
+  font-size: 1.05rem;
+  color: var(--color-text);
   position: relative;
-  color: var(--color-primary);
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   text-decoration: none;
 }
 
@@ -227,6 +245,11 @@
 
 .detail-hero__manager-link:is(:hover, :focus-visible)::after {
   transform: scaleX(1);
+}
+
+.detail-hero__actions .back-link {
+  font-weight: 500;
+  color: var(--color-muted);
 }
 
 .detail-section {
