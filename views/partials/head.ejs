@@ -153,12 +153,7 @@
                 class="site-subheader__nav section-progress-nav"
                 aria-label="<%= subheaderNavLabel %>"
                 data-section-nav
-                style="--section-nav-count: <%= Math.max(resolvedSubheaderNavItems.length, 1) %>"
-                data-section-count="<%= Math.max(resolvedSubheaderNavItems.length, 1) %>"
               >
-                <div class="section-progress-nav__track" aria-hidden="true">
-                  <div class="section-progress-nav__fill" data-section-nav-fill></div>
-                </div>
                 <ul class="section-progress-nav__list">
                   <% resolvedSubheaderNavItems.forEach(function (item) { %>
                     <li class="section-progress-nav__item">

@@ -523,24 +523,14 @@
     });
 
     const count = sections.length;
-    const resolvedCount = Math.max(count || navLinks.length || 1, 1);
-
-    sectionNav.style.setProperty('--section-nav-count', String(resolvedCount));
-    sectionNav.dataset.sectionCount = String(resolvedCount);
 
     if (!count) {
-      sectionNav.style.setProperty('--section-nav-progress', navLinks.length === 1 ? '1' : '0');
       return;
     }
 
     const ratioBySection = new Map();
     let activeIndex = -1;
     let scrollUpdateHandle = null;
-
-    function updateProgress(index) {
-      const progress = count <= 1 ? 1 : (index + 1) / count;
-      sectionNav.style.setProperty('--section-nav-progress', String(progress));
-    }
 
     function setActive(index) {
       if (index < 0 || index >= count || index === activeIndex) {
@@ -558,8 +548,6 @@
           item.link.removeAttribute('aria-current');
         }
       });
-
-      updateProgress(index);
     }
 
     function setActiveClosestToViewportCenter() {
