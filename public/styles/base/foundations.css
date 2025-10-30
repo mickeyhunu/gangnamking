@@ -8,7 +8,6 @@
   --color-muted: #b1a7d6;
   --color-border: rgba(255, 255, 255, 0.1);
   --color-glow: rgba(255, 46, 139, 0.38);
-  --shadow-accent: 0 25px 48px rgba(143, 91, 255, 0.45);
   --shadow-accent-inset: inset 0 0 0 1px rgba(255, 46, 139, 0.12);
   --max-width: 1120px;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI',
