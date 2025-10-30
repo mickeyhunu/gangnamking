@@ -528,9 +528,10 @@
       return;
     }
 
-    const ratioBySection = new Map();
     let activeIndex = -1;
     let scrollUpdateHandle = null;
+    const requestFrame = (window.requestAnimationFrame && window.requestAnimationFrame.bind(window)) ||
+      ((callback) => window.setTimeout(callback, 16));
 
     function setActive(index) {
       if (index < 0 || index >= count || index === activeIndex) {
@@ -550,78 +551,59 @@
       });
     }
 
-    function setActiveClosestToViewportCenter() {
-      const viewportCenter = window.scrollY + window.innerHeight / 2;
-      let closestIndex = 0;
-      let minDistance = Number.POSITIVE_INFINITY;
+    function updateActiveFromScrollPosition() {
+      scrollUpdateHandle = null;
 
-      sections.forEach((item, index) => {
-        const rect = item.target.getBoundingClientRect();
-        const sectionCenter = window.scrollY + rect.top + rect.height / 2;
-        const distance = Math.abs(sectionCenter - viewportCenter);
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestIndex = index;
-        }
-      });
+      const doc = document.documentElement;
+      const docHeight = doc ? doc.scrollHeight : 0;
+      const scrollBottom = window.scrollY + window.innerHeight;
 
-      setActive(closestIndex);
-    }
-
-    function scheduleInactiveFallback() {
-      if (scrollUpdateHandle) {
+      if (docHeight && scrollBottom >= docHeight - 1) {
+        setActive(count - 1);
         return;
       }
 
-      scrollUpdateHandle = window.requestAnimationFrame(() => {
-        scrollUpdateHandle = null;
+      const activationLine = Math.min(window.innerHeight * 0.35, 280);
+      let targetIndex = 0;
 
-        const hasVisible = sections.some((item) => {
-          const ratio = ratioBySection.get(item.target) || 0;
-          return ratio > 0.05;
-        });
+      for (let index = 0; index < count; index += 1) {
+        const { target } = sections[index];
+        const rect = target.getBoundingClientRect();
+        const top = rect.top;
+        const bottom = rect.bottom;
 
-        if (!hasVisible) {
-          setActiveClosestToViewportCenter();
+        if (top <= activationLine && bottom > activationLine) {
+          targetIndex = index;
+          break;
         }
-      });
+
+        if (top > activationLine) {
+          targetIndex = index;
+          break;
+        }
+
+        targetIndex = index;
+      }
+
+      setActive(targetIndex);
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          ratioBySection.set(entry.target, entry.intersectionRatio);
-        });
-
-        const visible = sections
-          .map((item, index) => ({
-            index,
-            ratio: ratioBySection.get(item.target) || 0,
-          }))
-          .filter((entry) => entry.ratio > 0.05)
-          .sort((a, b) => b.ratio - a.ratio);
-
-        if (visible.length) {
-          setActive(visible[0].index);
-        } else {
-          scheduleInactiveFallback();
-        }
-      },
-      {
-        threshold: [0, 0.15, 0.35, 0.5, 0.7, 0.9],
-        rootMargin: '-45% 0px -45% 0px',
+    function scheduleScrollUpdate() {
+      if (scrollUpdateHandle !== null) {
+        return;
       }
-    );
+
+      scrollUpdateHandle = requestFrame(updateActiveFromScrollPosition);
+    }
 
     sections.forEach((item, index) => {
-      observer.observe(item.target);
-
       item.link.addEventListener('click', (event) => {
         event.preventDefault();
         const hash = item.link.hash;
 
         item.target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         setActive(index);
+        scheduleScrollUpdate();
 
         if (hash && typeof window.history.replaceState === 'function') {
           try {
@@ -641,12 +623,13 @@
       const index = sections.findIndex((item) => item.link.hash === window.location.hash);
       if (index >= 0) {
         setActive(index);
+        scheduleScrollUpdate();
       }
     }
 
     window.addEventListener('hashchange', handleHashChange);
-    window.addEventListener('scroll', scheduleInactiveFallback, { passive: true });
-    window.addEventListener('resize', scheduleInactiveFallback);
+    window.addEventListener('scroll', scheduleScrollUpdate, { passive: true });
+    window.addEventListener('resize', scheduleScrollUpdate);
 
     const initialHash = window.location.hash;
     if (initialHash) {
@@ -660,6 +643,7 @@
       setActive(0);
     }
 
-    scheduleInactiveFallback();
+    scheduleScrollUpdate();
+    window.setTimeout(scheduleScrollUpdate, 200);
   }
 })();
