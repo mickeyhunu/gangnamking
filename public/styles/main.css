@@ -100,40 +100,136 @@ img {
 }
 
 .site-subheader__nav {
-  display: flex;
-  align-items: center;
+  position: relative;
   flex: 1 1 auto;
-  flex-wrap: wrap;
-  gap: 0.5rem;
   min-width: min(16rem, 100%);
 }
 
-.site-subheader__nav-link {
-  display: inline-flex;
-  align-items: center;
+.section-progress-nav {
+  --section-nav-count: 1;
+  --section-nav-progress: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
   justify-content: center;
-  padding: 0.45rem 1.1rem;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  width: 100%;
+  gap: 0;
+  padding: 0.25rem 0 1.75rem;
+}
+
+.section-progress-nav__track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.6rem;
+  height: 4px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.section-progress-nav__track::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent 0,
+    transparent calc(100% / var(--section-nav-count, 1) - 1px),
+    rgba(255, 255, 255, 0.2) calc(100% / var(--section-nav-count, 1) - 1px),
+    rgba(255, 255, 255, 0.2) calc(100% / var(--section-nav-count, 1))
+  );
+  background-size: 100% 100%;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.section-progress-nav[data-section-count='1'] .section-progress-nav__track::after {
+  display: none;
+}
+
+.section-progress-nav__fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #ff9bd1, #8b5cf6);
+  transform: scaleX(var(--section-nav-progress, 0));
+  transform-origin: left center;
+  transition: transform 0.35s ease;
+  will-change: transform;
+}
+
+.section-progress-nav__list {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.section-progress-nav__item {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: center;
+}
+
+.section-progress-nav__link {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0;
+  color: rgba(255, 255, 255, 0.72);
   font-size: 0.85rem;
   font-weight: 600;
+  letter-spacing: 0.01em;
+  text-align: center;
   text-decoration: none;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: color 0.25s ease;
 }
 
-.site-subheader__nav-link:is(:hover, :focus-visible) {
-  border-color: rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.14);
-  color: #fff;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+.section-progress-nav__link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -0.55rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  border: 2px solid rgba(9, 6, 20, 0.92);
+  transform: translateX(-50%);
+  transition: transform 0.3s ease, background 0.3s ease,
+    box-shadow 0.3s ease;
+  pointer-events: none;
 }
 
-.site-subheader__nav-link:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.65);
-  outline-offset: 2px;
+.section-progress-nav__link:is(:hover, :focus-visible) {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.section-progress-nav__link:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.45);
+  outline-offset: 6px;
+}
+
+.section-progress-nav__link--active {
+  color: #ffffff;
+}
+
+.section-progress-nav__link--active::after {
+  background: #ff9bd1;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12), 0 0 12px rgba(255, 155, 209, 0.8);
+  transform: translateX(-50%) scale(1.15);
+}
+
+.section-progress-nav__label {
+  line-height: 1.1;
 }
 
 #shop-overview,
