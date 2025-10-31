@@ -64,7 +64,7 @@
       "유앤미권지용", "유엔미권지용", "유앤미강인한", "유앤엔미강인한",
       "도파민유호", "도파민정훈", "도파민이서진"
     ],
-    "image": "/images/shops/1runningrabbit/main.png",
+    "image": "/images/shops/1.1.1runningrabbit/main.png",
     "translations": {
       "en": {
         "id": "gangnam-running-rabbit-karaoke-hyperpublic",
@@ -214,7 +214,7 @@
       "유앤미권지용", "유엔미권지용", "유앤미강인한", "유앤엔미강인한",
       "도파민유호", "도파민정훈", "도파민이서진"
     ],
-    "image": "/images/shops/2elite/main.png",
+    "image": "/images/shops/1.1.2elite/main.png",
     "translations": {
       "en": {
         "id": "gangnam-elite-sara-itne-karaoke-hyperpublic",
@@ -376,7 +376,7 @@
       "유앤미권지용", "유엔미권지용", "유앤미강인한", "유앤엔미강인한",
       "도파민유호", "도파민정훈", "도파민이서진"
     ],
-    "image": "/images/shops/3perfect/main.png",
+    "image": "/images/shops/1.1.3perfect/main.png",
     "translations": {
       "en": {
         "id": "gangnam-perfect-karaoke-hyperpublic",
@@ -526,7 +526,7 @@
       "유앤미권지용", "유엔미권지용", "유앤미강인한", "유앤엔미강인한",
       "도파민유호", "도파민정훈", "도파민이서진"
     ],
-    "image": "/images/shops/4youandme/main.png",
+    "image": "/images/shops/1.1.4youandme/main.png",
     "translations": {
       "en": {
         "id": "gangnam-you-and-me-karaoke-hyperpublic",
@@ -676,7 +676,7 @@
       "유앤미권지용", "유엔미권지용", "유앤미강인한", "유앤엔미강인한",
       "도파민유호", "도파민정훈", "도파민이서진"
     ],
-    "image": "/images/shops/5dopamine/main.png",
+    "image": "/images/shops/1.1.5dopamine/main.png",
     "translations": {
       "en": {
         "id": "gangnam-dopamine-karaoke-hyperpublic",
@@ -758,5 +758,162 @@
       }
     },
     "storeNo": 5
+  },
+
+
+  {
+    "id": "송파-윈-가라오케",
+    "name": "윈",
+    "region": "서울",
+    "district": "송파구",
+    "category": "가라오케",
+    "address": "서울특별시 송파구 석촌동 1-7",
+    "hours": "24시간",
+    "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
+    "pricingSchedule": {
+      "unitSuffix": "만",
+      "tc": 12,
+      "rt": 5,
+      "guestCounts": [1, 2, 3, 4],
+      "defaultSegmentId": "before-9pm",
+      "segments": [
+        {
+          "id": "before-9pm",
+          "label": "오후 9시 이전",
+          "base": 10,
+          "highlightLabel": {
+            "ko": "9시 전 주대",
+            "en": "Before 9 PM Base",
+            "zh": "9点前主台",
+            "ja": "9時前 基本料金"
+          },
+          "highlightOrder": 0
+        },
+        {
+          "id": "after-9pm",
+          "label": "오후 9시 이후",
+          "base": 13,
+          "highlightLabel": {
+            "ko": "ALL 타임 주대",
+            "en": "All-Time Base",
+            "zh": "全时段主台",
+            "ja": "オールタイム 基本料金"
+          },
+          "highlightOrder": 1
+        }
+      ]
+    },
+    "manager": {
+      "name": "강이사",
+      "phone": "010-5733-8710",
+      "kakao": "@gangnamking98"
+    },
+    "seoKeywords": [
+      "강남", "논현", "삼성", "서초", "선릉", "수서", "신논현", "양재", "역삼", "가락", "가산", "강동", "강북", "강서", "건대", "관악구", "광진", "구로",
+      "구의", "군자", "금천", "길동", "노원", "답십리", "도봉구", "동대문", "동작구", "마곡", "마포", "면목동", "명동", "목동", "미아", "방이", "방이동",
+      "봉천", "북창", "사가정", "사당", "상봉", "서대문", "서울대", "석계", "성동구", "성북", "성수동", "송파", "수유", "신길", "신당", "신도림", "신림", "신촌",
+      "쌍문", "양천", "여의도", "연신내", "영등포", "왕십리", "용산", "은평", "을지로", "잠실", "장안", "제기", "종로", "중구", "중랑", "창동", "천호", "청량리", "태릉", "합정", "홍대", "화곡",
+
+      "달토", "달리는 토끼", "사라있네", "엘리트", "퍼펙트", "유앤미", "유엔미", "도파민", "드라마", "줄리아나", "다소다", "트렌드",
+      "강남달토", "강남달리는 토끼", "강남사라있네", "강남엘리트", "강남퍼펙트", "강남유앤미", "강남유엔미", "강남도파민", "강남드라마", "강남줄리아나", "강남다소다", "강남트렌드",
+      "쩜오", "하퍼", "하이퍼블릭", "셔츠", "셔츠룸", "오피", "룸빵", "가라오케",
+      "강남쩜오", "강남하퍼", "강남하이퍼블릭", "강남셔츠", "강남셔츠룸", "강남오피", "강남룸빵", "강남가라오케",
+
+      "룸빵1번지", "룸빵일번지", "오피가이드", "오피스타",
+
+      "달토하대표", "달토소지섭", "달토진솔", "달토우지호", "달토안수정", "달토강동원",
+      "사라있네기명", "사라있네바다", "사라있네홍탁", "사라있네진우", "엘리트기명", "엘리트바다", "엘리트홍탁", "엘리트진우",
+      "퍼펙트우주", "퍼펙트강하늘",
+      "유앤미권지용", "유엔미권지용", "유앤미강인한", "유앤엔미강인한",
+      "도파민유호", "도파민정훈", "도파민이서진",
+
+      "윈", "윈가라오케"
+    ],
+    "image": "/images/shops/1.2.1win/main.png",
+    "translations": {
+      "en": {
+        "id": "gangnam-dopamine-karaoke-hyperpublic",
+        "name": "Dopamine Hyperpublic",
+        "region": "Seoul",
+        "district": "Gangnam-gu",
+        "category": "Hyperpublic",
+        "address": "142-29 Samseong-dong, Gangnam-gu, Seoul",
+        "hours": "Open 24 hours",
+        "description": "Dopamine energizes Samseong-dong nights with upbeat hyperpublic performances and streamlined late-night service.",
+        "highlights": [
+          "Samseong-dong nightlife hub",
+          "Upbeat performance-focused lineup",
+          "Smooth late-night table service"
+        ],
+        "pricing": {
+          "base": "Before 9 PM Base: ₩100,000 · All-Time Base: ₩130,000",
+          "tc": "TC ₩120,000",
+          "rt": "RT ₩50,000"
+        },
+        "seoKeywords": [
+          "Gangnam Dopamine",
+          "Dopamine hyperpublic",
+          "Samseong shirt room",
+          "Gangnam karaoke"
+        ]
+      },
+      "zh": {
+        "id": "江南-DOPAMINE-卡拉OK-超級公關",
+        "name": "DOPAMINE 超級公關",
+        "region": "首尔",
+        "district": "江南区",
+        "category": "超級公關",
+        "address": "首爾市江南區三成洞 142-29",
+        "hours": "24 小時營業",
+        "description": "DOPAMINE 以活力舞台與流暢服務，點亮三成洞的夜晚。",
+        "highlights": [
+          "三成洞夜生活核心",
+          "活力表演型陣容",
+          "深夜桌邊服務迅速"
+        ],
+        "pricing": {
+          "base": "9点前主台：₩100,000 · 全时段主台：₩130,000",
+          "tc": "TC ₩120,000",
+          "rt": "RT ₩50,000"
+        },
+        "seoKeywords": [
+          "江南DOPAMINE",
+          "DOPAMINE超級公關",
+          "三成襯衫房",
+          "江南卡拉OK"
+        ]
+      },
+      "ja": {
+        "id": "江南-ドーパミン-カラオケ-ハイパーパブリック",
+        "name": "ドーパミン ハイパーパブリック",
+        "region": "ソウル",
+        "district": "江南区",
+        "category": "ハイパーパブリック",
+        "address": "ソウル特別市 江南区 三成洞 142-29",
+        "hours": "24時間営業",
+        "description": "ドーパミンは三成洞の夜を盛り上げる、テンポ感あるパフォーマンスとスムーズな深夜サービスが特徴のハイパーパブリックです。",
+        "highlights": [
+          "三成洞ナイトライフの中心",
+          "テンポの良いパフォーマンス陣容",
+          "深夜のテーブルサービスがスムーズ"
+        ],
+        "pricing": {
+          "base": "9時前 基本料金：₩100,000 · オールタイム 基本料金：₩130,000",
+          "tc": "TC ₩120,000",
+          "rt": "RT ₩50,000"
+        },
+        "seoKeywords": [
+          "江南 ドーパミン",
+          "ドーパミン ハイパーパブリック",
+          "三成 シャツルーム",
+          "江南 カラオケ"
+        ]
+      }
+    },
+    "storeNo": 6
   }
+
+
+
+
 ]

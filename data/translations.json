@@ -65,8 +65,8 @@
         "summaryLabel": "총 출근인원",
         "summaryUnit": "명",
         "empty": "등록된 출근부 정보가 없습니다.",
-        "topListTitle": "추천 아가씨 TOP 5",
-        "topListEmpty": "추천 데이터가 없습니다.",
+        "topListTitle": "오늘의 인기 멤버 TOP 5",
+        "topListEmpty": "멤버 데이터가 없습니다.",
         "topListScoreLabel": "합계"
       },
       "pricingHighlight": {

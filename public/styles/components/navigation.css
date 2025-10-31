@@ -78,6 +78,14 @@
 
 .section-progress-nav__label {
   line-height: 1.1;
+  white-space: nowrap;
+  word-break: keep-all;
+}
+
+@media (max-width: 640px) {
+  .section-progress-nav__label {
+    white-space: normal;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

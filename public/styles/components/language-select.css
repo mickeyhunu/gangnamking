@@ -99,7 +99,8 @@
 
 .language-select__option {
   width: 100%;
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
   align-items: center;
   gap: 0.3rem;
   padding: 0.45rem 0.6rem;
@@ -129,14 +130,21 @@
 .language-select__option-flag {
   width: 28px;
   height: 20px;
+  min-width: 28px;
+  min-height: 20px;
+  max-width: 28px;
+  max-height: 20px;
   border-radius: 0.45rem;
   object-fit: cover;
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 10px 18px rgba(0, 0, 0, 0.35);
+  justify-self: start;
 }
 
 .language-select__option-label {
   color: #f2efff;
+  justify-self: end;
+  text-align: right;
 }
 
 .language-select__option:hover .language-select__option-label,
