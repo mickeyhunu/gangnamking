@@ -331,177 +331,181 @@
     window.addEventListener('pagehide', releaseStaticMap);
     window.addEventListener('beforeunload', releaseStaticMap);
 
-    if (!mapContainer || (!address && !hasPresetCoordinates)) {
-      setStatus(authErrorMessage || errorText, 'error');
-      return;
-    }
-
-    if (status) {
-      status.hidden = false;
-    }
-
-    const naverMaps = window.naver && window.naver.maps;
-
-    if (!naverMaps || !naverMaps.Service || !naverMaps.LatLng) {
-      console.warn('Naver Maps library is not available.');
-      if (hasPresetCoordinates) {
-        attemptStaticFallback(presetLat, presetLng);
-      } else {
+    function initializeInteractiveMap() {
+      if (!mapContainer || (!address && !hasPresetCoordinates)) {
         setStatus(authErrorMessage || errorText, 'error');
-      }
-      return;
-    }
-
-    function renderMap(lat, lng) {
-      releaseStaticMap();
-
-      const center = new naverMaps.LatLng(lat, lng);
-      const map = new naverMaps.Map(mapContainer, {
-        center,
-        zoom: 16,
-        scaleControl: false,
-        mapDataControl: false,
-        logoControlOptions: {
-          position: naverMaps.Position.BOTTOM_RIGHT,
-        },
-        zoomControl: true,
-        zoomControlOptions: {
-          position: naverMaps.Position.TOP_RIGHT,
-        },
-      });
-
-      const marker = new naverMaps.Marker({
-        position: center,
-        map,
-        title: venueName || undefined,
-      });
-
-      if (venueName) {
-        const infoContent = document.createElement('div');
-        infoContent.className = 'shop-map__info-window';
-        infoContent.textContent = venueName;
-
-        const infoWindow = new naverMaps.InfoWindow({
-          content: infoContent,
-          backgroundColor: 'transparent',
-          borderColor: 'transparent',
-          borderWidth: 0,
-          disableAnchor: true,
-        });
-
-        infoWindow.open(map, marker);
+        return;
       }
 
-      setStatus('', 'ready');
-    }
-
-    if (hasPresetCoordinates) {
-      renderMap(presetLat, presetLng);
-      return;
-    }
-
-    setStatus(loadingText, 'loading');
-
-    function normalizeQuery(query) {
-      if (typeof query !== 'string') {
-        return '';
+      if (status) {
+        status.hidden = false;
       }
 
-      return query.replace(/\s+/g, ' ').trim();
-    }
+      const naverMaps = window.naver && window.naver.maps;
 
-    function buildQueryQueue() {
-      const queries = [];
-      const seen = new Set();
-
-      function enqueue(value) {
-        const normalized = normalizeQuery(value);
-
-        if (!normalized || seen.has(normalized)) {
-          return;
-        }
-
-        seen.add(normalized);
-        queries.push(normalized);
-      }
-
-      enqueue([region, district, address].filter(Boolean).join(' '));
-      enqueue([district, address].filter(Boolean).join(' '));
-      enqueue([region, address].filter(Boolean).join(' '));
-      enqueue(address);
-      enqueue([district, region].filter(Boolean).join(' '));
-
-      return queries;
-    }
-
-    const geocodeQueue = buildQueryQueue();
-
-    if (!geocodeQueue.length) {
-      setStatus(authErrorMessage || errorText, 'error');
-      return;
-    }
-
-    function geocode(query) {
-      return new Promise((resolve, reject) => {
-        naverMaps.Service.geocode({ query }, (serviceStatus, response) => {
-          if (serviceStatus !== naverMaps.Service.Status.OK) {
-            reject(new Error(`Geocoding failed with status ${serviceStatus}`));
-            return;
-          }
-
-          const addresses =
-            response && response.v2 && Array.isArray(response.v2.addresses)
-              ? response.v2.addresses
-              : [];
-
-          if (!addresses.length) {
-            reject(new Error('No geocoding results found.'));
-            return;
-          }
-
-          const first = addresses[0];
-          const lat = parseFloat(first.y);
-          const lng = parseFloat(first.x);
-
-          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-            reject(new Error('Invalid coordinates received.'));
-            return;
-          }
-
-          resolve({ lat, lng });
-        });
-      });
-    }
-
-    function geocodeNext(queue) {
-      if (!queue.length) {
-        return Promise.reject(new Error('No geocoding results found.'));
-      }
-
-      const currentQuery = queue.shift();
-
-      return geocode(currentQuery).catch((error) => {
-        if (queue.length) {
-          console.warn(`Geocoding attempt failed for query "${currentQuery}":`, error);
-          return geocodeNext(queue);
-        }
-
-        throw error;
-      });
-    }
-
-    geocodeNext([...geocodeQueue])
-      .then(({ lat, lng }) => {
-        renderMap(lat, lng);
-      })
-      .catch((error) => {
-        console.warn('Failed to render map:', error);
+      if (!naverMaps || !naverMaps.Service || !naverMaps.LatLng) {
+        console.warn('Naver Maps library is not available.');
         if (hasPresetCoordinates) {
           attemptStaticFallback(presetLat, presetLng);
         } else {
           setStatus(authErrorMessage || errorText, 'error');
         }
-      });
+        return;
+      }
+
+      function renderMap(lat, lng) {
+        releaseStaticMap();
+
+        const center = new naverMaps.LatLng(lat, lng);
+        const map = new naverMaps.Map(mapContainer, {
+          center,
+          zoom: 16,
+          scaleControl: false,
+          mapDataControl: false,
+          logoControlOptions: {
+            position: naverMaps.Position.BOTTOM_RIGHT,
+          },
+          zoomControl: true,
+          zoomControlOptions: {
+            position: naverMaps.Position.TOP_RIGHT,
+          },
+        });
+
+        const marker = new naverMaps.Marker({
+          position: center,
+          map,
+          title: venueName || undefined,
+        });
+
+        if (venueName) {
+          const infoContent = document.createElement('div');
+          infoContent.className = 'shop-map__info-window';
+          infoContent.textContent = venueName;
+
+          const infoWindow = new naverMaps.InfoWindow({
+            content: infoContent,
+            backgroundColor: 'transparent',
+            borderColor: 'transparent',
+            borderWidth: 0,
+            disableAnchor: true,
+          });
+
+          infoWindow.open(map, marker);
+        }
+
+        setStatus('', 'ready');
+      }
+
+      if (hasPresetCoordinates) {
+        renderMap(presetLat, presetLng);
+        return;
+      }
+
+      setStatus(loadingText, 'loading');
+
+      function normalizeQuery(query) {
+        if (typeof query !== 'string') {
+          return '';
+        }
+
+        return query.replace(/\s+/g, ' ').trim();
+      }
+
+      function buildQueryQueue() {
+        const queries = [];
+        const seen = new Set();
+
+        function enqueue(value) {
+          const normalized = normalizeQuery(value);
+
+          if (!normalized || seen.has(normalized)) {
+            return;
+          }
+
+          seen.add(normalized);
+          queries.push(normalized);
+        }
+
+        enqueue([region, district, address].filter(Boolean).join(' '));
+        enqueue([district, address].filter(Boolean).join(' '));
+        enqueue([region, address].filter(Boolean).join(' '));
+        enqueue(address);
+        enqueue([district, region].filter(Boolean).join(' '));
+
+        return queries;
+      }
+
+      const geocodeQueue = buildQueryQueue();
+
+      if (!geocodeQueue.length) {
+        setStatus(authErrorMessage || errorText, 'error');
+        return;
+      }
+
+      function geocode(query) {
+        return new Promise((resolve, reject) => {
+          naverMaps.Service.geocode({ query }, (serviceStatus, response) => {
+            if (serviceStatus !== naverMaps.Service.Status.OK) {
+              reject(new Error(`Geocoding failed with status ${serviceStatus}`));
+              return;
+            }
+
+            const addresses =
+              response && response.v2 && Array.isArray(response.v2.addresses)
+                ? response.v2.addresses
+                : [];
+
+            if (!addresses.length) {
+              reject(new Error('No geocoding results found.'));
+              return;
+            }
+
+            const first = addresses[0];
+            const lat = parseFloat(first.y);
+            const lng = parseFloat(first.x);
+
+            if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+              reject(new Error('Invalid coordinates received.'));
+              return;
+            }
+
+            resolve({ lat, lng });
+          });
+        });
+      }
+
+      function geocodeNext(queue) {
+        if (!queue.length) {
+          return Promise.reject(new Error('No geocoding results found.'));
+        }
+
+        const currentQuery = queue.shift();
+
+        return geocode(currentQuery).catch((error) => {
+          if (queue.length) {
+            console.warn(`Geocoding attempt failed for query "${currentQuery}":`, error);
+            return geocodeNext(queue);
+          }
+
+          throw error;
+        });
+      }
+
+      geocodeNext([...geocodeQueue])
+        .then(({ lat, lng }) => {
+          renderMap(lat, lng);
+        })
+        .catch((error) => {
+          console.warn('Failed to render map:', error);
+          if (hasPresetCoordinates) {
+            attemptStaticFallback(presetLat, presetLng);
+          } else {
+            setStatus(authErrorMessage || errorText, 'error');
+          }
+        });
+    }
+
+    initializeInteractiveMap();
   }
 
   const sectionNav = document.querySelector('[data-section-nav]');
