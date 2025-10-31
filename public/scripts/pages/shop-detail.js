@@ -104,51 +104,52 @@
   const seoEditor = document.querySelector('[data-seo-editor]');
   if (seoEditor) {
     const textarea = seoEditor.querySelector('textarea');
-    const copyButton = seoEditor.querySelector('[data-action="copy"]');
-    const status = seoEditor.querySelector('[data-status]');
-    const metaKeywords = document.querySelector('meta[name="keywords"]');
-    const successMessage = seoEditor.dataset.successMessage || 'Copied keywords.';
-    const errorMessage = seoEditor.dataset.errorMessage || 'Copy failed. Please try again.';
-    let statusTimer;
 
     if (!textarea) {
-      return;
-    }
+      console.warn('SEO editor element is missing a textarea. Skipping SEO editor initialization.');
+    } else {
+      const copyButton = seoEditor.querySelector('[data-action="copy"]');
+      const status = seoEditor.querySelector('[data-status]');
+      const metaKeywords = document.querySelector('meta[name="keywords"]');
+      const successMessage = seoEditor.dataset.successMessage || 'Copied keywords.';
+      const errorMessage = seoEditor.dataset.errorMessage || 'Copy failed. Please try again.';
+      let statusTimer;
 
-    function setStatus(message, isSuccess) {
-      if (!status) {
-        return;
-      }
-      status.textContent = message;
-      status.style.color = isSuccess ? '#ff9bd1' : 'var(--color-muted)';
-      if (statusTimer) {
-        window.clearTimeout(statusTimer);
-      }
-      if (message) {
-        statusTimer = window.setTimeout(() => {
-          status.textContent = '';
-        }, 4000);
-      }
-    }
-
-    function updateMetaKeywords() {
-      if (metaKeywords) {
-        metaKeywords.setAttribute('content', textarea.value.trim());
-      }
-    }
-
-    textarea.addEventListener('input', updateMetaKeywords);
-
-    if (copyButton) {
-      copyButton.addEventListener('click', async () => {
-        try {
-          await navigator.clipboard.writeText(textarea.value);
-          setStatus(successMessage, true);
-        } catch (error) {
-          console.warn('Clipboard copy failed:', error);
-          setStatus(errorMessage, false);
+      function setStatus(message, isSuccess) {
+        if (!status) {
+          return;
         }
-      });
+        status.textContent = message;
+        status.style.color = isSuccess ? '#ff9bd1' : 'var(--color-muted)';
+        if (statusTimer) {
+          window.clearTimeout(statusTimer);
+        }
+        if (message) {
+          statusTimer = window.setTimeout(() => {
+            status.textContent = '';
+          }, 4000);
+        }
+      }
+
+      function updateMetaKeywords() {
+        if (metaKeywords) {
+          metaKeywords.setAttribute('content', textarea.value.trim());
+        }
+      }
+
+      textarea.addEventListener('input', updateMetaKeywords);
+
+      if (copyButton) {
+        copyButton.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(textarea.value);
+            setStatus(successMessage, true);
+          } catch (error) {
+            console.warn('Clipboard copy failed:', error);
+            setStatus(errorMessage, false);
+          }
+        });
+      }
     }
   }
 
