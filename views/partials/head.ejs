@@ -105,6 +105,19 @@
     />
   </head>
   <body>
+    <audio
+      id="site-bgm"
+      class="site-bgm"
+      autoplay
+      loop
+      preload="auto"
+      aria-hidden="true"
+    >
+      <source
+        src="https://storage.googleapis.com/legend_audio/gogogogo.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
     <% const currentLanguageOption = resolvedLanguageOptions.find(function(option) { return option.isCurrent; }) || resolvedLanguageOptions[0]; %>
     <% const languageSelectId = 'language-select'; %>
     <% const resolvedAreaFilterConfig = (typeof viewLocals.areaFilterConfig === 'object' && viewLocals.areaFilterConfig !== null)
