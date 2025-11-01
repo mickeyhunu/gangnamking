@@ -15,8 +15,9 @@
             </header>
             <div class="shop-grid" data-grid data-category-group="<%= group.category %>">
               <% group.shops.forEach(function(shop) { %>
-                <article
+                <a
                   class="shop-card"
+                  href="/shops/<%= shop.id %>"
                   data-region="<%= shop.region %>"
                   data-district="<%= shop.district %>"
                   data-category="<%= shop.category %>"
@@ -33,13 +34,13 @@
                       <h3 class="shop-card__name"><%= shop.name %></h3>
                       <div class="shop-card__meta-row">
                         <span class="shop-card__category"><%= shop.category %></span>
-                        <a class="shop-card__link" href="/shops/<%= shop.id %>">
+                        <span class="shop-card__link">
                           <%= t.shop && t.shop.viewDetails ? t.shop.viewDetails : '' %>
-                        </a>
+                        </span>
                       </div>
                     </div>
                   </div>
-                </article>
+                </a>
               <% }) %>
             </div>
           </section>
