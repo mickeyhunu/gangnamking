@@ -1,27 +1,42 @@
-function resolveClientSecret() {
-  const primary = process.env.NAVER_MAP_CLIENT_SECRET;
+function resolveValue(...candidates) {
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string') {
+      const trimmed = candidate.trim();
 
-  if (typeof primary === 'string' && primary.trim()) {
-    return primary;
-  }
-
-  // NAVER_MAP_API_KEY was the original environment variable used for the
-  // client secret. Keep supporting it so existing deployments continue to work.
-  const legacy = process.env.NAVER_MAP_API_KEY;
-  if (typeof legacy === 'string' && legacy.trim()) {
-    return legacy;
+      if (trimmed) {
+        return trimmed;
+      }
+    }
   }
 
   return '';
 }
 
+function resolveClientId() {
+  return resolveValue(
+    process.env.NAVER_MAP_API_KEY_ID,
+    process.env.NAVER_MAP_CLIENT_ID,
+    process.env.NAVER_CLIENT_ID
+  );
+}
+
+function resolveClientSecret() {
+  return resolveValue(
+    process.env.NAVER_MAP_CLIENT_SECRET,
+    // NAVER_MAP_API_KEY was the original environment variable used for the
+    // client secret. Keep supporting it so existing deployments continue to work.
+    process.env.NAVER_MAP_API_KEY,
+    process.env.NAVER_CLIENT_SECRET
+  );
+}
+
 function getNaverMapCredentials() {
-  const clientId = process.env.NAVER_MAP_API_KEY_ID;
+  const clientId = resolveClientId();
   const clientSecret = resolveClientSecret();
 
   return {
-    clientId: typeof clientId === 'string' && clientId ? clientId : '',
-    clientSecret: typeof clientSecret === 'string' && clientSecret ? clientSecret : '',
+    clientId,
+    clientSecret,
   };
 }
 

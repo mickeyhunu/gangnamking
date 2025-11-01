@@ -3,6 +3,7 @@ const express = require('express');
 const languageMiddleware = require('./middleware/language');
 const shopRoutes = require('./routes/index');
 const { initializeDataStore } = require('./services/dataStore');
+const { getNaverMapCredentials } = require('./config/naver');
 
 initializeDataStore();
 
@@ -15,7 +16,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(languageMiddleware);
 app.use((req, res, next) => {
-  res.locals.naverMapClientId = process.env.NAVER_MAP_API_KEY_ID || '';
+  const { clientId } = getNaverMapCredentials();
+  res.locals.naverMapClientId = clientId || '';
   next();
 });
 app.use('/', shopRoutes);
