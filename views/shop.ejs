@@ -941,7 +941,12 @@
     <section class="section detail-section" id="shop-location">
       <div class="container detail-section__grid">
         <div class="detail-card detail-card--full">
-          <h2><%= mapText.title || 'Location' %></h2>
+          <h2 class="detail-card__heading">
+            <span class="detail-card__heading-primary"><%= mapText.title || 'Location' %></span>
+            <% if (mapText.subtitle) { %>
+              <span class="detail-card__heading-subtitle"><%= mapText.subtitle %></span>
+            <% } %>
+          </h2>
           <div
             class="shop-map"
             data-shop-map
