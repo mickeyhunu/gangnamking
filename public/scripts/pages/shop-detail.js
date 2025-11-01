@@ -165,17 +165,12 @@
     const latValue = mapHost.dataset.shopLat;
     const lngValue = mapHost.dataset.shopLng;
     const authErrorMessage = (mapHost.dataset.mapAuthError || '').trim();
-    const mapLocale = (mapHost.dataset.mapLocale || '').trim();
-    const staticMapEndpoint = (mapHost.dataset.staticMapEndpoint || '').trim();
-    const staticMapMessage = mapHost.dataset.staticMapMessage || '';
-    const staticMapAlt = mapHost.dataset.staticMapAlt || '';
     const presetLat =
       typeof latValue === 'string' && latValue.trim() !== '' ? Number.parseFloat(latValue) : NaN;
     const presetLng =
       typeof lngValue === 'string' && lngValue.trim() !== '' ? Number.parseFloat(lngValue) : NaN;
     const hasPresetCoordinates = Number.isFinite(presetLat) && Number.isFinite(presetLng);
-    let staticMapObjectUrl = '';
-    let staticMapAbortController = null;
+    const hasLeaflet = Boolean(window.L && typeof window.L.map === 'function');
 
     function setStatus(message, state) {
       if (state) {
@@ -195,148 +190,42 @@
       }
     }
 
-    function cancelStaticMapRequest() {
-      if (staticMapAbortController && typeof staticMapAbortController.abort === 'function') {
-        staticMapAbortController.abort();
+    function renderLeafletMap(lat, lng) {
+      if (!hasLeaflet || !mapContainer || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+        return false;
       }
 
-      staticMapAbortController = null;
-    }
+      mapContainer.innerHTML = '';
 
-    function releaseStaticMapObjectUrl() {
-      if (staticMapObjectUrl) {
-        URL.revokeObjectURL(staticMapObjectUrl);
-        staticMapObjectUrl = '';
-      }
-    }
-
-    function removeExistingStaticImage() {
-      if (!mapContainer) {
-        return;
-      }
-
-      const existingImage = mapContainer.querySelector('.shop-map__static-image');
-      if (existingImage) {
-        existingImage.remove();
-      }
-    }
-
-    function getStaticMapSize() {
-      if (!mapContainer) {
-        return { width: 600, height: 360 };
-      }
-
-      const rect = mapContainer.getBoundingClientRect();
-      const width = Math.max(Math.round(rect.width), 200);
-      const height = Math.max(Math.round(rect.height), 200);
-
-      return { width, height };
-    }
-
-    async function loadStaticMap(lat, lng) {
-      if (!staticMapEndpoint) {
-        throw new Error('Static map endpoint is not configured.');
-      }
-
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-        throw new Error('Static map coordinates are not available.');
-      }
-
-      const { width, height } = getStaticMapSize();
-      const url = new URL(staticMapEndpoint, window.location.origin);
-      url.searchParams.set('lat', String(lat));
-      url.searchParams.set('lng', String(lng));
-      url.searchParams.set('w', String(width));
-      url.searchParams.set('h', String(height));
-      url.searchParams.set('zoom', '16');
-      url.searchParams.set('scale', window.devicePixelRatio >= 1.5 ? '2' : '1');
-      if (mapLocale) {
-        url.searchParams.set('lang', mapLocale);
-      }
-
-      const controller = typeof AbortController === 'function' ? new AbortController() : null;
-
-      if (controller) {
-        cancelStaticMapRequest();
-        staticMapAbortController = controller;
-      }
-
-      setStatus(loadingText, 'loading');
-
-      try {
-        if (typeof axios === 'undefined') {
-          throw new Error('Axios is required to load static map images.');
-        }
-
-        const response = await axios.get(url.toString(), {
-          responseType: 'blob',
-          ...(controller ? { signal: controller.signal } : {}),
-        });
-
-        const blob = response && response.data instanceof Blob ? response.data : new Blob([response.data]);
-
-        if (controller && controller.signal.aborted) {
-          return;
-        }
-
-        if (staticMapAbortController === controller) {
-          staticMapAbortController = null;
-        } else {
-          cancelStaticMapRequest();
-        }
-
-        releaseStaticMapObjectUrl();
-
-        staticMapObjectUrl = URL.createObjectURL(blob);
-
-        removeExistingStaticImage();
-        mapContainer.innerHTML = '';
-
-        const image = document.createElement('img');
-        image.className = 'shop-map__static-image';
-        image.src = staticMapObjectUrl;
-        image.alt = staticMapAlt || '';
-        image.decoding = 'async';
-        mapContainer.appendChild(image);
-
-        if (staticMapMessage) {
-          setStatus(staticMapMessage, 'static');
-        } else {
-          setStatus('', 'static');
-        }
-      } catch (error) {
-        if (
-          (controller && controller.signal.aborted) ||
-          (error && (error.name === 'AbortError' || error.code === 'ERR_CANCELED'))
-        ) {
-          return;
-        }
-
-        throw error;
-      }
-    }
-
-    function attemptStaticFallback(lat, lng) {
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-        return;
-      }
-
-      loadStaticMap(lat, lng).catch(() => {
-        setStatus(authErrorMessage || errorText, 'error');
+      const map = window.L.map(mapContainer, {
+        center: [lat, lng],
+        zoom: 16,
+        zoomControl: true,
+        scrollWheelZoom: false,
       });
-    }
 
-    function releaseStaticMap() {
-      cancelStaticMapRequest();
-      releaseStaticMapObjectUrl();
-      removeExistingStaticImage();
-    }
+      window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19,
+      }).addTo(map);
 
-    window.addEventListener('pagehide', releaseStaticMap);
-    window.addEventListener('beforeunload', releaseStaticMap);
+      const marker = window.L.marker([lat, lng]).addTo(map);
+
+      if (venueName) {
+        marker.bindPopup(venueName).openPopup();
+      }
+
+      setStatus('', 'ready');
+      return true;
+    }
 
     function initializeInteractiveMap() {
       if (!mapContainer || (!address && !hasPresetCoordinates)) {
+        if (hasLeaflet && hasPresetCoordinates) {
+          renderLeafletMap(presetLat, presetLng);
+          return;
+        }
+
         setStatus(authErrorMessage || errorText, 'error');
         return;
       }
@@ -346,18 +235,12 @@
       }
 
       const naverMaps = window.naver && window.naver.maps;
+      const hasNaverMaps = Boolean(naverMaps && naverMaps.Service && naverMaps.LatLng);
 
-      if (!naverMaps || !naverMaps.Service || !naverMaps.LatLng) {
-        if (hasPresetCoordinates) {
-          attemptStaticFallback(presetLat, presetLng);
-        } else {
-          setStatus(authErrorMessage || errorText, 'error');
+      function renderNaverMap(lat, lng) {
+        if (!hasNaverMaps || !mapContainer || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+          return false;
         }
-        return;
-      }
-
-      function renderMap(lat, lng) {
-        releaseStaticMap();
 
         const center = new naverMaps.LatLng(lat, lng);
         const map = new naverMaps.Map(mapContainer, {
@@ -397,10 +280,21 @@
         }
 
         setStatus('', 'ready');
+        return true;
+      }
+
+      if (!hasNaverMaps) {
+        if (hasLeaflet && hasPresetCoordinates) {
+          renderLeafletMap(presetLat, presetLng);
+          return;
+        }
+
+        setStatus(authErrorMessage || errorText, 'error');
+        return;
       }
 
       if (hasPresetCoordinates) {
-        renderMap(presetLat, presetLng);
+        renderNaverMap(presetLat, presetLng);
         return;
       }
 
@@ -495,11 +389,13 @@
 
       geocodeNext([...geocodeQueue])
         .then(({ lat, lng }) => {
-          renderMap(lat, lng);
+          if (!renderNaverMap(lat, lng) && hasLeaflet) {
+            renderLeafletMap(lat, lng);
+          }
         })
         .catch(() => {
-          if (hasPresetCoordinates) {
-            attemptStaticFallback(presetLat, presetLng);
+          if (hasLeaflet && hasPresetCoordinates) {
+            renderLeafletMap(presetLat, presetLng);
           } else {
             setStatus(authErrorMessage || errorText, 'error');
           }
