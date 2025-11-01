@@ -935,6 +935,48 @@
   const staticMapAlt = formatMapLabel(
     mapText.staticAlt || 'Static map showing location of {{shopName}}'
   );
+  const locationInfoItems = [
+    locationSummary
+      ? {
+          label: pricingHighlight.region || '지역',
+          value: locationSummary,
+        }
+      : null,
+    shop.category
+      ? {
+          label: pricingHighlight.category || '업종',
+          value: shop.category,
+        }
+      : null,
+    shop.name
+      ? {
+          label: pricingHighlight.brand || '상호',
+          value: shop.name,
+        }
+      : null,
+    shop.address
+      ? {
+          label: (t.shop && t.shop.address) || 'Address',
+          value: shop.address,
+        }
+      : null,
+    shop.hours
+      ? {
+          label: (t.shop && t.shop.hours) || 'Hours',
+          value: shop.hours,
+        }
+      : null,
+  ].filter(function (item, index, array) {
+    if (!item) {
+      return false;
+    }
+
+    const firstIndex = array.findIndex(function (entry) {
+      return entry && entry.value === item.value && entry.label === item.label;
+    });
+
+    return firstIndex === index;
+  });
 %>
 
   <div class="detail-location">
@@ -943,10 +985,17 @@
         <div class="detail-card detail-card--full">
           <h2 class="detail-card__heading">
             <span class="detail-card__heading-primary"><%= mapText.title || 'Location' %></span>
-            <% if (mapText.subtitle) { %>
-              <span class="detail-card__heading-subtitle"><%= mapText.subtitle %></span>
-            <% } %>
           </h2>
+          <% if (locationInfoItems.length) { %>
+            <dl class="shop-map__details">
+              <% locationInfoItems.forEach(function (item) { %>
+                <div class="shop-map__detail">
+                  <dt class="shop-map__detail-label"><%= item.label %></dt>
+                  <dd class="shop-map__detail-value"><%= item.value %></dd>
+                </div>
+              <% }); %>
+            </dl>
+          <% } %>
           <div
             class="shop-map"
             data-shop-map
