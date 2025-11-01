@@ -988,8 +988,6 @@
             data-shop-district="<%= shop.district %>"
             data-shop-region="<%= shop.region %>"
             data-map-locale="<%= lang || 'ko' %>"
-            data-loading-text="<%= mapText.loading || 'Loading map…' %>"
-            data-error-text="<%= mapText.error || 'Unable to load map. Please check the address.' %>"
             <% if (mapAuthErrorMessage) { %>
               data-map-auth-error="<%= mapAuthErrorMessage %>"
             <% } %>
@@ -1004,9 +1002,6 @@
               role="img"
               aria-label="<%= formatMapLabel(mapText.ariaLabel || 'Map showing location of {{shopName}}') %>"
             ></div>
-            <p class="shop-map__status" data-map-status aria-live="polite">
-              <%= mapText.loading || 'Loading map…' %>
-            </p>
           </div>
         </div>
       </div>

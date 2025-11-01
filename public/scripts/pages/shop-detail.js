@@ -152,16 +152,15 @@
     }
   }
 
+
   const mapHost = document.querySelector('[data-shop-map]');
   if (mapHost) {
     const mapContainer = mapHost.querySelector('[data-map-region]');
-    const status = mapHost.querySelector('[data-map-status]');
     const address = (mapHost.dataset.shopAddress || '').trim();
     const district = (mapHost.dataset.shopDistrict || '').trim();
     const region = (mapHost.dataset.shopRegion || '').trim();
     const venueName = mapHost.dataset.shopName || '';
-    const loadingText = mapHost.dataset.loadingText || 'Loading map...';
-    const errorText = mapHost.dataset.errorText || 'Unable to load map.';
+    const defaultErrorMessage = 'Unable to load map. Please check the address.';
     const latValue = mapHost.dataset.shopLat;
     const lngValue = mapHost.dataset.shopLng;
     const authErrorMessage = (mapHost.dataset.mapAuthError || '').trim();
@@ -171,22 +170,58 @@
       typeof lngValue === 'string' && lngValue.trim() !== '' ? Number.parseFloat(lngValue) : NaN;
     const hasPresetCoordinates = Number.isFinite(presetLat) && Number.isFinite(presetLng);
     const hasLeaflet = Boolean(window.L && typeof window.L.map === 'function');
+    let mapInitialized = false;
+    let naverRetryHandle = null;
+    let naverRetryCount = 0;
+    const maxNaverRetries = 30;
 
-    function setStatus(message, state) {
+    function getNaverMaps() {
+      const maps = window.naver && window.naver.maps;
+      if (!maps || !maps.Service || !maps.LatLng) {
+        return null;
+      }
+
+      return maps;
+    }
+
+    function getErrorMessage() {
+      return authErrorMessage || defaultErrorMessage;
+    }
+
+    function setMapState(state) {
       if (state) {
         mapHost.dataset.mapState = state;
       } else {
         delete mapHost.dataset.mapState;
       }
+    }
 
-      if (status) {
-        if (message) {
-          status.textContent = message;
-          status.hidden = false;
-        } else {
-          status.textContent = '';
-          status.hidden = true;
-        }
+    function clearNaverRetry() {
+      if (naverRetryHandle !== null) {
+        window.clearTimeout(naverRetryHandle);
+        naverRetryHandle = null;
+      }
+    }
+
+    function scheduleNaverRetry() {
+      if (mapInitialized || naverRetryHandle !== null || naverRetryCount >= maxNaverRetries) {
+        return false;
+      }
+
+      naverRetryHandle = window.setTimeout(() => {
+        naverRetryHandle = null;
+        naverRetryCount += 1;
+        initializeInteractiveMap();
+      }, 200);
+
+      return true;
+    }
+
+    function handleError(message) {
+      setMapState('error');
+
+      if (message && window.console && typeof window.console.warn === 'function') {
+        console.warn('[Shop Map]', message);
       }
     }
 
@@ -215,90 +250,101 @@
         marker.bindPopup(venueName).openPopup();
       }
 
-      setStatus('', 'ready');
+      mapInitialized = true;
+      clearNaverRetry();
+      setMapState('ready');
+      return true;
+    }
+
+    function renderNaverMap(lat, lng) {
+      const naverMaps = getNaverMaps();
+      if (!naverMaps || !mapContainer || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+        return false;
+      }
+
+      const center = new naverMaps.LatLng(lat, lng);
+      const map = new naverMaps.Map(mapContainer, {
+        center,
+        zoom: 16,
+        scaleControl: false,
+        mapDataControl: false,
+        logoControlOptions: {
+          position: naverMaps.Position.BOTTOM_RIGHT,
+        },
+        zoomControl: true,
+        zoomControlOptions: {
+          position: naverMaps.Position.TOP_RIGHT,
+        },
+      });
+
+      const marker = new naverMaps.Marker({
+        position: center,
+        map,
+        title: venueName || undefined,
+      });
+
+      if (venueName) {
+        const infoContent = document.createElement('div');
+        infoContent.className = 'shop-map__info-window';
+        infoContent.textContent = venueName;
+
+        const infoWindow = new naverMaps.InfoWindow({
+          content: infoContent,
+          backgroundColor: 'transparent',
+          borderColor: 'transparent',
+          borderWidth: 0,
+          disableAnchor: true,
+        });
+
+        infoWindow.open(map, marker);
+      }
+
+      mapInitialized = true;
+      clearNaverRetry();
+      setMapState('ready');
       return true;
     }
 
     function initializeInteractiveMap() {
+      if (mapInitialized) {
+        return;
+      }
+
       if (!mapContainer || (!address && !hasPresetCoordinates)) {
         if (hasLeaflet && hasPresetCoordinates) {
           renderLeafletMap(presetLat, presetLng);
           return;
         }
 
-        setStatus(authErrorMessage || errorText, 'error');
+        handleError(getErrorMessage());
         return;
       }
 
-      if (status) {
-        status.hidden = false;
-      }
+      const naverMaps = getNaverMaps();
 
-      const naverMaps = window.naver && window.naver.maps;
-      const hasNaverMaps = Boolean(naverMaps && naverMaps.Service && naverMaps.LatLng);
-
-      function renderNaverMap(lat, lng) {
-        if (!hasNaverMaps || !mapContainer || !Number.isFinite(lat) || !Number.isFinite(lng)) {
-          return false;
-        }
-
-        const center = new naverMaps.LatLng(lat, lng);
-        const map = new naverMaps.Map(mapContainer, {
-          center,
-          zoom: 16,
-          scaleControl: false,
-          mapDataControl: false,
-          logoControlOptions: {
-            position: naverMaps.Position.BOTTOM_RIGHT,
-          },
-          zoomControl: true,
-          zoomControlOptions: {
-            position: naverMaps.Position.TOP_RIGHT,
-          },
-        });
-
-        const marker = new naverMaps.Marker({
-          position: center,
-          map,
-          title: venueName || undefined,
-        });
-
-        if (venueName) {
-          const infoContent = document.createElement('div');
-          infoContent.className = 'shop-map__info-window';
-          infoContent.textContent = venueName;
-
-          const infoWindow = new naverMaps.InfoWindow({
-            content: infoContent,
-            backgroundColor: 'transparent',
-            borderColor: 'transparent',
-            borderWidth: 0,
-            disableAnchor: true,
-          });
-
-          infoWindow.open(map, marker);
-        }
-
-        setStatus('', 'ready');
-        return true;
-      }
-
-      if (!hasNaverMaps) {
+      if (!naverMaps) {
         if (hasLeaflet && hasPresetCoordinates) {
           renderLeafletMap(presetLat, presetLng);
           return;
         }
 
-        setStatus(authErrorMessage || errorText, 'error');
+        if (scheduleNaverRetry()) {
+          setMapState('loading');
+          return;
+        }
+
+        handleError(getErrorMessage());
         return;
       }
 
       if (hasPresetCoordinates) {
-        renderNaverMap(presetLat, presetLng);
+        if (!renderNaverMap(presetLat, presetLng) && hasLeaflet) {
+          renderLeafletMap(presetLat, presetLng);
+        }
         return;
       }
 
-      setStatus(loadingText, 'loading');
+      setMapState('loading');
 
       function normalizeQuery(query) {
         if (typeof query !== 'string') {
@@ -335,7 +381,7 @@
       const geocodeQueue = buildQueryQueue();
 
       if (!geocodeQueue.length) {
-        setStatus(authErrorMessage || errorText, 'error');
+        handleError(getErrorMessage());
         return;
       }
 
@@ -387,17 +433,21 @@
         });
       }
 
-      geocodeNext([...geocodeQueue])
-        .then(({ lat, lng }) => {
-          if (!renderNaverMap(lat, lng) && hasLeaflet) {
-            renderLeafletMap(lat, lng);
+      geocodeNext(geocodeQueue)
+        .then((result) => {
+          if (!renderNaverMap(result.lat, result.lng) && hasLeaflet) {
+            renderLeafletMap(result.lat, result.lng);
           }
         })
-        .catch(() => {
+        .catch((error) => {
+          if (window.console && typeof window.console.warn === 'function') {
+            console.warn('[Map] Failed to geocode address:', error);
+          }
+
           if (hasLeaflet && hasPresetCoordinates) {
             renderLeafletMap(presetLat, presetLng);
           } else {
-            setStatus(authErrorMessage || errorText, 'error');
+            handleError(getErrorMessage());
           }
         });
     }
