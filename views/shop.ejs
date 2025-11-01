@@ -929,8 +929,9 @@
   const staticMapEndpoint =
     shop && shop.id ? `/shops/${encodeURIComponent(shop.id)}/map/static` : '';
   const staticMapMessage =
-    mapText.staticFallback ||
-    'Showing static map preview while interactive map is unavailable.';
+    typeof mapText.staticFallback === 'string' && mapText.staticFallback.trim()
+      ? mapText.staticFallback.trim()
+      : '';
   const staticMapAlt = formatMapLabel(
     mapText.staticAlt || 'Static map showing location of {{shopName}}'
   );
@@ -952,7 +953,9 @@
             data-loading-text="<%= mapText.loading || 'Loading map…' %>"
             data-error-text="<%= mapText.error || 'Unable to load map. Please check the address.' %>"
             data-static-map-endpoint="<%= staticMapEndpoint %>"
-            data-static-map-message="<%= staticMapMessage %>"
+            <% if (staticMapMessage) { %>
+              data-static-map-message="<%= staticMapMessage %>"
+            <% } %>
             data-static-map-alt="<%= staticMapAlt %>"
             <% if (mapAuthErrorMessage) { %>
               data-map-auth-error="<%= mapAuthErrorMessage %>"
