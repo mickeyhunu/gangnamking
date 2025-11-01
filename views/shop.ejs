@@ -42,6 +42,10 @@
 
   const primaryImage = highlightGallery.length ? highlightGallery[0] : null;
   const mapText = (t.shop && t.shop.map) || {};
+  const resolvedClientId = typeof naverMapClientId === 'string' ? naverMapClientId.trim() : '';
+  const extraMapStyles = resolvedClientId
+    ? []
+    : ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'];
   const pricingHighlight = (t.shop && t.shop.pricingHighlight) || {};
   const managerText = (t.shop && t.shop.manager) || {};
   const managerTitleText = managerText.title || '담당자 정보';
@@ -111,7 +115,8 @@
   description: metaDescription,
   seoKeywords,
   subheaderNavItems,
-  areaFilterConfig: null
+  areaFilterConfig: null,
+  extraStyles: extraMapStyles
 }) %>
   <section class="section detail-section detail-hero">
     <div class="container">
@@ -926,15 +931,6 @@
       ? mapText.authError ||
         'Naver Maps authentication failed. Please enable the API subscription in your Naver Cloud project.'
       : '';
-  const staticMapEndpoint =
-    shop && shop.id ? `/shops/${encodeURIComponent(shop.id)}/map/static` : '';
-  const staticMapMessage =
-    typeof mapText.staticFallback === 'string' && mapText.staticFallback.trim()
-      ? mapText.staticFallback.trim()
-      : '';
-  const staticMapAlt = formatMapLabel(
-    mapText.staticAlt || 'Static map showing location of {{shopName}}'
-  );
   const locationInfoItems = [
     shop.name
       ? {
@@ -994,11 +990,6 @@
             data-map-locale="<%= lang || 'ko' %>"
             data-loading-text="<%= mapText.loading || 'Loading map…' %>"
             data-error-text="<%= mapText.error || 'Unable to load map. Please check the address.' %>"
-            data-static-map-endpoint="<%= staticMapEndpoint %>"
-            <% if (staticMapMessage) { %>
-              data-static-map-message="<%= staticMapMessage %>"
-            <% } %>
-            data-static-map-alt="<%= staticMapAlt %>"
             <% if (mapAuthErrorMessage) { %>
               data-map-auth-error="<%= mapAuthErrorMessage %>"
             <% } %>
@@ -1022,13 +1013,13 @@
     </section>
   </div>
 <%
-  const resolvedClientId = typeof naverMapClientId === 'string' ? naverMapClientId.trim() : '';
   const mapScripts = [];
   if (resolvedClientId) {
     const encodedClientId = encodeURIComponent(resolvedClientId);
     mapScripts.push(`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${encodedClientId}&submodules=geocoder`);
+  } else {
+    mapScripts.push('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js');
   }
-  mapScripts.push('https://cdn.jsdelivr.net/npm/axios@1.13.1/dist/axios.min.js');
   mapScripts.push('/scripts/pages/shop-detail.js');
 %>
 <%- include('partials/footer', {
