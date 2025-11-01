@@ -173,6 +173,7 @@
     let mapInitialized = false;
     let naverRetryHandle = null;
     let naverRetryCount = 0;
+    let naverReadyListenerAttached = false;
     const maxNaverRetries = 30;
 
     function getNaverMaps() {
@@ -215,6 +216,39 @@
       }, 200);
 
       return true;
+    }
+
+    function attachNaverReadyListener() {
+      if (naverReadyListenerAttached) {
+        return;
+      }
+
+      const naverGlobal = window.naver && window.naver.maps;
+
+      if (!naverGlobal || typeof naverGlobal !== 'object') {
+        return;
+      }
+
+      const existingHandler =
+        typeof naverGlobal.onJSContentLoaded === 'function' ? naverGlobal.onJSContentLoaded : null;
+
+      naverGlobal.onJSContentLoaded = function onJSContentLoadedWrapper() {
+        if (typeof existingHandler === 'function') {
+          try {
+            existingHandler();
+          } catch (error) {
+            if (window.console && typeof window.console.warn === 'function') {
+              console.warn('[Shop Map] Existing onJSContentLoaded handler failed.', error);
+            }
+          }
+        }
+
+        if (!mapInitialized) {
+          initializeInteractiveMap();
+        }
+      };
+
+      naverReadyListenerAttached = true;
     }
 
     function handleError(message) {
@@ -319,6 +353,8 @@
         handleError(getErrorMessage());
         return;
       }
+
+      attachNaverReadyListener();
 
       const naverMaps = getNaverMaps();
 
@@ -452,6 +488,8 @@
         });
     }
 
+    setMapState('loading');
+    attachNaverReadyListener();
     initializeInteractiveMap();
   }
 
