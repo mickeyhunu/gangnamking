@@ -155,6 +155,7 @@
 
   const mapHost = document.querySelector('[data-shop-map]');
   if (mapHost) {
+    console.log('[ShopMap] Map host found.', mapHost);
     const mapContainer = mapHost.querySelector('[data-map-region]');
     const status = mapHost.querySelector('[data-map-status]');
     const address = (mapHost.dataset.shopAddress || '').trim();
@@ -177,6 +178,17 @@
     const hasPresetCoordinates = Number.isFinite(presetLat) && Number.isFinite(presetLng);
     let staticMapObjectUrl = '';
     let staticMapAbortController = null;
+
+    console.log('[ShopMap] Dataset parsed.', {
+      address,
+      district,
+      region,
+      venueName,
+      hasPresetCoordinates,
+      presetLat,
+      presetLng,
+      staticMapEndpoint,
+    });
 
     function setStatus(message, state) {
       if (state) {
@@ -332,7 +344,13 @@
     window.addEventListener('beforeunload', releaseStaticMap);
 
     function initializeInteractiveMap() {
+      console.log('[ShopMap] Initializing interactive map.');
       if (!mapContainer || (!address && !hasPresetCoordinates)) {
+        console.warn('[ShopMap] Missing map container or location data.', {
+          hasMapContainer: Boolean(mapContainer),
+          hasAddress: Boolean(address),
+          hasPresetCoordinates,
+        });
         setStatus(authErrorMessage || errorText, 'error');
         return;
       }
@@ -344,8 +362,12 @@
       const naverMaps = window.naver && window.naver.maps;
 
       if (!naverMaps || !naverMaps.Service || !naverMaps.LatLng) {
-        console.warn('Naver Maps library is not available.');
+        console.warn('[ShopMap] Naver Maps library is not available.', {
+          hasWindowNaver: Boolean(window.naver),
+          hasMaps: Boolean(window.naver && window.naver.maps),
+        });
         if (hasPresetCoordinates) {
+          console.log('[ShopMap] Attempting static fallback using preset coordinates.');
           attemptStaticFallback(presetLat, presetLng);
         } else {
           setStatus(authErrorMessage || errorText, 'error');
@@ -354,6 +376,7 @@
       }
 
       function renderMap(lat, lng) {
+        console.log('[ShopMap] Rendering map with coordinates.', { lat, lng });
         releaseStaticMap();
 
         const center = new naverMaps.LatLng(lat, lng);
@@ -397,11 +420,13 @@
       }
 
       if (hasPresetCoordinates) {
+        console.log('[ShopMap] Using preset coordinates for map rendering.');
         renderMap(presetLat, presetLng);
         return;
       }
 
       setStatus(loadingText, 'loading');
+      console.log('[ShopMap] Starting geocoding workflow.');
 
       function normalizeQuery(query) {
         if (typeof query !== 'string') {
@@ -436,6 +461,7 @@
       }
 
       const geocodeQueue = buildQueryQueue();
+      console.log('[ShopMap] Geocode queue prepared.', geocodeQueue);
 
       if (!geocodeQueue.length) {
         setStatus(authErrorMessage || errorText, 'error');
@@ -481,6 +507,7 @@
 
         const currentQuery = queue.shift();
 
+        console.log('[ShopMap] Attempting geocode query.', currentQuery);
         return geocode(currentQuery).catch((error) => {
           if (queue.length) {
             console.warn(`Geocoding attempt failed for query "${currentQuery}":`, error);
@@ -493,11 +520,13 @@
 
       geocodeNext([...geocodeQueue])
         .then(({ lat, lng }) => {
+          console.log('[ShopMap] Geocoding succeeded.', { lat, lng });
           renderMap(lat, lng);
         })
         .catch((error) => {
           console.warn('Failed to render map:', error);
           if (hasPresetCoordinates) {
+            console.log('[ShopMap] Falling back to preset coordinates after geocode failure.');
             attemptStaticFallback(presetLat, presetLng);
           } else {
             setStatus(authErrorMessage || errorText, 'error');
@@ -506,6 +535,8 @@
     }
 
     initializeInteractiveMap();
+  } else {
+    console.log('[ShopMap] Map host not found on page.');
   }
 
   const sectionNav = document.querySelector('[data-section-nav]');
