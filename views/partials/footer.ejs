@@ -70,21 +70,17 @@
             script.async = false;
 
             script.addEventListener('load', function () {
-              console.log('[ScriptLoader] Loaded script:', normalizedSrc);
               loadNext();
             });
 
-            script.addEventListener('error', function (event) {
-              console.error('[ScriptLoader] Failed to load script:', normalizedSrc, event);
+            script.addEventListener('error', function () {
               loadNext();
             });
 
-            script.addEventListener('abort', function (event) {
-              console.warn('[ScriptLoader] Script loading aborted:', normalizedSrc, event);
+            script.addEventListener('abort', function () {
               loadNext();
             });
 
-            console.log('[ScriptLoader] Loading script:', normalizedSrc);
             document.body.appendChild(script);
           }
 

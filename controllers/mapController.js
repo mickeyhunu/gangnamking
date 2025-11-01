@@ -87,8 +87,6 @@ async function renderShopStaticMap(req, res) {
     res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=86400');
     res.send(image);
   } catch (error) {
-    console.error('Failed to fetch static map preview:', error);
-
     if (error && (error.statusCode === 401 || error.statusCode === 403)) {
       res.status(403).json({ error: 'Static map request is not authorized.' });
       return;
