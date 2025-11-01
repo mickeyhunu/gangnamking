@@ -71,7 +71,6 @@ async function fetchEntriesForStore(storeNo, options = {}) {
 
     return normalized;
   } catch (error) {
-    console.error('Failed to fetch entries for store', storeNo, error);
     return [];
   }
 }

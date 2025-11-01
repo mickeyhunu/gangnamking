@@ -106,56 +106,54 @@
     const textarea = seoEditor.querySelector('textarea');
 
     if (!textarea) {
-      console.warn('SEO editor element is missing a textarea. Skipping SEO editor initialization.');
-    } else {
-      const copyButton = seoEditor.querySelector('[data-action="copy"]');
-      const status = seoEditor.querySelector('[data-status]');
-      const metaKeywords = document.querySelector('meta[name="keywords"]');
-      const successMessage = seoEditor.dataset.successMessage || 'Copied keywords.';
-      const errorMessage = seoEditor.dataset.errorMessage || 'Copy failed. Please try again.';
-      let statusTimer;
+      return;
+    }
 
-      function setStatus(message, isSuccess) {
-        if (!status) {
-          return;
-        }
-        status.textContent = message;
-        status.style.color = isSuccess ? '#ff9bd1' : 'var(--color-muted)';
-        if (statusTimer) {
-          window.clearTimeout(statusTimer);
-        }
-        if (message) {
-          statusTimer = window.setTimeout(() => {
-            status.textContent = '';
-          }, 4000);
-        }
+    const copyButton = seoEditor.querySelector('[data-action="copy"]');
+    const status = seoEditor.querySelector('[data-status]');
+    const metaKeywords = document.querySelector('meta[name="keywords"]');
+    const successMessage = seoEditor.dataset.successMessage || 'Copied keywords.';
+    const errorMessage = seoEditor.dataset.errorMessage || 'Copy failed. Please try again.';
+    let statusTimer;
+
+    function setStatus(message, isSuccess) {
+      if (!status) {
+        return;
       }
+      status.textContent = message;
+      status.style.color = isSuccess ? '#ff9bd1' : 'var(--color-muted)';
+      if (statusTimer) {
+        window.clearTimeout(statusTimer);
+      }
+      if (message) {
+        statusTimer = window.setTimeout(() => {
+          status.textContent = '';
+        }, 4000);
+      }
+    }
 
-      function updateMetaKeywords() {
-        if (metaKeywords) {
-          metaKeywords.setAttribute('content', textarea.value.trim());
+    function updateMetaKeywords() {
+      if (metaKeywords) {
+        metaKeywords.setAttribute('content', textarea.value.trim());
+      }
+    }
+
+    textarea.addEventListener('input', updateMetaKeywords);
+
+    if (copyButton) {
+      copyButton.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(textarea.value);
+          setStatus(successMessage, true);
+        } catch (error) {
+          setStatus(errorMessage, false);
         }
-      }
-
-      textarea.addEventListener('input', updateMetaKeywords);
-
-      if (copyButton) {
-        copyButton.addEventListener('click', async () => {
-          try {
-            await navigator.clipboard.writeText(textarea.value);
-            setStatus(successMessage, true);
-          } catch (error) {
-            console.warn('Clipboard copy failed:', error);
-            setStatus(errorMessage, false);
-          }
-        });
-      }
+      });
     }
   }
 
   const mapHost = document.querySelector('[data-shop-map]');
   if (mapHost) {
-    console.log('[ShopMap] Map host found.', mapHost);
     const mapContainer = mapHost.querySelector('[data-map-region]');
     const status = mapHost.querySelector('[data-map-status]');
     const address = (mapHost.dataset.shopAddress || '').trim();
@@ -178,17 +176,6 @@
     const hasPresetCoordinates = Number.isFinite(presetLat) && Number.isFinite(presetLng);
     let staticMapObjectUrl = '';
     let staticMapAbortController = null;
-
-    console.log('[ShopMap] Dataset parsed.', {
-      address,
-      district,
-      region,
-      venueName,
-      hasPresetCoordinates,
-      presetLat,
-      presetLng,
-      staticMapEndpoint,
-    });
 
     function setStatus(message, state) {
       if (state) {
@@ -334,8 +321,7 @@
         return;
       }
 
-      loadStaticMap(lat, lng).catch((error) => {
-        console.warn('Failed to load static map fallback:', error);
+      loadStaticMap(lat, lng).catch(() => {
         setStatus(authErrorMessage || errorText, 'error');
       });
     }
@@ -350,13 +336,7 @@
     window.addEventListener('beforeunload', releaseStaticMap);
 
     function initializeInteractiveMap() {
-      console.log('[ShopMap] Initializing interactive map.');
       if (!mapContainer || (!address && !hasPresetCoordinates)) {
-        console.warn('[ShopMap] Missing map container or location data.', {
-          hasMapContainer: Boolean(mapContainer),
-          hasAddress: Boolean(address),
-          hasPresetCoordinates,
-        });
         setStatus(authErrorMessage || errorText, 'error');
         return;
       }
@@ -368,12 +348,7 @@
       const naverMaps = window.naver && window.naver.maps;
 
       if (!naverMaps || !naverMaps.Service || !naverMaps.LatLng) {
-        console.warn('[ShopMap] Naver Maps library is not available.', {
-          hasWindowNaver: Boolean(window.naver),
-          hasMaps: Boolean(window.naver && window.naver.maps),
-        });
         if (hasPresetCoordinates) {
-          console.log('[ShopMap] Attempting static fallback using preset coordinates.');
           attemptStaticFallback(presetLat, presetLng);
         } else {
           setStatus(authErrorMessage || errorText, 'error');
@@ -382,7 +357,6 @@
       }
 
       function renderMap(lat, lng) {
-        console.log('[ShopMap] Rendering map with coordinates.', { lat, lng });
         releaseStaticMap();
 
         const center = new naverMaps.LatLng(lat, lng);
@@ -426,13 +400,11 @@
       }
 
       if (hasPresetCoordinates) {
-        console.log('[ShopMap] Using preset coordinates for map rendering.');
         renderMap(presetLat, presetLng);
         return;
       }
 
       setStatus(loadingText, 'loading');
-      console.log('[ShopMap] Starting geocoding workflow.');
 
       function normalizeQuery(query) {
         if (typeof query !== 'string') {
@@ -467,7 +439,6 @@
       }
 
       const geocodeQueue = buildQueryQueue();
-      console.log('[ShopMap] Geocode queue prepared.', geocodeQueue);
 
       if (!geocodeQueue.length) {
         setStatus(authErrorMessage || errorText, 'error');
@@ -513,10 +484,8 @@
 
         const currentQuery = queue.shift();
 
-        console.log('[ShopMap] Attempting geocode query.', currentQuery);
         return geocode(currentQuery).catch((error) => {
           if (queue.length) {
-            console.warn(`Geocoding attempt failed for query "${currentQuery}":`, error);
             return geocodeNext(queue);
           }
 
@@ -526,13 +495,10 @@
 
       geocodeNext([...geocodeQueue])
         .then(({ lat, lng }) => {
-          console.log('[ShopMap] Geocoding succeeded.', { lat, lng });
           renderMap(lat, lng);
         })
-        .catch((error) => {
-          console.warn('Failed to render map:', error);
+        .catch(() => {
           if (hasPresetCoordinates) {
-            console.log('[ShopMap] Falling back to preset coordinates after geocode failure.');
             attemptStaticFallback(presetLat, presetLng);
           } else {
             setStatus(authErrorMessage || errorText, 'error');
@@ -541,8 +507,6 @@
     }
 
     initializeInteractiveMap();
-  } else {
-    console.log('[ShopMap] Map host not found on page.');
   }
 
   const sectionNav = document.querySelector('[data-section-nav]');

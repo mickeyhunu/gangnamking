@@ -30,8 +30,6 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error('Unexpected error', err);
-
   if (res.headersSent) {
     return next(err);
   }
@@ -39,6 +37,4 @@ app.use((err, req, res, next) => {
   res.status(500).send('Internal Server Error');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+app.listen(PORT);

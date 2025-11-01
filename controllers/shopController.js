@@ -214,7 +214,7 @@ async function renderShopDetail(req, res, next) {
         shopLocation = locationResult;
       }
     } catch (error) {
-      console.warn('Failed to retrieve shop location details:', error);
+      // Intentionally ignore location lookup errors so the page can render without map data.
     }
 
     res.render('shop', {
@@ -229,7 +229,6 @@ async function renderShopDetail(req, res, next) {
       metaDescription: localizedShop.description || '',
     });
   } catch (error) {
-    console.error('Failed to render shop detail page', error);
     next(error);
   }
 }

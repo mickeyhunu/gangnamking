@@ -12,7 +12,6 @@ function readJsonFile(filePath, fallback) {
     const raw = fs.readFileSync(filePath, 'utf-8');
     return JSON.parse(raw);
   } catch (error) {
-    console.error(`Failed to read JSON file at ${filePath}`, error);
     return fallback;
   }
 }
@@ -33,12 +32,10 @@ function initializeWatchers() {
   }
 
   fs.watchFile(shopsPath, { interval: 1000 }, () => {
-    console.log('Detected change in shop data. Reloading...');
     loadShops();
   });
 
   fs.watchFile(translationsPath, { interval: 1000 }, () => {
-    console.log('Detected change in translations. Reloading...');
     loadTranslations();
   });
 

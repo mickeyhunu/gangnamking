@@ -276,18 +276,10 @@ async function attemptProvider(
 
       if (isAuthIssue) {
         let details = null;
-        let logMessage = '';
 
         if (typeof extractAuthDetails === 'function') {
           const extracted = extractAuthDetails(error) || {};
           details = extracted.details || null;
-          logMessage = extracted.logMessage || '';
-        }
-
-        if (logMessage) {
-          console.warn(`[${name}] ${logMessage}`);
-        } else {
-          console.warn(`[${name}] Authentication error for query "${query}":`, error);
         }
 
         authError = {
@@ -298,7 +290,7 @@ async function attemptProvider(
       }
 
       if (queue[queue.length - 1] === query) {
-        console.warn(`[${name}] Failed to fetch shop location for query "${query}":`, error);
+        // Swallow the error to allow fallback providers to handle the query.
       }
     }
   }
