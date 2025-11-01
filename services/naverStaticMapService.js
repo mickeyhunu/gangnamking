@@ -72,7 +72,7 @@ function buildStaticMapParams({ lat, lng, width, height, level, scale, lang }) {
   params.set('level', String(resolveLevel(level)));
   params.set('scale', String(resolveScale(scale)));
   params.set('format', 'png');
-  params.append('markers', `type:t|size:mid|color:0xff478b|pos:${lng},${lat}`);
+  params.append('markers', `type:t|size:mid|color:0xff478b|pos:${lng} ${lat}`);
   params.set('lang', normalizeLanguage(lang));
 
   return params.toString();
