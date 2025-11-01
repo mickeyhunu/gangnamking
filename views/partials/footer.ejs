@@ -42,9 +42,55 @@
     <script src="/scripts/components/area-menu.js"></script>
     <script src="/scripts/components/language-select.js"></script>
     <% if (typeof scripts !== 'undefined' && Array.isArray(scripts) && scripts.length) { %>
-      <% scripts.forEach(function (script) { %>
-        <script src="<%= script %>"></script>
-      <% }); %>
+      <script>
+        (function () {
+          var queue = <%- JSON.stringify(scripts) %>;
+
+          if (!Array.isArray(queue) || !queue.length) {
+            return;
+          }
+
+          var index = 0;
+
+          function loadNext() {
+            if (index >= queue.length) {
+              return;
+            }
+
+            var src = queue[index++];
+
+            if (typeof src !== 'string' || !src.trim()) {
+              loadNext();
+              return;
+            }
+
+            var normalizedSrc = src.trim();
+            var script = document.createElement('script');
+            script.src = normalizedSrc;
+            script.async = false;
+
+            script.addEventListener('load', function () {
+              console.log('[ScriptLoader] Loaded script:', normalizedSrc);
+              loadNext();
+            });
+
+            script.addEventListener('error', function (event) {
+              console.error('[ScriptLoader] Failed to load script:', normalizedSrc, event);
+              loadNext();
+            });
+
+            script.addEventListener('abort', function (event) {
+              console.warn('[ScriptLoader] Script loading aborted:', normalizedSrc, event);
+              loadNext();
+            });
+
+            console.log('[ScriptLoader] Loading script:', normalizedSrc);
+            document.body.appendChild(script);
+          }
+
+          loadNext();
+        })();
+      </script>
     <% } %>
   </body>
 </html>
