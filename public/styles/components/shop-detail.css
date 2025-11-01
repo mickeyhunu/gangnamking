@@ -275,6 +275,20 @@
   margin-bottom: 1.5rem;
 }
 
+.detail-card__heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+.detail-card__heading-subtitle {
+  font-size: 0.75em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.02em;
+}
+
 .detail-card--full {
   grid-column: 1 / -1;
 }
@@ -815,6 +829,46 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.shop-map__details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem 1.5rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+}
+
+.shop-map__detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.shop-map__detail-label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.01em;
+}
+
+.shop-map__detail-value {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .shop-map__details {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.5rem 1rem;
+  }
+
+  .shop-map__detail-value {
+    font-size: 1rem;
+  }
 }
 
 .shop-map__map {
