@@ -983,6 +983,7 @@
     const encodedClientId = encodeURIComponent(resolvedClientId);
     mapScripts.push(`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${encodedClientId}&submodules=geocoder`);
   }
+  mapScripts.push('https://cdn.jsdelivr.net/npm/axios@1.13.1/dist/axios.min.js');
   mapScripts.push('/scripts/pages/shop-detail.js');
 %>
 <%- include('partials/footer', {

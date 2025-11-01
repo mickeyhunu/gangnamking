@@ -1,4 +1,4 @@
-const https = require('https');
+const axios = require('axios');
 const { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } = require('../lib/constants');
 const { getNaverMapCredentials, hasNaverMapCredentials } = require('../config/naver');
 
@@ -78,62 +78,72 @@ function buildStaticMapParams({ lat, lng, width, height, level, scale, lang }) {
   return params.toString();
 }
 
-function fetchStaticMapImage({ lat, lng, width, height, level, scale, lang }) {
-  return new Promise((resolve, reject) => {
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-      reject(new Error('Latitude and longitude are required to request a static map.'));
-      return;
-    }
+async function fetchStaticMapImage({ lat, lng, width, height, level, scale, lang }) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    throw new Error('Latitude and longitude are required to request a static map.');
+  }
 
-    if (!hasCredentials()) {
-      reject(new Error('Naver Map credentials are not configured.'));
-      return;
-    }
+  if (!hasCredentials()) {
+    throw new Error('Naver Map credentials are not configured.');
+  }
 
-    const params = buildStaticMapParams({ lat, lng, width, height, level, scale, lang });
-    const requestUrl = `${STATIC_MAP_ENDPOINT}?${params}`;
-    const { clientId, clientSecret } = getNaverMapCredentials();
+  const params = buildStaticMapParams({ lat, lng, width, height, level, scale, lang });
+  const requestUrl = `${STATIC_MAP_ENDPOINT}?${params}`;
+  const { clientId, clientSecret } = getNaverMapCredentials();
 
-    const request = https.request(
-      requestUrl,
-      {
-        method: 'GET',
-        headers: {
-          'X-NCP-APIGW-API-KEY-ID': clientId,
-          'X-NCP-APIGW-API-KEY': clientSecret,
-          Accept: 'image/png,image/jpeg',
-        },
+  try {
+    const response = await axios.get(requestUrl, {
+      responseType: 'arraybuffer',
+      headers: {
+        'X-NCP-APIGW-API-KEY-ID': clientId,
+        'X-NCP-APIGW-API-KEY': clientSecret,
+        Accept: 'image/png,image/jpeg',
       },
-      (response) => {
-        const { statusCode } = response;
-        const chunks = [];
-
-        response.on('data', (chunk) => {
-          chunks.push(chunk);
-        });
-
-        response.on('end', () => {
-          const body = Buffer.concat(chunks);
-
-          if (statusCode !== 200) {
-            const error = new Error(`Static map request failed with status ${statusCode}`);
-            error.statusCode = statusCode;
-            error.body = body;
-            reject(error);
-            return;
-          }
-
-          resolve(body);
-        });
-      }
-    );
-
-    request.on('error', (error) => {
-      reject(error);
     });
 
-    request.end();
-  });
+    const data = response && response.data ? response.data : null;
+    return Buffer.isBuffer(data) ? data : Buffer.from(data || []);
+  } catch (error) {
+    throw normalizeAxiosError(error, 'Static map request failed');
+  }
+}
+
+function normalizeAxiosError(error, fallbackMessage) {
+  if (error && error.response) {
+    const statusCode = Number(error.response.status);
+    const messageSuffix = Number.isFinite(statusCode) ? ` with status ${statusCode}` : '';
+    const normalized = new Error(`${fallbackMessage}${messageSuffix}`);
+    normalized.statusCode = Number.isFinite(statusCode) ? statusCode : null;
+    normalized.body = serializeResponseBody(error.response.data);
+    normalized.cause = error;
+    throw normalized;
+  }
+
+  throw error;
+}
+
+function serializeResponseBody(body) {
+  if (body === undefined || body === null) {
+    return '';
+  }
+
+  if (typeof body === 'string') {
+    return body;
+  }
+
+  if (Buffer.isBuffer(body)) {
+    return body.toString('utf8');
+  }
+
+  if (body instanceof ArrayBuffer) {
+    return Buffer.from(body).toString('utf8');
+  }
+
+  try {
+    return JSON.stringify(body);
+  } catch (error) {
+    return String(body);
+  }
 }
 
 module.exports = {

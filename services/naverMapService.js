@@ -1,4 +1,4 @@
-const https = require('https');
+const axios = require('axios');
 
 const GEOCODE_ENDPOINT = 'https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode';
 const NOMINATIM_ENDPOINT = 'https://nominatim.openstreetmap.org/search';
@@ -40,171 +40,126 @@ function buildQueryQueue({ address, district, region }) {
   return queries;
 }
 
-function requestNaverGeocode(query) {
-  return new Promise((resolve, reject) => {
-    if (!hasCredentials()) {
-      reject(new Error('Naver Map credentials are not configured.'));
-      return;
+async function requestNaverGeocode(query) {
+  if (!hasCredentials()) {
+    throw new Error('Naver Map credentials are not configured.');
+  }
+
+  const { clientId, clientSecret } = getNaverMapCredentials();
+
+  try {
+    const response = await axios.get(GEOCODE_ENDPOINT, {
+      params: { query },
+      headers: {
+        'X-NCP-APIGW-API-KEY-ID': clientId,
+        'X-NCP-APIGW-API-KEY': clientSecret,
+        Accept: 'application/json',
+      },
+    });
+
+    const data = response && typeof response.data === 'object' ? response.data : {};
+    const addresses = Array.isArray(data.addresses) ? data.addresses : [];
+
+    if (!addresses.length) {
+      throw new Error('No geocoding results found.');
     }
 
-    const encodedQuery = encodeURIComponent(query);
-    const requestUrl = `${GEOCODE_ENDPOINT}?query=${encodedQuery}`;
+    const first = addresses[0] || {};
+    const lat = Number.parseFloat(first.y);
+    const lng = Number.parseFloat(first.x);
 
-    const { clientId, clientSecret } = getNaverMapCredentials();
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      throw new Error('Received invalid coordinates from geocoding response.');
+    }
 
-    const request = https.request(
-      requestUrl,
-      {
-        method: 'GET',
-        headers: {
-          'X-NCP-APIGW-API-KEY-ID': clientId,
-          'X-NCP-APIGW-API-KEY': clientSecret,
-          Accept: 'application/json',
-        },
-      },
-      (response) => {
-        const { statusCode } = response;
-        const chunks = [];
-
-        response.setEncoding('utf8');
-
-        response.on('data', (chunk) => {
-          chunks.push(chunk);
-        });
-
-        response.on('end', () => {
-          const rawBody = chunks.join('');
-
-          if (statusCode !== 200) {
-            const error = new Error(`Geocoding request failed with status ${statusCode}`);
-            error.statusCode = statusCode;
-            error.body = rawBody;
-            reject(error);
-            return;
-          }
-
-          let parsed;
-          try {
-            parsed = rawBody ? JSON.parse(rawBody) : {};
-          } catch (error) {
-            const parseError = new Error('Failed to parse geocoding response.');
-            parseError.cause = error;
-            reject(parseError);
-            return;
-          }
-
-          const addresses = Array.isArray(parsed.addresses) ? parsed.addresses : [];
-
-          if (!addresses.length) {
-            reject(new Error('No geocoding results found.'));
-            return;
-          }
-
-          const first = addresses[0] || {};
-          const lat = Number.parseFloat(first.y);
-          const lng = Number.parseFloat(first.x);
-
-          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-            reject(new Error('Received invalid coordinates from geocoding response.'));
-            return;
-          }
-
-          resolve({
-            lat,
-            lng,
-            roadAddress: first.roadAddress || '',
-            jibunAddress: first.jibunAddress || '',
-            englishAddress: first.englishAddress || '',
-            query,
-          });
-        });
-      }
-    );
-
-    request.on('error', (error) => {
-      reject(error);
-    });
-
-    request.end();
-  });
+    return {
+      lat,
+      lng,
+      roadAddress: first.roadAddress || '',
+      jibunAddress: first.jibunAddress || '',
+      englishAddress: first.englishAddress || '',
+      query,
+    };
+  } catch (error) {
+    throw normalizeAxiosError(error, 'Geocoding request failed');
+  }
 }
 
-function requestNominatimGeocode(query) {
-  return new Promise((resolve, reject) => {
-    const encodedQuery = encodeURIComponent(query);
-    const requestUrl = `${NOMINATIM_ENDPOINT}?format=json&limit=1&q=${encodedQuery}`;
-
-    const request = https.request(
-      requestUrl,
-      {
-        method: 'GET',
-        headers: {
-          'User-Agent': 'GangnamKing/1.0 (contact: support@gangnamking.com)',
-          'Accept-Language': 'ko',
-        },
+async function requestNominatimGeocode(query) {
+  try {
+    const response = await axios.get(NOMINATIM_ENDPOINT, {
+      params: {
+        format: 'json',
+        limit: 1,
+        q: query,
       },
-      (response) => {
-        const { statusCode } = response;
-        const chunks = [];
-
-        response.setEncoding('utf8');
-
-        response.on('data', (chunk) => {
-          chunks.push(chunk);
-        });
-
-        response.on('end', () => {
-          const rawBody = chunks.join('');
-
-          if (statusCode !== 200) {
-            const error = new Error(`Nominatim request failed with status ${statusCode}`);
-            error.statusCode = statusCode;
-            error.body = rawBody;
-            reject(error);
-            return;
-          }
-
-          let parsed;
-          try {
-            parsed = rawBody ? JSON.parse(rawBody) : [];
-          } catch (error) {
-            const parseError = new Error('Failed to parse Nominatim response.');
-            parseError.cause = error;
-            reject(parseError);
-            return;
-          }
-
-          const first = Array.isArray(parsed) && parsed.length ? parsed[0] : null;
-
-          if (!first) {
-            reject(new Error('No geocoding results found from Nominatim.'));
-            return;
-          }
-
-          const lat = Number.parseFloat(first.lat);
-          const lng = Number.parseFloat(first.lon);
-
-          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-            reject(new Error('Received invalid coordinates from Nominatim response.'));
-            return;
-          }
-
-          resolve({
-            lat,
-            lng,
-            displayName: first.display_name || '',
-            query,
-          });
-        });
-      }
-    );
-
-    request.on('error', (error) => {
-      reject(error);
+      headers: {
+        'User-Agent': 'GangnamKing/1.0 (contact: support@gangnamking.com)',
+        'Accept-Language': 'ko',
+      },
     });
 
-    request.end();
-  });
+    const data = response && response.data ? response.data : [];
+    const first = Array.isArray(data) && data.length ? data[0] : null;
+
+    if (!first) {
+      throw new Error('No geocoding results found from Nominatim.');
+    }
+
+    const lat = Number.parseFloat(first.lat);
+    const lng = Number.parseFloat(first.lon);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      throw new Error('Received invalid coordinates from Nominatim response.');
+    }
+
+    return {
+      lat,
+      lng,
+      displayName: first.display_name || '',
+      query,
+    };
+  } catch (error) {
+    throw normalizeAxiosError(error, 'Nominatim request failed');
+  }
+}
+
+function normalizeAxiosError(error, fallbackMessage) {
+  if (error && error.response) {
+    const statusCode = Number(error.response.status);
+    const messageSuffix = Number.isFinite(statusCode) ? ` with status ${statusCode}` : '';
+    const normalized = new Error(`${fallbackMessage}${messageSuffix}`);
+    normalized.statusCode = Number.isFinite(statusCode) ? statusCode : null;
+    normalized.body = serializeResponseBody(error.response.data);
+    normalized.cause = error;
+    throw normalized;
+  }
+
+  throw error;
+}
+
+function serializeResponseBody(body) {
+  if (body === undefined || body === null) {
+    return '';
+  }
+
+  if (typeof body === 'string') {
+    return body;
+  }
+
+  if (Buffer.isBuffer(body)) {
+    return body.toString('utf8');
+  }
+
+  if (body instanceof ArrayBuffer) {
+    return Buffer.from(body).toString('utf8');
+  }
+
+  try {
+    return JSON.stringify(body);
+  } catch (error) {
+    return String(body);
+  }
 }
 
 function parseErrorBody(error) {

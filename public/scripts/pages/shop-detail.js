@@ -277,13 +277,16 @@
       setStatus(loadingText, 'loading');
 
       try {
-        const response = await fetch(url.toString(), controller ? { signal: controller.signal } : undefined);
-
-        if (!response.ok) {
-          throw new Error(`Static map request failed with status ${response.status}`);
+        if (typeof axios === 'undefined') {
+          throw new Error('Axios is required to load static map images.');
         }
 
-        const blob = await response.blob();
+        const response = await axios.get(url.toString(), {
+          responseType: 'blob',
+          ...(controller ? { signal: controller.signal } : {}),
+        });
+
+        const blob = response && response.data instanceof Blob ? response.data : new Blob([response.data]);
 
         if (controller && controller.signal.aborted) {
           return;
@@ -315,7 +318,10 @@
           setStatus('', 'static');
         }
       } catch (error) {
-        if (error && error.name === 'AbortError') {
+        if (
+          (controller && controller.signal.aborted) ||
+          (error && (error.name === 'AbortError' || error.code === 'ERR_CANCELED'))
+        ) {
           return;
         }
 
