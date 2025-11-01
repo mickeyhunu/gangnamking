@@ -936,18 +936,6 @@
     mapText.staticAlt || 'Static map showing location of {{shopName}}'
   );
   const locationInfoItems = [
-    locationSummary
-      ? {
-          label: pricingHighlight.region || '지역',
-          value: locationSummary,
-        }
-      : null,
-    shop.category
-      ? {
-          label: pricingHighlight.category || '업종',
-          value: shop.category,
-        }
-      : null,
     shop.name
       ? {
           label: pricingHighlight.brand || '상호',
