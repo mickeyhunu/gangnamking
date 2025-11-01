@@ -59,6 +59,7 @@ function requestNaverGeocode(query) {
         headers: {
           'X-NCP-APIGW-API-KEY-ID': clientId,
           'X-NCP-APIGW-API-KEY': clientSecret,
+          Accept: 'application/json',
         },
       },
       (response) => {
