@@ -324,6 +324,22 @@
       return marker;
     }
 
+    function clearStaticMapArtifacts() {
+      if (!mapContainer) {
+        return;
+      }
+
+      const staticElements = mapContainer.querySelectorAll(
+        '.shop-map__static-image, .shop-map__static-marker',
+      );
+
+      staticElements.forEach((element) => {
+        if (element && typeof element.remove === 'function') {
+          element.remove();
+        }
+      });
+    }
+
     function clearNaverRetry() {
       if (naverRetryHandle !== null) {
         window.clearTimeout(naverRetryHandle);
@@ -565,6 +581,7 @@
         return false;
       }
 
+      clearStaticMapArtifacts();
       mapContainer.innerHTML = '';
 
       const map = window.L.map(mapContainer, {
@@ -603,6 +620,9 @@
         logTiming('Ignoring Naver map render request for a stale attempt.');
         return false;
       }
+
+      clearStaticMapArtifacts();
+      mapContainer.innerHTML = '';
 
       const center = new naverMaps.LatLng(lat, lng);
       const map = new naverMaps.Map(mapContainer, {
