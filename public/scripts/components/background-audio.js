@@ -38,7 +38,7 @@
 
   var storedState = null;
   try {
-    storedState = sessionStorage.getItem(STATE_KEY);
+    storedState = localStorage.getItem(STATE_KEY);
   } catch (error) {
     storedState = null;
   }
@@ -88,7 +88,7 @@
 
     try {
       sessionStorage.setItem(TIME_KEY, String(audio.currentTime));
-      sessionStorage.setItem(STATE_KEY, audio.paused ? 'paused' : 'playing');
+      localStorage.setItem(STATE_KEY, audio.paused ? 'paused' : 'playing');
     } catch (error) {
       // Ignore persistence errors (e.g. storage disabled)
     }
@@ -135,7 +135,7 @@
       playPromise
         .then(function () {
           try {
-            sessionStorage.setItem(STATE_KEY, 'playing');
+            localStorage.setItem(STATE_KEY, 'playing');
           } catch (error) {
             // Ignore storage errors
           }
@@ -173,7 +173,7 @@
     hasEverPlayed = true;
     desiredState = 'playing';
     try {
-      sessionStorage.setItem(STATE_KEY, 'playing');
+      localStorage.setItem(STATE_KEY, 'playing');
     } catch (error) {
       // Ignore storage errors
     }
@@ -185,7 +185,7 @@
     if (hasEverPlayed) {
       desiredState = 'paused';
       try {
-        sessionStorage.setItem(STATE_KEY, 'paused');
+        localStorage.setItem(STATE_KEY, 'paused');
       } catch (error) {
         // Ignore storage errors
       }
@@ -203,28 +203,16 @@
     }
   });
 
-  if (storedState === 'paused') {
-    try {
-      audio.autoplay = false;
-    } catch (error) {
-      // Ignore assignment errors
-    }
+  try {
+    audio.autoplay = true;
+  } catch (error) {
+    // Ignore assignment errors
+  }
 
-    if (!audio.paused) {
-      try {
-        audio.pause();
-      } catch (error) {
-        // Ignore pause errors
-      }
-    }
-  } else {
-    try {
-      audio.autoplay = true;
-    } catch (error) {
-      // Ignore assignment errors
-    }
-
+  if (desiredState === 'playing') {
     requestPlay();
+  } else {
+    audio.pause();
   }
 
   updateToggleButton();
