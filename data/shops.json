@@ -796,27 +796,15 @@
     "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricingSchedule": {
       "unitSuffix": "만",
-      "tc": 12,
+      "tc": 11,
       "rt": 5,
       "guestCounts": [1, 2, 3, 4],
       "defaultSegmentId": "before-9pm",
       "segments": [
         {
-          "id": "before-9pm",
-          "label": "오후 9시 이전",
-          "base": 10,
-          "highlightLabel": {
-            "ko": "9시 전 주대",
-            "en": "Before 9 PM Base",
-            "zh": "9点前主台",
-            "ja": "9時前 基本料金"
-          },
-          "highlightOrder": 0
-        },
-        {
           "id": "after-9pm",
           "label": "오후 9시 이후",
-          "base": 13,
+          "base": 9,
           "highlightLabel": {
             "ko": "ALL 타임 주대",
             "en": "All-Time Base",
@@ -851,7 +839,7 @@
       "유앤미권지용", "유엔미권지용", "유앤미강인한", "유앤엔미강인한",
       "도파민유호", "도파민정훈", "도파민이서진",
 
-      "윈", "윈가라오케"
+      "윈", "윈가라오케", "잠실", "잠실가라오케", "잠실노래방"
     ],
     "image": "/images/shops/1.2.1win/main.png",
     "translations": {
