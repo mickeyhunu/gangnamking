@@ -155,7 +155,7 @@
 
   const mapHost = document.querySelector('[data-shop-map]');
   if (mapHost) {
-    const mapContainer = mapHost.querySelector('[data-map-region]');
+    let mapContainer = mapHost.querySelector('[data-map-region]');
     const address = (mapHost.dataset.shopAddress || '').trim();
     const district = (mapHost.dataset.shopDistrict || '').trim();
     const region = (mapHost.dataset.shopRegion || '').trim();
@@ -187,6 +187,8 @@
     let currentMapAttempt = 0;
     const maxNaverRetries = 30;
     const staleAttemptErrorMessage = 'Map load cancelled due to a newer request.';
+    let activeNaverMap = null;
+    let activeLeafletMap = null;
 
     if (reloadButton) {
       reloadButton.hidden = true;
@@ -312,7 +314,8 @@
       naverRetryCount = 0;
       clearNaverRetry();
       clearScheduledReload();
-      mapContainer.innerHTML = '';
+      destroyActiveMaps();
+      resetMapContainer();
       setMapState('loading');
       toggleReloadButton(false);
       startMapInitialization(isManual ? 'manual reload' : 'automatic reload');
@@ -350,6 +353,50 @@
       if (naverRetryHandle !== null) {
         window.clearTimeout(naverRetryHandle);
         naverRetryHandle = null;
+      }
+    }
+
+    function destroyActiveMaps() {
+      if (activeLeafletMap && typeof activeLeafletMap.remove === 'function') {
+        try {
+          activeLeafletMap.remove();
+        } catch (error) {
+          warn('Failed to remove existing Leaflet map instance.', error);
+        }
+      }
+      activeLeafletMap = null;
+
+      if (activeNaverMap) {
+        if (typeof activeNaverMap.destroy === 'function') {
+          try {
+            activeNaverMap.destroy();
+          } catch (error) {
+            warn('Failed to destroy existing Naver map instance.', error);
+          }
+        } else if (typeof activeNaverMap.setMap === 'function') {
+          try {
+            activeNaverMap.setMap(null);
+          } catch (error) {
+            warn('Failed to detach existing Naver map instance.', error);
+          }
+        }
+      }
+      activeNaverMap = null;
+    }
+
+    function resetMapContainer() {
+      if (!mapContainer) {
+        return;
+      }
+
+      const parent = mapContainer.parentNode;
+
+      if (parent) {
+        const replacement = mapContainer.cloneNode(false);
+        parent.replaceChild(replacement, mapContainer);
+        mapContainer = replacement;
+      } else {
+        mapContainer.innerHTML = '';
       }
     }
 
@@ -451,6 +498,7 @@
         marker.bindPopup(venueName).openPopup();
       }
 
+      activeLeafletMap = map;
       mapInitialized = true;
       clearNaverRetry();
       setMapState('ready');
@@ -506,6 +554,7 @@
         infoWindow.open(map, marker);
       }
 
+      activeNaverMap = map;
       mapInitialized = true;
       clearNaverRetry();
       setMapState('ready');
