@@ -64,7 +64,7 @@ function normalizeLanguage(value) {
   return DEFAULT_LANGUAGE;
 }
 
-function buildStaticMapParams({ lat, lng, width, height, level, scale, lang }) {
+function buildStaticMapParams({ lat, lng, width, height, level, scale, lang, marker }) {
   const params = new URLSearchParams();
   params.set('w', String(resolveDimension(width, DEFAULT_WIDTH)));
   params.set('h', String(resolveDimension(height, DEFAULT_HEIGHT)));
@@ -72,13 +72,87 @@ function buildStaticMapParams({ lat, lng, width, height, level, scale, lang }) {
   params.set('level', String(resolveLevel(level)));
   params.set('scale', String(resolveScale(scale)));
   params.set('format', 'png');
-  params.append('markers', `type:t|size:mid|color:0xff478b|pos:${lng} ${lat}`);
+  const markerDescriptor = normalizeMarkerDescriptor({
+    marker,
+    lat,
+    lng,
+  });
+
+  if (markerDescriptor) {
+    params.append('markers', markerDescriptor);
+  }
   params.set('lang', normalizeLanguage(lang));
 
   return params.toString();
 }
 
-async function fetchStaticMapImage({ lat, lng, width, height, level, scale, lang }) {
+function normalizeMarkerDescriptor({ marker, lat, lng }) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return '';
+  }
+
+  if (marker === null) {
+    return '';
+  }
+
+  const descriptor = {};
+
+  if (marker && typeof marker === 'object') {
+    if (typeof marker.type === 'string' && marker.type.trim()) {
+      descriptor.type = marker.type.trim();
+    }
+
+    if (typeof marker.size === 'string' && marker.size.trim()) {
+      descriptor.size = marker.size.trim();
+    }
+
+    if (typeof marker.color === 'string' && marker.color.trim()) {
+      descriptor.color = marker.color.trim();
+    }
+
+    if (typeof marker.icon === 'string' && marker.icon.trim()) {
+      descriptor.icon = marker.icon.trim();
+    }
+
+    if (typeof marker.label === 'string' && marker.label.trim()) {
+      descriptor.label = marker.label.trim();
+    }
+  }
+
+  const descriptorParts = [];
+
+  if (descriptor.icon) {
+    descriptorParts.push(`icon:${descriptor.icon}`);
+  }
+
+  if (descriptor.type) {
+    descriptorParts.push(`type:${descriptor.type}`);
+  }
+
+  if (descriptor.size) {
+    descriptorParts.push(`size:${descriptor.size}`);
+  }
+
+  if (descriptor.color) {
+    descriptorParts.push(`color:${descriptor.color}`);
+  }
+
+  if (descriptor.label) {
+    descriptorParts.push(`label:${descriptor.label}`);
+  }
+
+  if (!descriptorParts.length) {
+    descriptorParts.push('type:t');
+    descriptorParts.push('size:mid');
+    descriptorParts.push('color:0xff478b');
+  }
+
+  descriptorParts.push(`pos:${lng} ${lat}`);
+
+  return descriptorParts.join('|');
+}
+
+async function fetchStaticMapImage({ lat, lng, width, height, level, scale, lang, marker }) {
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
     throw new Error('Latitude and longitude are required to request a static map.');
   }
@@ -87,7 +161,16 @@ async function fetchStaticMapImage({ lat, lng, width, height, level, scale, lang
     throw new Error('Naver Map credentials are not configured.');
   }
 
-  const params = buildStaticMapParams({ lat, lng, width, height, level, scale, lang });
+  const params = buildStaticMapParams({
+    lat,
+    lng,
+    width,
+    height,
+    level,
+    scale,
+    lang,
+    marker,
+  });
   const requestUrl = `${STATIC_MAP_ENDPOINT}?${params}`;
   const { clientId, clientSecret } = getNaverMapCredentials();
 

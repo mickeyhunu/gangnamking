@@ -300,6 +300,46 @@
       }
     }
 
+    function createStaticMarkerElement(labelText) {
+      const marker = document.createElement('div');
+      marker.className = 'shop-map__static-marker';
+      marker.setAttribute('aria-hidden', 'true');
+
+      if (typeof labelText === 'string' && labelText.trim()) {
+        const label = document.createElement('span');
+        label.className = 'shop-map__static-marker-label';
+        label.textContent = labelText.trim();
+        marker.appendChild(label);
+      }
+
+      const pin = document.createElement('span');
+      pin.className = 'shop-map__static-marker-pin';
+
+      const pinCore = document.createElement('span');
+      pinCore.className = 'shop-map__static-marker-pin-core';
+      pin.appendChild(pinCore);
+
+      marker.appendChild(pin);
+
+      return marker;
+    }
+
+    function clearStaticMapArtifacts() {
+      if (!mapContainer) {
+        return;
+      }
+
+      const staticElements = mapContainer.querySelectorAll(
+        '.shop-map__static-image, .shop-map__static-marker',
+      );
+
+      staticElements.forEach((element) => {
+        if (element && typeof element.remove === 'function') {
+          element.remove();
+        }
+      });
+    }
+
     function clearNaverRetry() {
       if (naverRetryHandle !== null) {
         window.clearTimeout(naverRetryHandle);
@@ -520,6 +560,7 @@
       });
 
       mapContainer.appendChild(image);
+      mapContainer.appendChild(createStaticMarkerElement(venueName));
       setMapState('static');
 
       if (markReady) {
@@ -540,6 +581,7 @@
         return false;
       }
 
+      clearStaticMapArtifacts();
       mapContainer.innerHTML = '';
 
       const map = window.L.map(mapContainer, {
@@ -578,6 +620,9 @@
         logTiming('Ignoring Naver map render request for a stale attempt.');
         return false;
       }
+
+      clearStaticMapArtifacts();
+      mapContainer.innerHTML = '';
 
       const center = new naverMaps.LatLng(lat, lng);
       const map = new naverMaps.Map(mapContainer, {
