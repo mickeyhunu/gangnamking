@@ -171,17 +171,10 @@
     const hasPresetCoordinates = Number.isFinite(presetLat) && Number.isFinite(presetLng);
     const hasLeaflet = Boolean(window.L && typeof window.L.map === 'function');
     const reloadButton = mapHost.querySelector('[data-map-reload]');
-    const reloadDelayAttr = mapHost.dataset.mapReloadDelay;
-    const parsedReloadDelay =
-      typeof reloadDelayAttr === 'string' && reloadDelayAttr.trim() !== ''
-        ? Number.parseInt(reloadDelayAttr, 10)
-        : NaN;
-    const autoReloadDelay = Number.isFinite(parsedReloadDelay) && parsedReloadDelay >= 0 ? parsedReloadDelay : 5000;
     let mapInitialized = false;
     let naverRetryHandle = null;
     let naverRetryCount = 0;
     let naverReadyListenerAttached = false;
-    let scheduledReloadHandle = null;
     let mapRequestStartTime = null;
     let geocodeRequestStartTime = null;
     let currentMapAttempt = 0;
@@ -273,31 +266,11 @@
       reloadButton.disabled = !show;
     }
 
-    function clearScheduledReload() {
-      if (scheduledReloadHandle !== null) {
-        window.clearTimeout(scheduledReloadHandle);
-        scheduledReloadHandle = null;
-      }
-    }
-
-    function scheduleReload(reason) {
-      if (scheduledReloadHandle !== null) {
-        return;
-      }
-
-      logTiming(`Scheduling map reload in ${autoReloadDelay}ms${reason ? ` (${reason})` : ''}.`);
-      scheduledReloadHandle = window.setTimeout(() => {
-        scheduledReloadHandle = null;
-        triggerMapReload(false);
-      }, autoReloadDelay);
-    }
-
     function isStaleAttempt(attemptId) {
       return typeof attemptId === 'number' && attemptId !== currentMapAttempt;
     }
 
     function finalizeMapReady(source) {
-      clearScheduledReload();
       toggleReloadButton(false);
       logMapReady(source);
     }
@@ -308,17 +281,16 @@
         return;
       }
 
-      const reloadReason = isManual ? 'manual reload' : 'automatic reload';
+      const reloadReason = isManual ? 'manual reload' : 'programmatic reload';
       logTiming(`Reloading map (${reloadReason}).`);
       mapInitialized = false;
       naverRetryCount = 0;
       clearNaverRetry();
-      clearScheduledReload();
       destroyActiveMaps();
       resetMapContainer();
       setMapState('loading');
       toggleReloadButton(false);
-      startMapInitialization(isManual ? 'manual reload' : 'automatic reload');
+      startMapInitialization(reloadReason);
     }
 
     function startMapInitialization(reason) {
@@ -461,9 +433,7 @@
 
       if (allowReload) {
         toggleReloadButton(true);
-        scheduleReload(reason || 'error');
       } else {
-        clearScheduledReload();
         toggleReloadButton(false);
       }
     }
