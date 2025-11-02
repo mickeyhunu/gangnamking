@@ -903,6 +903,57 @@
   object-fit: cover;
 }
 
+.shop-map__static-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #ffe5f4 0%, #ff62b5 45%, #ff2e8b 85%);
+  box-shadow: 0 10px 40px rgba(255, 46, 139, 0.35), 0 0 0 6px rgba(255, 46, 139, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.shop-map__static-marker-core {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 12px rgba(255, 46, 139, 0.5);
+}
+
+.shop-map__static-marker-wave {
+  position: absolute;
+  inset: -0.65rem;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 46, 139, 0.35);
+  animation: shop-map-static-pulse 2.6s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shop-map-static-pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.6;
+  }
+
+  65% {
+    transform: scale(1.1);
+    opacity: 0.1;
+  }
+
+  100% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+
 .shop-map__info-window {
   padding: 0.65rem 0.8rem;
   background: rgba(8, 5, 18, 0.92);
