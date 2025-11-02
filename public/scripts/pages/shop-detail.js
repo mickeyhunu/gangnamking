@@ -300,18 +300,26 @@
       }
     }
 
-    function createStaticMarkerElement() {
-      const marker = document.createElement('span');
+    function createStaticMarkerElement(labelText) {
+      const marker = document.createElement('div');
       marker.className = 'shop-map__static-marker';
       marker.setAttribute('aria-hidden', 'true');
 
-      const core = document.createElement('span');
-      core.className = 'shop-map__static-marker-core';
-      marker.appendChild(core);
+      if (typeof labelText === 'string' && labelText.trim()) {
+        const label = document.createElement('span');
+        label.className = 'shop-map__static-marker-label';
+        label.textContent = labelText.trim();
+        marker.appendChild(label);
+      }
 
-      const wave = document.createElement('span');
-      wave.className = 'shop-map__static-marker-wave';
-      marker.appendChild(wave);
+      const pin = document.createElement('span');
+      pin.className = 'shop-map__static-marker-pin';
+
+      const pinCore = document.createElement('span');
+      pinCore.className = 'shop-map__static-marker-pin-core';
+      pin.appendChild(pinCore);
+
+      marker.appendChild(pin);
 
       return marker;
     }
@@ -536,7 +544,7 @@
       });
 
       mapContainer.appendChild(image);
-      mapContainer.appendChild(createStaticMarkerElement());
+      mapContainer.appendChild(createStaticMarkerElement(venueName));
       setMapState('static');
 
       if (markReady) {
