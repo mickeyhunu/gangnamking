@@ -43,9 +43,17 @@
     storedState = null;
   }
 
-  var hasEverPlayed = storedState === 'playing' || storedState === 'paused';
+  var hasEverPlayed = storedState === 'playing';
 
-  var desiredState = storedState === 'paused' ? 'paused' : 'playing';
+  var desiredState = 'playing';
+
+  if (storedState === 'paused') {
+    try {
+      sessionStorage.removeItem(STATE_KEY);
+    } catch (error) {
+      // Ignore storage errors
+    }
+  }
 
   function updateToggleButton() {
     if (!toggleButton) {
@@ -203,29 +211,13 @@
     }
   });
 
-  if (storedState === 'paused') {
-    try {
-      audio.autoplay = false;
-    } catch (error) {
-      // Ignore assignment errors
-    }
-
-    if (!audio.paused) {
-      try {
-        audio.pause();
-      } catch (error) {
-        // Ignore pause errors
-      }
-    }
-  } else {
-    try {
-      audio.autoplay = true;
-    } catch (error) {
-      // Ignore assignment errors
-    }
-
-    requestPlay();
+  try {
+    audio.autoplay = true;
+  } catch (error) {
+    // Ignore assignment errors
   }
+
+  requestPlay();
 
   updateToggleButton();
 })();
