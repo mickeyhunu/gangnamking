@@ -266,6 +266,22 @@
       reloadButton.disabled = !show;
     }
 
+    function clamp(value, min, max) {
+      if (!Number.isFinite(value)) {
+        return value;
+      }
+
+      if (value < min) {
+        return min;
+      }
+
+      if (value > max) {
+        return max;
+      }
+
+      return value;
+    }
+
     function isStaleAttempt(attemptId) {
       return typeof attemptId === 'number' && attemptId !== currentMapAttempt;
     }
@@ -438,6 +454,66 @@
       }
     }
 
+    function renderStaticFallbackMap(lat, lng, options) {
+      if (!mapContainer || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+        return false;
+      }
+
+      const settings = options || {};
+      const attemptId =
+        typeof settings.attemptId === 'number' ? settings.attemptId : currentMapAttempt;
+      const persistent = settings.persistent === true;
+      const markReady = settings.markReady !== false && !persistent;
+
+      if (isStaleAttempt(attemptId)) {
+        logTiming('Ignoring static map render request for a stale attempt.');
+        return false;
+      }
+
+      const normalizedLat = clamp(lat, -85, 85);
+      const normalizedLng = clamp(lng, -180, 180);
+      const zoom = clamp(Number.parseInt(settings.zoom, 10) || 16, 0, 18);
+      const measuredWidth = Math.round(settings.width || mapContainer.clientWidth || mapContainer.offsetWidth || 0);
+      const measuredHeight = Math.round(settings.height || mapContainer.clientHeight || mapContainer.offsetHeight || 0);
+      const width = clamp(measuredWidth || 600, 200, 1024);
+      const height = clamp(measuredHeight || 360, 200, 1024);
+      const markerColor = typeof settings.markerColor === 'string' && settings.markerColor.trim()
+        ? settings.markerColor.trim()
+        : 'lightblue1';
+      const staticUrl =
+        `https://staticmap.openstreetmap.de/staticmap.php?center=${normalizedLat},${normalizedLng}` +
+        `&zoom=${zoom}&size=${width}x${height}&maptype=mapnik&markers=${normalizedLat},${normalizedLng},${markerColor}`;
+
+      mapContainer.innerHTML = '';
+
+      const image = document.createElement('img');
+      image.className = 'shop-map__static-image';
+      image.alt = venueName ? `${venueName} location map` : 'Shop location map';
+      image.decoding = 'async';
+      image.loading = 'lazy';
+      image.src = staticUrl;
+
+      image.addEventListener('error', () => {
+        if (persistent) {
+          warn('Failed to load static fallback map preview.');
+          return;
+        }
+
+        handleError(getErrorMessage(), { reason: 'static-map-error' });
+      });
+
+      mapContainer.appendChild(image);
+      setMapState('static');
+
+      if (markReady) {
+        mapInitialized = true;
+        toggleReloadButton(false);
+        finalizeMapReady('Static map');
+      }
+
+      return true;
+    }
+
     function renderLeafletMap(lat, lng, attemptId) {
       if (!hasLeaflet || !mapContainer || !Number.isFinite(lat) || !Number.isFinite(lng)) {
         return false;
@@ -556,6 +632,10 @@
           return;
         }
 
+        if (hasPresetCoordinates && renderStaticFallbackMap(presetLat, presetLng, { attemptId })) {
+          return;
+        }
+
         handleError(getErrorMessage(), { allowReload: false, reason: 'missing-map-data' });
         return;
       }
@@ -571,6 +651,10 @@
           return;
         }
 
+        if (hasPresetCoordinates && renderStaticFallbackMap(presetLat, presetLng, { attemptId })) {
+          return;
+        }
+
         if (scheduleNaverRetry()) {
           setMapState('loading');
           return;
@@ -581,8 +665,14 @@
       }
 
       if (hasPresetCoordinates) {
-        if (!renderNaverMap(presetLat, presetLng, attemptId) && hasLeaflet) {
-          renderLeafletMap(presetLat, presetLng, attemptId);
+        if (!renderNaverMap(presetLat, presetLng, attemptId)) {
+          if (hasLeaflet && renderLeafletMap(presetLat, presetLng, attemptId)) {
+            return;
+          }
+
+          if (renderStaticFallbackMap(presetLat, presetLng, { attemptId })) {
+            return;
+          }
         }
         return;
       }
@@ -697,8 +787,12 @@
 
       geocodeNext(geocodeQueue)
         .then((result) => {
-          if (!renderNaverMap(result.lat, result.lng, attemptId) && hasLeaflet) {
-            renderLeafletMap(result.lat, result.lng, attemptId);
+          if (!renderNaverMap(result.lat, result.lng, attemptId)) {
+            if (hasLeaflet && renderLeafletMap(result.lat, result.lng, attemptId)) {
+              return;
+            }
+
+            renderStaticFallbackMap(result.lat, result.lng, { attemptId });
           }
         })
         .catch((error) => {
@@ -711,13 +805,28 @@
 
           if (hasLeaflet && hasPresetCoordinates) {
             renderLeafletMap(presetLat, presetLng, attemptId);
-          } else {
-            handleError(getErrorMessage(), { reason: 'geocode-failed' });
+            return;
           }
+
+          if (hasPresetCoordinates && renderStaticFallbackMap(presetLat, presetLng, { attemptId })) {
+            return;
+          }
+
+          handleError(getErrorMessage(), { reason: 'geocode-failed' });
         });
     }
 
-    setMapState('loading');
+    const hasInitialStaticMap =
+      hasPresetCoordinates &&
+      renderStaticFallbackMap(presetLat, presetLng, {
+        attemptId: currentMapAttempt,
+        persistent: true,
+        markReady: false,
+      });
+
+    if (!hasInitialStaticMap) {
+      setMapState('loading');
+    }
     attachNaverReadyListener();
     startMapInitialization('initial load');
   }
