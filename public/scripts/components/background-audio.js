@@ -22,30 +22,6 @@
     ? toggleButton.getAttribute('data-bgm-toggle-paused-label')
     : null;
 
-  function updateToggleButton() {
-    if (!toggleButton) {
-      return;
-    }
-
-    var isPlaying = !audio.paused;
-    var nextLabel = isPlaying
-      ? playingLabel || 'Stop music'
-      : pausedLabel || 'Play music';
-    toggleButton.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
-    toggleButton.setAttribute('title', nextLabel);
-    toggleButton.setAttribute('aria-label', nextLabel);
-
-    if (toggleText) {
-      toggleText.textContent = nextLabel;
-    } else {
-      toggleButton.textContent = nextLabel;
-    }
-
-    if (toggleIcon) {
-      toggleIcon.textContent = isPlaying ? '🔊' : '🔇';
-    }
-  }
-
   var storedTime = null;
   try {
     storedTime = sessionStorage.getItem(TIME_KEY);
@@ -68,6 +44,42 @@
   }
 
   var hasEverPlayed = storedState === 'playing' || storedState === 'paused';
+
+  var desiredState = storedState === 'paused' ? 'paused' : 'playing';
+
+  function updateToggleButton() {
+    if (!toggleButton) {
+      return;
+    }
+
+    var isPlaying;
+
+    if (desiredState === 'playing') {
+      if (hasEverPlayed) {
+        isPlaying = !audio.paused;
+      } else {
+        isPlaying = true;
+      }
+    } else {
+      isPlaying = false;
+    }
+    var nextLabel = isPlaying
+      ? playingLabel || 'Stop music'
+      : pausedLabel || 'Play music';
+    toggleButton.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+    toggleButton.setAttribute('title', nextLabel);
+    toggleButton.setAttribute('aria-label', nextLabel);
+
+    if (toggleText) {
+      toggleText.textContent = nextLabel;
+    } else {
+      toggleButton.textContent = nextLabel;
+    }
+
+    if (toggleIcon) {
+      toggleIcon.textContent = isPlaying ? '🔊' : '🔇';
+    }
+  }
 
   function persistState() {
     if (!hasEverPlayed && audio.paused && audio.currentTime === 0) {
@@ -107,6 +119,9 @@
   }
 
   function requestPlay() {
+    desiredState = 'playing';
+    updateToggleButton();
+
     var playPromise;
 
     try {
@@ -134,8 +149,10 @@
   if (toggleButton) {
     toggleButton.addEventListener('click', function () {
       if (audio.paused) {
+        desiredState = 'playing';
         requestPlay();
       } else {
+        desiredState = 'paused';
         audio.pause();
       }
 
@@ -154,6 +171,7 @@
 
   audio.addEventListener('play', function () {
     hasEverPlayed = true;
+    desiredState = 'playing';
     try {
       sessionStorage.setItem(STATE_KEY, 'playing');
     } catch (error) {
@@ -165,6 +183,7 @@
 
   audio.addEventListener('pause', function () {
     if (hasEverPlayed) {
+      desiredState = 'paused';
       try {
         sessionStorage.setItem(STATE_KEY, 'paused');
       } catch (error) {
