@@ -100,6 +100,7 @@ async function renderShopStaticMap(req, res) {
       level,
       scale,
       lang: normalizedLang,
+      marker: null,
     });
 
     res.setHeader('Content-Type', 'image/png');

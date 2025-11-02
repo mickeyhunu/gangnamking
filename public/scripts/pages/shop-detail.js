@@ -300,6 +300,22 @@
       }
     }
 
+    function createStaticMarkerElement() {
+      const marker = document.createElement('span');
+      marker.className = 'shop-map__static-marker';
+      marker.setAttribute('aria-hidden', 'true');
+
+      const core = document.createElement('span');
+      core.className = 'shop-map__static-marker-core';
+      marker.appendChild(core);
+
+      const wave = document.createElement('span');
+      wave.className = 'shop-map__static-marker-wave';
+      marker.appendChild(wave);
+
+      return marker;
+    }
+
     function clearNaverRetry() {
       if (naverRetryHandle !== null) {
         window.clearTimeout(naverRetryHandle);
@@ -520,6 +536,7 @@
       });
 
       mapContainer.appendChild(image);
+      mapContainer.appendChild(createStaticMarkerElement());
       setMapState('static');
 
       if (markReady) {
