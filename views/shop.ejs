@@ -988,6 +988,7 @@
             data-shop-district="<%= shop.district %>"
             data-shop-region="<%= shop.region %>"
             data-map-locale="<%= lang || 'ko' %>"
+            data-map-reload-delay="5000"
             <% if (mapAuthErrorMessage) { %>
               data-map-auth-error="<%= mapAuthErrorMessage %>"
             <% } %>
@@ -1002,6 +1003,9 @@
               role="img"
               aria-label="<%= formatMapLabel(mapText.ariaLabel || 'Map showing location of {{shopName}}') %>"
             ></div>
+            <button type="button" class="shop-map__reload" data-map-reload hidden>
+              <%= mapText.reload || 'Reload map' %>
+            </button>
           </div>
         </div>
       </div>

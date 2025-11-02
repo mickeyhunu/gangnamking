@@ -170,11 +170,160 @@
       typeof lngValue === 'string' && lngValue.trim() !== '' ? Number.parseFloat(lngValue) : NaN;
     const hasPresetCoordinates = Number.isFinite(presetLat) && Number.isFinite(presetLng);
     const hasLeaflet = Boolean(window.L && typeof window.L.map === 'function');
+    const reloadButton = mapHost.querySelector('[data-map-reload]');
+    const reloadDelayAttr = mapHost.dataset.mapReloadDelay;
+    const parsedReloadDelay =
+      typeof reloadDelayAttr === 'string' && reloadDelayAttr.trim() !== ''
+        ? Number.parseInt(reloadDelayAttr, 10)
+        : NaN;
+    const autoReloadDelay = Number.isFinite(parsedReloadDelay) && parsedReloadDelay >= 0 ? parsedReloadDelay : 5000;
     let mapInitialized = false;
     let naverRetryHandle = null;
     let naverRetryCount = 0;
     let naverReadyListenerAttached = false;
+    let scheduledReloadHandle = null;
+    let mapRequestStartTime = null;
+    let geocodeRequestStartTime = null;
+    let currentMapAttempt = 0;
     const maxNaverRetries = 30;
+    const staleAttemptErrorMessage = 'Map load cancelled due to a newer request.';
+
+    if (reloadButton) {
+      reloadButton.hidden = true;
+      reloadButton.disabled = true;
+      reloadButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        logTiming('Manual reload requested by user.');
+        triggerMapReload(true);
+      });
+    }
+
+    function now() {
+      if (window.performance && typeof window.performance.now === 'function') {
+        return window.performance.now();
+      }
+
+      return Date.now();
+    }
+
+    function logTiming(message) {
+      if (window.console && typeof window.console.log === 'function') {
+        window.console.log('[Shop Map]', message);
+      }
+    }
+
+    function warn(message, error) {
+      if (window.console && typeof window.console.warn === 'function') {
+        if (typeof error !== 'undefined') {
+          window.console.warn('[Shop Map]', message, error);
+        } else {
+          window.console.warn('[Shop Map]', message);
+        }
+      }
+    }
+
+    function beginMapRequest(reason) {
+      if (mapRequestStartTime === null) {
+        mapRequestStartTime = now();
+        logTiming(`Map request started${reason ? ` (${reason})` : ''}.`);
+      } else if (reason) {
+        logTiming(`Continuing map request${reason ? ` (${reason})` : ''}.`);
+      }
+    }
+
+    function logMapReady(source) {
+      if (mapRequestStartTime === null) {
+        logTiming(`Map ready via ${source}.`);
+        return;
+      }
+
+      const elapsed = Math.round(now() - mapRequestStartTime);
+      logTiming(`Map ready via ${source} in ${elapsed}ms.`);
+      mapRequestStartTime = null;
+    }
+
+    function startGeocodeTiming(query) {
+      geocodeRequestStartTime = now();
+      logTiming(`Geocode requested for "${query}".`);
+    }
+
+    function finishGeocodeTiming(query, success) {
+      if (geocodeRequestStartTime === null) {
+        return;
+      }
+
+      const elapsed = Math.round(now() - geocodeRequestStartTime);
+      geocodeRequestStartTime = null;
+
+      if (typeof success !== 'boolean') {
+        return;
+      }
+
+      logTiming(`Geocode ${success ? 'succeeded' : 'failed'} in ${elapsed}ms for "${query}".`);
+    }
+
+    function toggleReloadButton(show) {
+      if (!reloadButton) {
+        return;
+      }
+
+      reloadButton.hidden = !show;
+      reloadButton.disabled = !show;
+    }
+
+    function clearScheduledReload() {
+      if (scheduledReloadHandle !== null) {
+        window.clearTimeout(scheduledReloadHandle);
+        scheduledReloadHandle = null;
+      }
+    }
+
+    function scheduleReload(reason) {
+      if (scheduledReloadHandle !== null) {
+        return;
+      }
+
+      logTiming(`Scheduling map reload in ${autoReloadDelay}ms${reason ? ` (${reason})` : ''}.`);
+      scheduledReloadHandle = window.setTimeout(() => {
+        scheduledReloadHandle = null;
+        triggerMapReload(false);
+      }, autoReloadDelay);
+    }
+
+    function isStaleAttempt(attemptId) {
+      return typeof attemptId === 'number' && attemptId !== currentMapAttempt;
+    }
+
+    function finalizeMapReady(source) {
+      clearScheduledReload();
+      toggleReloadButton(false);
+      logMapReady(source);
+    }
+
+    function triggerMapReload(isManual) {
+      if (!mapContainer) {
+        warn('Reload requested but map container is unavailable.');
+        return;
+      }
+
+      const reloadReason = isManual ? 'manual reload' : 'automatic reload';
+      logTiming(`Reloading map (${reloadReason}).`);
+      mapInitialized = false;
+      naverRetryCount = 0;
+      clearNaverRetry();
+      clearScheduledReload();
+      mapContainer.innerHTML = '';
+      setMapState('loading');
+      toggleReloadButton(false);
+      startMapInitialization(isManual ? 'manual reload' : 'automatic reload');
+    }
+
+    function startMapInitialization(reason) {
+      currentMapAttempt += 1;
+      mapRequestStartTime = null;
+      geocodeRequestStartTime = null;
+      initializeInteractiveMap(reason, { attemptId: currentMapAttempt, newAttempt: true });
+    }
 
     function getNaverMaps() {
       const maps = window.naver && window.naver.maps;
@@ -209,12 +358,15 @@
         return false;
       }
 
+      const attemptId = currentMapAttempt;
+
       naverRetryHandle = window.setTimeout(() => {
         naverRetryHandle = null;
         naverRetryCount += 1;
-        initializeInteractiveMap();
+        initializeInteractiveMap('naver retry', { attemptId });
       }, 200);
 
+      logTiming(`Waiting for Naver Maps to become available (attempt ${naverRetryCount + 1} of ${maxNaverRetries}).`);
       return true;
     }
 
@@ -237,30 +389,45 @@
           try {
             existingHandler();
           } catch (error) {
-            if (window.console && typeof window.console.warn === 'function') {
-              console.warn('[Shop Map] Existing onJSContentLoaded handler failed.', error);
-            }
+            warn('Existing onJSContentLoaded handler failed.', error);
           }
         }
 
         if (!mapInitialized) {
-          initializeInteractiveMap();
+          initializeInteractiveMap('naver script ready');
         }
       };
 
       naverReadyListenerAttached = true;
     }
 
-    function handleError(message) {
+    function handleError(message, options) {
+      const settings = options || {};
+      const allowReload = settings.allowReload !== false;
+      const reason = typeof settings.reason === 'string' ? settings.reason : '';
+
       setMapState('error');
 
-      if (message && window.console && typeof window.console.warn === 'function') {
-        console.warn('[Shop Map]', message);
+      if (message) {
+        warn(message);
+      }
+
+      if (allowReload) {
+        toggleReloadButton(true);
+        scheduleReload(reason || 'error');
+      } else {
+        clearScheduledReload();
+        toggleReloadButton(false);
       }
     }
 
-    function renderLeafletMap(lat, lng) {
+    function renderLeafletMap(lat, lng, attemptId) {
       if (!hasLeaflet || !mapContainer || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+        return false;
+      }
+
+      if (isStaleAttempt(attemptId)) {
+        logTiming('Ignoring Leaflet render request for a stale attempt.');
         return false;
       }
 
@@ -287,12 +454,18 @@
       mapInitialized = true;
       clearNaverRetry();
       setMapState('ready');
+      finalizeMapReady('Leaflet');
       return true;
     }
 
-    function renderNaverMap(lat, lng) {
+    function renderNaverMap(lat, lng, attemptId) {
       const naverMaps = getNaverMaps();
       if (!naverMaps || !mapContainer || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+        return false;
+      }
+
+      if (isStaleAttempt(attemptId)) {
+        logTiming('Ignoring Naver map render request for a stale attempt.');
         return false;
       }
 
@@ -336,31 +509,46 @@
       mapInitialized = true;
       clearNaverRetry();
       setMapState('ready');
+      finalizeMapReady('Naver Maps');
       return true;
     }
 
-    function initializeInteractiveMap() {
+    function initializeInteractiveMap(triggerReason, options) {
+      const settings = options || {};
+      const attemptId =
+        typeof settings.attemptId === 'number' ? settings.attemptId : currentMapAttempt;
+
+      if (settings.newAttempt === true && attemptId !== currentMapAttempt) {
+        currentMapAttempt = attemptId;
+      }
+
+      if (attemptId !== currentMapAttempt) {
+        logTiming('Skipping map initialization for a stale attempt.');
+        return;
+      }
+
       if (mapInitialized) {
         return;
       }
 
       if (!mapContainer || (!address && !hasPresetCoordinates)) {
         if (hasLeaflet && hasPresetCoordinates) {
-          renderLeafletMap(presetLat, presetLng);
+          renderLeafletMap(presetLat, presetLng, attemptId);
           return;
         }
 
-        handleError(getErrorMessage());
+        handleError(getErrorMessage(), { allowReload: false, reason: 'missing-map-data' });
         return;
       }
 
+      beginMapRequest(triggerReason || 'initial load');
       attachNaverReadyListener();
 
       const naverMaps = getNaverMaps();
 
       if (!naverMaps) {
         if (hasLeaflet && hasPresetCoordinates) {
-          renderLeafletMap(presetLat, presetLng);
+          renderLeafletMap(presetLat, presetLng, attemptId);
           return;
         }
 
@@ -369,13 +557,13 @@
           return;
         }
 
-        handleError(getErrorMessage());
+        handleError(getErrorMessage(), { reason: 'naver-unavailable' });
         return;
       }
 
       if (hasPresetCoordinates) {
-        if (!renderNaverMap(presetLat, presetLng) && hasLeaflet) {
-          renderLeafletMap(presetLat, presetLng);
+        if (!renderNaverMap(presetLat, presetLng, attemptId) && hasLeaflet) {
+          renderLeafletMap(presetLat, presetLng, attemptId);
         }
         return;
       }
@@ -417,7 +605,8 @@
       const geocodeQueue = buildQueryQueue();
 
       if (!geocodeQueue.length) {
-        handleError(getErrorMessage());
+        logTiming('No valid address queries available for geocoding.');
+        handleError(getErrorMessage(), { allowReload: false, reason: 'empty-geocode-queue' });
         return;
       }
 
@@ -459,38 +648,59 @@
         }
 
         const currentQuery = queue.shift();
+        startGeocodeTiming(currentQuery);
 
-        return geocode(currentQuery).catch((error) => {
-          if (queue.length) {
-            return geocodeNext(queue);
-          }
+        if (isStaleAttempt(attemptId)) {
+          return Promise.reject(new Error(staleAttemptErrorMessage));
+        }
 
-          throw error;
-        });
+        return geocode(currentQuery)
+          .then((result) => {
+            finishGeocodeTiming(currentQuery, true);
+            return result;
+          })
+          .catch((error) => {
+            const isStaleError = Boolean(error && error.message === staleAttemptErrorMessage);
+            finishGeocodeTiming(currentQuery, isStaleError ? undefined : false);
+
+            if (isStaleError) {
+              throw error;
+            }
+
+            if (queue.length) {
+              logTiming('Geocoding failed, retrying with an alternate query.');
+              return geocodeNext(queue);
+            }
+
+            throw error;
+          });
       }
 
       geocodeNext(geocodeQueue)
         .then((result) => {
-          if (!renderNaverMap(result.lat, result.lng) && hasLeaflet) {
-            renderLeafletMap(result.lat, result.lng);
+          if (!renderNaverMap(result.lat, result.lng, attemptId) && hasLeaflet) {
+            renderLeafletMap(result.lat, result.lng, attemptId);
           }
         })
         .catch((error) => {
-          if (window.console && typeof window.console.warn === 'function') {
-            console.warn('[Map] Failed to geocode address:', error);
+          if (error && error.message === staleAttemptErrorMessage) {
+            logTiming('Geocoding cancelled because a newer map request started.');
+            return;
           }
 
+          warn('Failed to geocode address.', error);
+
           if (hasLeaflet && hasPresetCoordinates) {
-            renderLeafletMap(presetLat, presetLng);
+            renderLeafletMap(presetLat, presetLng, attemptId);
           } else {
-            handleError(getErrorMessage());
+            handleError(getErrorMessage(), { reason: 'geocode-failed' });
           }
         });
     }
 
     setMapState('loading');
     attachNaverReadyListener();
-    initializeInteractiveMap();
+    startMapInitialization('initial load');
   }
 
   const sectionNav = document.querySelector('[data-section-nav]');
