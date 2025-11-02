@@ -12,6 +12,40 @@
   var PERSIST_INTERVAL = 1000;
   var interactionScheduled = false;
 
+  var toggleButton = document.querySelector('[data-bgm-toggle]');
+  var toggleText = toggleButton ? toggleButton.querySelector('.bgm-toggle__text') : null;
+  var toggleIcon = toggleButton ? toggleButton.querySelector('.bgm-toggle__icon') : null;
+  var playingLabel = toggleButton
+    ? toggleButton.getAttribute('data-bgm-toggle-playing-label')
+    : null;
+  var pausedLabel = toggleButton
+    ? toggleButton.getAttribute('data-bgm-toggle-paused-label')
+    : null;
+
+  function updateToggleButton() {
+    if (!toggleButton) {
+      return;
+    }
+
+    var isPlaying = !audio.paused;
+    var nextLabel = isPlaying
+      ? playingLabel || 'Stop music'
+      : pausedLabel || 'Play music';
+    toggleButton.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+    toggleButton.setAttribute('title', nextLabel);
+    toggleButton.setAttribute('aria-label', nextLabel);
+
+    if (toggleText) {
+      toggleText.textContent = nextLabel;
+    } else {
+      toggleButton.textContent = nextLabel;
+    }
+
+    if (toggleIcon) {
+      toggleIcon.textContent = isPlaying ? '🔊' : '🔇';
+    }
+  }
+
   var storedTime = null;
   try {
     storedTime = sessionStorage.getItem(TIME_KEY);
@@ -91,6 +125,19 @@
     }
   }
 
+  if (toggleButton) {
+    toggleButton.addEventListener('click', function () {
+      if (audio.paused) {
+        requestPlay();
+      } else {
+        audio.pause();
+      }
+
+      // Ensure the button reflects the current state immediately
+      updateToggleButton();
+    });
+  }
+
   audio.addEventListener('timeupdate', function () {
     var now = Date.now();
     if (now - lastPersist >= PERSIST_INTERVAL) {
@@ -105,6 +152,8 @@
     } catch (error) {
       // Ignore storage errors
     }
+
+    updateToggleButton();
   });
 
   audio.addEventListener('pause', function () {
@@ -114,6 +163,8 @@
       // Ignore storage errors
     }
     persistState();
+
+    updateToggleButton();
   });
 
   window.addEventListener('beforeunload', persistState);
@@ -131,4 +182,6 @@
   } else {
     requestPlay();
   }
+
+  updateToggleButton();
 })();
