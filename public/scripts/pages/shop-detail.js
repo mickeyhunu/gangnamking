@@ -160,10 +160,12 @@
     const district = (mapHost.dataset.shopDistrict || '').trim();
     const region = (mapHost.dataset.shopRegion || '').trim();
     const venueName = mapHost.dataset.shopName || '';
+    const shopId = (mapHost.dataset.shopId || '').trim();
     const defaultErrorMessage = 'Unable to load map. Please check the address.';
     const latValue = mapHost.dataset.shopLat;
     const lngValue = mapHost.dataset.shopLng;
     const authErrorMessage = (mapHost.dataset.mapAuthError || '').trim();
+    const mapLocale = (mapHost.dataset.mapLocale || '').trim();
     const presetLat =
       typeof latValue === 'string' && latValue.trim() !== '' ? Number.parseFloat(latValue) : NaN;
     const presetLng =
@@ -407,6 +409,42 @@
 
     }
 
+    function buildStaticMapRequestUrl({ lat, lng, width, height, zoom, scale }) {
+      if (!shopId) {
+        return '';
+      }
+
+      if (typeof URLSearchParams !== 'function') {
+        return '';
+      }
+
+      const params = new URLSearchParams();
+      if (Number.isFinite(lat)) {
+        params.set('lat', lat.toFixed(6));
+      }
+      if (Number.isFinite(lng)) {
+        params.set('lng', lng.toFixed(6));
+      }
+      if (Number.isFinite(width)) {
+        params.set('w', String(Math.round(width)));
+      }
+      if (Number.isFinite(height)) {
+        params.set('h', String(Math.round(height)));
+      }
+      if (Number.isFinite(zoom)) {
+        params.set('zoom', String(Math.round(zoom)));
+      }
+      if (Number.isFinite(scale)) {
+        params.set('scale', String(Math.round(scale)));
+      }
+      if (mapLocale) {
+        params.set('lang', mapLocale);
+      }
+
+      const encodedId = encodeURIComponent(shopId);
+      return `/shops/${encodedId}/map/static?${params.toString()}`;
+    }
+
     function renderStaticFallbackMap(lat, lng, options) {
       if (!mapContainer || !Number.isFinite(lat) || !Number.isFinite(lng)) {
         return false;
@@ -430,12 +468,21 @@
       const measuredHeight = Math.round(settings.height || mapContainer.clientHeight || mapContainer.offsetHeight || 0);
       const width = clamp(measuredWidth || 600, 200, 1024);
       const height = clamp(measuredHeight || 360, 200, 1024);
-      const markerColor = typeof settings.markerColor === 'string' && settings.markerColor.trim()
-        ? settings.markerColor.trim()
-        : 'lightblue1';
-      const staticUrl =
-        `https://staticmap.openstreetmap.de/staticmap.php?center=${normalizedLat},${normalizedLng}` +
-        `&zoom=${zoom}&size=${width}x${height}&maptype=mapnik&markers=${normalizedLat},${normalizedLng},${markerColor}`;
+      const devicePixelRatio = window.devicePixelRatio || 1;
+      const scale = clamp(Math.round(devicePixelRatio), 1, 2);
+      const staticUrl = buildStaticMapRequestUrl({
+        lat: normalizedLat,
+        lng: normalizedLng,
+        width,
+        height,
+        zoom,
+        scale,
+      });
+
+      if (!staticUrl) {
+        warn('Unable to determine static map URL for this shop.');
+        return false;
+      }
 
       mapContainer.innerHTML = '';
 
@@ -445,6 +492,23 @@
       image.decoding = 'async';
       image.loading = 'lazy';
       image.src = staticUrl;
+      image.width = width;
+      image.height = height;
+
+      if (scale > 1) {
+        const retinaUrl = buildStaticMapRequestUrl({
+          lat: normalizedLat,
+          lng: normalizedLng,
+          width,
+          height,
+          zoom,
+          scale: 2,
+        });
+
+        if (retinaUrl) {
+          image.srcset = `${retinaUrl} 2x`;
+        }
+      }
 
       image.addEventListener('error', () => {
         if (persistent) {
