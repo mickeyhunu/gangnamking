@@ -126,6 +126,10 @@
     %>
     <% const cityFilterOptions = Array.isArray(resolvedAreaFilterConfig.cities) ? resolvedAreaFilterConfig.cities : []; %>
     <% const subheaderNavLabel = (t && t.header && t.header.sectionNavLabel) || '상세 정보 바로가기'; %>
+    <% const bgmToggleLabels = (t && t.header && t.header.bgmToggle) || {}; %>
+    <% const bgmToggleAriaLabel = bgmToggleLabels.ariaLabel || 'Toggle background music'; %>
+    <% const bgmTogglePlayLabel = bgmToggleLabels.play || 'Play music'; %>
+    <% const bgmTogglePauseLabel = bgmToggleLabels.pause || 'Stop music'; %>
     <header class="site-header">
       <div class="container site-header__main">
         <a class="branding" href="/">
@@ -280,6 +284,19 @@
             }, {})) %>
       </script>
     <% } %>
+    <button
+      type="button"
+      class="bgm-toggle"
+      data-bgm-toggle
+      data-bgm-toggle-playing-label="<%= bgmTogglePauseLabel %>"
+      data-bgm-toggle-paused-label="<%= bgmTogglePlayLabel %>"
+      aria-pressed="true"
+      aria-label="<%= bgmToggleAriaLabel %>"
+      title="<%= bgmTogglePauseLabel %>"
+    >
+      <span class="bgm-toggle__icon" aria-hidden="true">🔊</span>
+      <span class="bgm-toggle__text"><%= bgmTogglePauseLabel %></span>
+    </button>
     <% if (resolvedLanguageOptions.length) { %>
       <% const languageLabel = (t && t.header && t.header.languageLabel) || 'Language'; %>
       <div class="language-select language-select--floating" data-language-select>

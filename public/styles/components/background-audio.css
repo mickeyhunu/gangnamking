@@ -6,3 +6,59 @@
   opacity: 0;
   pointer-events: none;
 }
+
+.bgm-toggle {
+  position: fixed;
+  left: clamp(1rem, 4vw, 2.75rem);
+  top: clamp(1rem, 15vw, 5rem);
+  z-index: 140;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background:
+    linear-gradient(150deg, rgba(30, 20, 55, 0.88), rgba(58, 33, 98, 0.88)),
+    radial-gradient(circle at top, rgba(255, 82, 165, 0.32), transparent 65%);
+  box-shadow: 0 18px 36px rgba(8, 2, 20, 0.48);
+  color: #fdfcff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(6px);
+}
+
+.bgm-toggle:hover,
+.bgm-toggle:focus-visible {
+  color: #ff9bd6;
+  transform: translateY(-1px);
+  box-shadow: 0 22px 42px rgba(8, 2, 20, 0.58);
+}
+
+.bgm-toggle:focus-visible {
+  outline: 2px solid rgba(255, 150, 210, 0.8);
+  outline-offset: 4px;
+}
+
+.bgm-toggle__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.bgm-toggle__text {
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .bgm-toggle {
+    left: clamp(0.75rem, 3vw, 1.5rem);
+    top: clamp(0.75rem, 12vw, 4.5rem);
+    font-size: 0.72rem;
+    padding: 0.5rem 0.85rem;
+  }
+}
