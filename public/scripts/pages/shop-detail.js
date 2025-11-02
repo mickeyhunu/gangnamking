@@ -170,7 +170,6 @@
       typeof lngValue === 'string' && lngValue.trim() !== '' ? Number.parseFloat(lngValue) : NaN;
     const hasPresetCoordinates = Number.isFinite(presetLat) && Number.isFinite(presetLng);
     const hasLeaflet = Boolean(window.L && typeof window.L.map === 'function');
-    const reloadButton = mapHost.querySelector('[data-map-reload]');
     let mapInitialized = false;
     let naverRetryHandle = null;
     let naverRetryCount = 0;
@@ -182,16 +181,6 @@
     const staleAttemptErrorMessage = 'Map load cancelled due to a newer request.';
     let activeNaverMap = null;
     let activeLeafletMap = null;
-
-    if (reloadButton) {
-      reloadButton.hidden = true;
-      reloadButton.disabled = true;
-      reloadButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        logTiming('Manual reload requested by user.');
-        triggerMapReload(true);
-      });
-    }
 
     function now() {
       if (window.performance && typeof window.performance.now === 'function') {
@@ -257,15 +246,6 @@
       logTiming(`Geocode ${success ? 'succeeded' : 'failed'} in ${elapsed}ms for "${query}".`);
     }
 
-    function toggleReloadButton(show) {
-      if (!reloadButton) {
-        return;
-      }
-
-      reloadButton.hidden = !show;
-      reloadButton.disabled = !show;
-    }
-
     function clamp(value, min, max) {
       if (!Number.isFinite(value)) {
         return value;
@@ -287,26 +267,7 @@
     }
 
     function finalizeMapReady(source) {
-      toggleReloadButton(false);
       logMapReady(source);
-    }
-
-    function triggerMapReload(isManual) {
-      if (!mapContainer) {
-        warn('Reload requested but map container is unavailable.');
-        return;
-      }
-
-      const reloadReason = isManual ? 'manual reload' : 'programmatic reload';
-      logTiming(`Reloading map (${reloadReason}).`);
-      mapInitialized = false;
-      naverRetryCount = 0;
-      clearNaverRetry();
-      destroyActiveMaps();
-      resetMapContainer();
-      setMapState('loading');
-      toggleReloadButton(false);
-      startMapInitialization(reloadReason);
     }
 
     function startMapInitialization(reason) {
@@ -436,10 +397,7 @@
       naverReadyListenerAttached = true;
     }
 
-    function handleError(message, options) {
-      const settings = options || {};
-      const allowReload = settings.allowReload !== false;
-      const reason = typeof settings.reason === 'string' ? settings.reason : '';
+    function handleError(message) {
 
       setMapState('error');
 
@@ -447,11 +405,6 @@
         warn(message);
       }
 
-      if (allowReload) {
-        toggleReloadButton(true);
-      } else {
-        toggleReloadButton(false);
-      }
     }
 
     function renderStaticFallbackMap(lat, lng, options) {
@@ -499,7 +452,7 @@
           return;
         }
 
-        handleError(getErrorMessage(), { reason: 'static-map-error' });
+        handleError(getErrorMessage());
       });
 
       mapContainer.appendChild(image);
@@ -507,7 +460,6 @@
 
       if (markReady) {
         mapInitialized = true;
-        toggleReloadButton(false);
         finalizeMapReady('Static map');
       }
 
@@ -636,7 +588,7 @@
           return;
         }
 
-        handleError(getErrorMessage(), { allowReload: false, reason: 'missing-map-data' });
+        handleError(getErrorMessage());
         return;
       }
 
@@ -660,7 +612,7 @@
           return;
         }
 
-        handleError(getErrorMessage(), { reason: 'naver-unavailable' });
+        handleError(getErrorMessage());
         return;
       }
 
@@ -715,7 +667,7 @@
 
       if (!geocodeQueue.length) {
         logTiming('No valid address queries available for geocoding.');
-        handleError(getErrorMessage(), { allowReload: false, reason: 'empty-geocode-queue' });
+        handleError(getErrorMessage());
         return;
       }
 
@@ -812,7 +764,7 @@
             return;
           }
 
-          handleError(getErrorMessage(), { reason: 'geocode-failed' });
+          handleError(getErrorMessage());
         });
     }
 
