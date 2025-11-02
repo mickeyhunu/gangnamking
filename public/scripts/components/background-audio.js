@@ -67,7 +67,13 @@
     storedState = null;
   }
 
+  var hasEverPlayed = storedState === 'playing' || storedState === 'paused';
+
   function persistState() {
+    if (!hasEverPlayed && audio.paused && audio.currentTime === 0) {
+      return;
+    }
+
     try {
       sessionStorage.setItem(TIME_KEY, String(audio.currentTime));
       sessionStorage.setItem(STATE_KEY, audio.paused ? 'paused' : 'playing');
@@ -147,6 +153,7 @@
   });
 
   audio.addEventListener('play', function () {
+    hasEverPlayed = true;
     try {
       sessionStorage.setItem(STATE_KEY, 'playing');
     } catch (error) {
@@ -157,12 +164,14 @@
   });
 
   audio.addEventListener('pause', function () {
-    try {
-      sessionStorage.setItem(STATE_KEY, 'paused');
-    } catch (error) {
-      // Ignore storage errors
+    if (hasEverPlayed) {
+      try {
+        sessionStorage.setItem(STATE_KEY, 'paused');
+      } catch (error) {
+        // Ignore storage errors
+      }
+      persistState();
     }
-    persistState();
 
     updateToggleButton();
   });
@@ -175,11 +184,7 @@
     }
   });
 
-  if (storedState === 'playing') {
-    requestPlay();
-  } else if (storedState === 'paused') {
-    audio.pause();
-  } else {
+  if (storedState !== 'paused') {
     requestPlay();
   }
 
