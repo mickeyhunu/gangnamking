@@ -193,28 +193,71 @@ async function renderShopDetail(req, res, next) {
 
     let shopLocation = null;
     let mapAuthErrorCode = '';
-    try {
-      const locationResult = await fetchShopLocation({
-        address: localizedShop.address || shop.address,
-        district: localizedShop.district || shop.district,
-        region: localizedShop.region || shop.region,
-      });
 
-      if (locationResult && typeof locationResult === 'object') {
-        if (locationResult.location && typeof locationResult.location === 'object') {
-          shopLocation = locationResult.location;
-        } else if (Number.isFinite(locationResult.lat) && Number.isFinite(locationResult.lng)) {
+    const candidateLocations = [localizedShop.location, shop.location];
+    const fallbackAddress = localizedShop.address || shop.address || '';
+
+    for (const candidate of candidateLocations) {
+      if (!candidate || typeof candidate !== 'object') {
+        continue;
+      }
+
+      const candidateLat = Number(candidate.lat);
+      const candidateLng = Number(candidate.lng);
+
+      if (!Number.isFinite(candidateLat) || !Number.isFinite(candidateLng)) {
+        continue;
+      }
+
+      shopLocation = {
+        lat: candidateLat,
+        lng: candidateLng,
+        formattedAddress:
+          typeof candidate.formattedAddress === 'string' && candidate.formattedAddress.trim()
+            ? candidate.formattedAddress.trim()
+            : fallbackAddress,
+        roadAddress:
+          typeof candidate.roadAddress === 'string' && candidate.roadAddress.trim()
+            ? candidate.roadAddress.trim()
+            : null,
+        jibunAddress:
+          typeof candidate.jibunAddress === 'string' && candidate.jibunAddress.trim()
+            ? candidate.jibunAddress.trim()
+            : null,
+        englishAddress:
+          typeof candidate.englishAddress === 'string' && candidate.englishAddress.trim()
+            ? candidate.englishAddress.trim()
+            : null,
+        source: 'precomputed',
+      };
+
+      break;
+    }
+
+    if (!shopLocation) {
+      try {
+        const locationResult = await fetchShopLocation({
+          address: localizedShop.address || shop.address,
+          district: localizedShop.district || shop.district,
+          region: localizedShop.region || shop.region,
+        });
+
+        if (locationResult && typeof locationResult === 'object') {
+          if (locationResult.location && typeof locationResult.location === 'object') {
+            shopLocation = locationResult.location;
+          } else if (Number.isFinite(locationResult.lat) && Number.isFinite(locationResult.lng)) {
+            shopLocation = locationResult;
+          }
+
+          if (locationResult.authError && typeof locationResult.authError === 'object') {
+            mapAuthErrorCode = locationResult.authError.code || '';
+          }
+        } else {
           shopLocation = locationResult;
         }
-
-        if (locationResult.authError && typeof locationResult.authError === 'object') {
-          mapAuthErrorCode = locationResult.authError.code || '';
-        }
-      } else {
-        shopLocation = locationResult;
+      } catch (error) {
+        // Intentionally ignore location lookup errors so the page can render without map data.
       }
-    } catch (error) {
-      // Intentionally ignore location lookup errors so the page can render without map data.
     }
 
     res.render('shop', {

@@ -46,6 +46,25 @@ async function renderShopStaticMap(req, res) {
     let lng = parseNumber(req.query.lng);
 
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      const candidateLocations = [localizedShop.location, shop.location];
+
+      for (const candidate of candidateLocations) {
+        if (!candidate || typeof candidate !== 'object') {
+          continue;
+        }
+
+        const candidateLat = parseNumber(candidate.lat);
+        const candidateLng = parseNumber(candidate.lng);
+
+        if (Number.isFinite(candidateLat) && Number.isFinite(candidateLng)) {
+          lat = candidateLat;
+          lng = candidateLng;
+          break;
+        }
+      }
+    }
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
       const locationResult = await fetchShopLocation({
         address: localizedShop.address || shop.address,
         district: localizedShop.district || shop.district,
