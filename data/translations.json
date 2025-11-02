@@ -10,7 +10,12 @@
       "shopTitleSuffix": " - 룸빵1번지"
     },
     "header": {
-      "languageLabel": "언어"
+      "languageLabel": "언어",
+      "bgmToggle": {
+        "ariaLabel": "배경 음악 토글",
+        "play": "노래 켜기",
+        "pause": "노래 끄기"
+      }
     },
     "quickRegions": {
       "label": "지역 빠른 선택"
@@ -160,7 +165,12 @@
       "shopTitleSuffix": " – Roombbang First"
     },
     "header": {
-      "languageLabel": "Language"
+      "languageLabel": "Language",
+      "bgmToggle": {
+        "ariaLabel": "Toggle background music",
+        "play": "Play music",
+        "pause": "Stop music"
+      }
     },
     "quickRegions": {
       "label": "Quick area selection"
@@ -330,7 +340,12 @@
       "shopTitleSuffix": " – 房房一番地"
     },
     "header": {
-      "languageLabel": "語言"
+      "languageLabel": "語言",
+      "bgmToggle": {
+        "ariaLabel": "切換背景音樂",
+        "play": "播放音樂",
+        "pause": "停止音樂"
+      }
     },
     "quickRegions": {
       "label": "快速選擇地區"
@@ -490,7 +505,12 @@
       "shopTitleSuffix": " – ルンパン一番地"
     },
     "header": {
-      "languageLabel": "言語"
+      "languageLabel": "言語",
+      "bgmToggle": {
+        "ariaLabel": "バックグラウンド音楽の切り替え",
+        "play": "音楽を再生",
+        "pause": "音楽を停止"
+      }
     },
     "quickRegions": {
       "label": "エリアをクイック選択"

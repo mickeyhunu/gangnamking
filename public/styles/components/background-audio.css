@@ -6,3 +6,55 @@
   opacity: 0;
   pointer-events: none;
 }
+
+.bgm-toggle {
+  position: fixed;
+  left: clamp(1rem, 4vw, 2.75rem);
+  top: clamp(1rem, 15vw, 5rem);
+  z-index: 140;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  height: 28px;
+  padding: 0 0.9rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: #fdfcff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.bgm-toggle:hover,
+.bgm-toggle:focus-visible {
+  color: #ff9bd6;
+}
+
+.bgm-toggle:focus-visible {
+  outline: 2px solid rgba(255, 150, 210, 0.8);
+  outline-offset: 4px;
+}
+
+.bgm-toggle__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.bgm-toggle__text {
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .bgm-toggle {
+    left: clamp(0.75rem, 3vw, 1.5rem);
+    top: clamp(0.75rem, 12vw, 4.5rem);
+    font-size: 0.72rem;
+    padding: 0 0.75rem;
+  }
+}
