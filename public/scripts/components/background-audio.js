@@ -203,28 +203,16 @@
     }
   });
 
-  if (storedState === 'paused') {
-    try {
-      audio.autoplay = false;
-    } catch (error) {
-      // Ignore assignment errors
-    }
+  try {
+    audio.autoplay = true;
+  } catch (error) {
+    // Ignore assignment errors
+  }
 
-    if (!audio.paused) {
-      try {
-        audio.pause();
-      } catch (error) {
-        // Ignore pause errors
-      }
-    }
-  } else {
-    try {
-      audio.autoplay = true;
-    } catch (error) {
-      // Ignore assignment errors
-    }
-
+  if (desiredState === 'playing') {
     requestPlay();
+  } else {
+    audio.pause();
   }
 
   updateToggleButton();
