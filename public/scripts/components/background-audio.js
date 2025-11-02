@@ -67,7 +67,7 @@
     storedState = null;
   }
 
-  var hasEverPlayed = storedState === 'playing' || storedState === 'paused';
+  var hasEverPlayed = storedState === 'playing';
 
   function persistState() {
     if (!hasEverPlayed && audio.paused && audio.currentTime === 0) {
@@ -184,13 +184,7 @@
     }
   });
 
-  if (storedState === 'playing') {
-    requestPlay();
-  } else if (storedState === 'paused') {
-    audio.pause();
-  } else {
-    requestPlay();
-  }
+  requestPlay();
 
   updateToggleButton();
 })();
