@@ -712,12 +712,21 @@
           return;
         }
 
-        if (hasPresetCoordinates && renderStaticFallbackMap(presetLat, presetLng, { attemptId })) {
+        const renderedStaticFallback =
+          hasPresetCoordinates &&
+          renderStaticFallbackMap(presetLat, presetLng, {
+            attemptId,
+            markReady: false,
+          });
+
+        if (scheduleNaverRetry()) {
+          if (!renderedStaticFallback) {
+            setMapState('loading');
+          }
           return;
         }
 
-        if (scheduleNaverRetry()) {
-          setMapState('loading');
+        if (renderedStaticFallback) {
           return;
         }
 
