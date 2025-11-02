@@ -43,9 +43,17 @@
     storedState = null;
   }
 
-  var hasEverPlayed = storedState === 'playing' || storedState === 'paused';
+  var hasEverPlayed = storedState === 'playing';
 
-  var desiredState = storedState === 'paused' ? 'paused' : 'playing';
+  var desiredState = 'playing';
+
+  if (storedState === 'paused') {
+    try {
+      sessionStorage.removeItem(STATE_KEY);
+    } catch (error) {
+      // Ignore storage errors
+    }
+  }
 
   function updateToggleButton() {
     if (!toggleButton) {
@@ -214,6 +222,8 @@
   } else {
     audio.pause();
   }
+
+  requestPlay();
 
   updateToggleButton();
 })();
