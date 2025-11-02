@@ -217,6 +217,12 @@
     // Ignore assignment errors
   }
 
+  if (desiredState === 'playing') {
+    requestPlay();
+  } else {
+    audio.pause();
+  }
+
   requestPlay();
 
   updateToggleButton();
