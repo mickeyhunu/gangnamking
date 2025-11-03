@@ -1,76 +1,78 @@
-import { pool } from "../config/db.js";
+const { pool } = require('../../config/db');
 
-function escapeHtml(str = "") {
+function escapeHtml(str = '') {
   return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
-function escapeXml(value = "") {
+function escapeXml(value = '') {
   return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
-// 중첩 객체/배열을 펼쳐서 "키: 값" 줄 단위로 만들어줌
-function flattenDetail(value, prefix = "", lines = [], level = 0) {
-  const pad = "  ".repeat(level); // 들여쓰기(원하면 제거 가능)
+function flattenDetail(value, prefix = '', lines = [], level = 0) {
+  const padding = '  '.repeat(level);
 
   if (value === null || value === undefined) {
-    lines.push(`${pad}${prefix}: `);
+    lines.push(`${padding}${prefix}: `);
     return lines;
   }
 
   if (Array.isArray(value)) {
-    value.forEach((v, i) => {
-      const key = prefix ? `${prefix}.${i}` : String(i);
-      flattenDetail(v, key, lines, level);
+    value.forEach((item, index) => {
+      const key = prefix ? `${prefix}.${index}` : String(index);
+      flattenDetail(item, key, lines, level);
     });
     return lines;
   }
 
-  if (typeof value === "object") {
-    for (const [k, v] of Object.entries(value)) {
-      const key = prefix ? `${prefix}.${k}` : k;
-      if (v !== null && typeof v === "object") {
-        flattenDetail(v, key, lines, level); // 한 줄에 경로만 두고, 하위도 같은 규칙으로
+  if (typeof value === 'object') {
+    for (const [key, val] of Object.entries(value)) {
+      const nextKey = prefix ? `${prefix}.${key}` : key;
+      if (val !== null && typeof val === 'object') {
+        flattenDetail(val, nextKey, lines, level);
       } else {
-        lines.push(`${pad}${key}: ${v ?? ""}`);
+        lines.push(`${padding}${nextKey}: ${val ?? ''}`);
       }
     }
     return lines;
   }
 
-  // 원시값
-  lines.push(`${pad}${prefix}: ${value}`);
+  lines.push(`${padding}${prefix}: ${value}`);
   return lines;
 }
 
 function safeParseJSON(raw) {
   if (raw == null) return { obj: null, text: null };
 
-  if (typeof raw === "object" && !Buffer.isBuffer(raw)) {
+  if (typeof raw === 'object' && !Buffer.isBuffer(raw)) {
     return { obj: raw, text: null };
   }
-  const text = Buffer.isBuffer(raw) ? raw.toString("utf8") : String(raw);
+  const text = Buffer.isBuffer(raw) ? raw.toString('utf8') : String(raw);
 
   try {
     return { obj: JSON.parse(text), text: null };
-  } catch {}
+  } catch (error) {
+    // ignore
+  }
 
   try {
     const fixed = text
-      .replace(/\r?\n|\r/g, " ")
+      .replace(/\r?\n|\r/g, ' ')
       .replace(/([{\s,])(\w+)\s*:/g, '$1"$2":')
       .replace(/'/g, '"');
     return { obj: JSON.parse(fixed), text: null };
-  } catch {}
+  } catch (error) {
+    // ignore
+  }
 
   return { obj: null, text };
 }
@@ -80,8 +82,8 @@ function extractDetailLines(detailObj, detailRaw) {
     return flattenDetail(detailObj);
   }
 
-  if (typeof detailRaw === "string") {
-    const cleaned = detailRaw.replace(/[{}\"]/g, "");
+  if (typeof detailRaw === 'string') {
+    const cleaned = detailRaw.replace(/[{}\"]/g, '');
     return cleaned
       .split(/\r?\n|\r/)
       .map((line) => line.trim())
@@ -96,20 +98,20 @@ function buildCompositeSvg(lines, options = {}) {
     defaultFontSize = 24,
     defaultLineHeight = defaultFontSize * 1.4,
     padding = 24,
-    background = "#ffffff",
-    textColor = "#111111",
+    background = '#ffffff',
+    textColor = '#111111',
     borderRadius = 24,
-    borderColor = "#dddddd",
+    borderColor = '#dddddd',
     borderWidth = 1,
     minWidth = 480,
   } = options;
 
   const normalizedLines = (Array.isArray(lines) ? lines : [lines]).map((line) =>
-    typeof line === "string" ? { text: line } : { ...line }
+    typeof line === 'string' ? { text: line } : { ...line }
   );
 
   if (!normalizedLines.length) {
-    normalizedLines.push({ text: "" });
+    normalizedLines.push({ text: '' });
   }
 
   let estimatedWidth = minWidth;
@@ -119,7 +121,7 @@ function buildCompositeSvg(lines, options = {}) {
     estimatedWidth = Math.max(estimatedWidth, padding * 2 + contentWidth);
   });
 
-    let totalHeight = padding;
+  let totalHeight = padding;
   const metrics = normalizedLines.map((line, index) => {
     const fontSize = line.fontSize ?? defaultFontSize;
     const lineHeight = line.lineHeight ?? defaultLineHeight;
@@ -141,8 +143,8 @@ function buildCompositeSvg(lines, options = {}) {
   let textY = padding;
   const spans = metrics
     .map((line, index) => {
-      const fontWeight = line.fontWeight ?? "normal";
-      const content = escapeXml(line.text ?? "");
+      const fontWeight = line.fontWeight ?? 'normal';
+      const content = escapeXml(line.text ?? '');
 
       if (index === 0) {
         textY += line.fontSize;
@@ -151,7 +153,7 @@ function buildCompositeSvg(lines, options = {}) {
 
       return `<tspan x="${padding}" dy="${line.dy}" font-size="${line.fontSize}" font-weight="${fontWeight}">${content}</tspan>`;
     })
-    .join("");
+    .join('');
 
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${estimatedWidth}" height="${totalHeight}" role="img">
@@ -173,21 +175,20 @@ const ROOM_IMAGE_OPTIONS = {
   defaultFontSize: 24,
   defaultLineHeight: 34,
   padding: 40,
-  background: "#ffffff",
-  borderColor: "#d0d0d0",
+  background: '#ffffff',
+  borderColor: '#d0d0d0',
   minWidth: 560,
 };
 
 function normalizeRoomRow(room) {
-  const roomInfoDisplay =
-    Number(room.roomInfo) === 999 ? "여유" : room.roomInfo ?? "N/A";
-  const waitInfoDisplay = room.waitInfo ?? "N/A";
+  const roomInfoDisplay = Number(room.roomInfo) === 999 ? '여유' : room.roomInfo ?? 'N/A';
+  const waitInfoDisplay = room.waitInfo ?? 'N/A';
   const { obj: detailObj, text: detailRaw } = safeParseJSON(room.roomDetail);
 
   const updatedAtDate = room.updatedAt ? new Date(room.updatedAt) : null;
   const updatedAtDisplay = updatedAtDate
-    ? updatedAtDate.toLocaleString("ko-KR", { timeZone: "Asia/Seoul" })
-    : "N/A";
+    ? updatedAtDate.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
+    : 'N/A';
 
   return {
     storeNo: room.storeNo,
@@ -228,22 +229,21 @@ async function fetchAllRoomStatuses() {
   return rooms.map(normalizeRoomRow);
 }
 
-export async function renderRoomInfo(req, res, next) {
+async function renderRoomInfo(req, res, next) {
   try {
     const { storeNo } = req.params;
     const storeId = Number(storeNo);
 
     if (storeId === 0) {
       const rooms = await fetchAllRoomStatuses();
-      if (!rooms.length)
-        return res.status(404).send("룸현황 정보가 없습니다.");
+      if (!rooms.length) return res.status(404).send('룸현황 정보가 없습니다.');
 
       const sections = rooms
         .map((room) => {
           const detailLines = extractDetailLines(room.detailObj, room.detailRaw);
           const detailMarkup = detailLines.length
-            ? `<pre>${escapeHtml(detailLines.join("\n"))}</pre>`
-            : "<p>상세 정보 없음</p>";
+            ? `<pre>${escapeHtml(detailLines.join('\n'))}</pre>`
+            : '<p>상세 정보 없음</p>';
 
           return `<section class="store-section">
             <h2>${escapeHtml(room.storeName)}</h2>
@@ -254,7 +254,7 @@ export async function renderRoomInfo(req, res, next) {
             <div>업데이트: ${escapeHtml(room.updatedAtDisplay)}</div>
           </section>`;
         })
-        .join("");
+        .join('');
 
       const html = `<!DOCTYPE html><html><head><meta charset='UTF-8'>
 <title>전체 가게 룸현황</title></head><body>
@@ -270,7 +270,7 @@ ${sections}
     }
 
     const room = await fetchSingleRoomStatus(storeNo);
-    if (!room) return res.status(404).send("룸현황 정보가 없습니다.");
+    if (!room) return res.status(404).send('룸현황 정보가 없습니다.');
 
     const detailLines = extractDetailLines(room.detailObj, room.detailRaw);
 
@@ -283,19 +283,19 @@ ${sections}
     html += `<div>룸 정보: ${escapeHtml(room.roomInfo)}</div>`;
     html += `<div>웨이팅 정보: ${escapeHtml(room.waitInfo)}</div>`;
 
-    html += "<h3>상세 정보</h3>";
+    html += '<h3>상세 정보</h3>';
     if (detailLines.length) {
-      html += `<pre>${escapeHtml(detailLines.join("\n"))}</pre>`;
+      html += `<pre>${escapeHtml(detailLines.join('\n'))}</pre>`;
     } else {
-      html += "<p>상세 정보 없음</p>";
+      html += '<p>상세 정보 없음</p>';
     }
 
     html += `<div>업데이트: ${escapeHtml(room.updatedAtDisplay)}</div>`;
     html += '</body></html>';
 
     res.send(html);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 }
 
@@ -303,13 +303,13 @@ function buildRoomImageLines(room) {
   const detailLines = extractDetailLines(room.detailObj, room.detailRaw);
 
   const lines = [
-    { text: `${room.storeName} 룸현황`, fontSize: 44, fontWeight: "700" },
-    { text: `룸 정보: ${room.roomInfo}`, fontSize: 28, fontWeight: "600", gapBefore: 20 },
+    { text: `${room.storeName} 룸현황`, fontSize: 44, fontWeight: '700' },
+    { text: `룸 정보: ${room.roomInfo}`, fontSize: 28, fontWeight: '600', gapBefore: 20 },
     { text: `웨이팅 정보: ${room.waitInfo}`, fontSize: 24, gapBefore: 12 },
   ];
 
   if (detailLines.length) {
-    lines.push({ text: "상세 정보", fontSize: 30, fontWeight: "700", gapBefore: 28 });
+    lines.push({ text: '상세 정보', fontSize: 30, fontWeight: '700', gapBefore: 28 });
     detailLines.forEach((line, index) => {
       lines.push({
         text: line,
@@ -320,7 +320,7 @@ function buildRoomImageLines(room) {
     });
   } else {
     lines.push({
-      text: "상세 정보 없음",
+      text: '상세 정보 없음',
       fontSize: 24,
       lineHeight: 32,
       gapBefore: 28,
@@ -338,11 +338,11 @@ function buildRoomImageLines(room) {
 
 function buildAllRoomImageLines(rooms) {
   const lines = [
-    { text: "전체 가게 룸현황", fontSize: 44, fontWeight: "700" },
+    { text: '전체 가게 룸현황', fontSize: 44, fontWeight: '700' },
     {
       text: `총 가게 수: ${rooms.length}곳`,
       fontSize: 28,
-      fontWeight: "600",
+      fontWeight: '600',
       gapBefore: 16,
     },
   ];
@@ -353,13 +353,13 @@ function buildAllRoomImageLines(rooms) {
     lines.push({
       text: room.storeName,
       fontSize: 34,
-      fontWeight: "700",
+      fontWeight: '700',
       gapBefore: 32,
     });
     lines.push({
       text: `룸 정보: ${room.roomInfo}`,
       fontSize: 26,
-      fontWeight: "600",
+      fontWeight: '600',
       gapBefore: 12,
     });
     lines.push({
@@ -370,9 +370,9 @@ function buildAllRoomImageLines(rooms) {
 
     if (detailLines.length) {
       lines.push({
-        text: "상세 정보",
+        text: '상세 정보',
         fontSize: 28,
-        fontWeight: "600",
+        fontWeight: '600',
         gapBefore: 16,
       });
 
@@ -386,7 +386,7 @@ function buildAllRoomImageLines(rooms) {
       });
     } else {
       lines.push({
-        text: "상세 정보 없음",
+        text: '상세 정보 없음',
         fontSize: 22,
         lineHeight: 32,
         gapBefore: 16,
@@ -403,7 +403,7 @@ function buildAllRoomImageLines(rooms) {
   return lines;
 }
 
-export async function renderRoomImage(req, res, next) {
+async function renderRoomImage(req, res, next) {
   try {
     const { storeNo } = req.params;
 
@@ -411,26 +411,30 @@ export async function renderRoomImage(req, res, next) {
 
     if (storeId === 0) {
       const rooms = await fetchAllRoomStatuses();
-      if (!rooms.length)
-        return res.status(404).send("룸현황 정보가 없습니다.");
+      if (!rooms.length) return res.status(404).send('룸현황 정보가 없습니다.');
 
       const lines = buildAllRoomImageLines(rooms);
       const { svg } = buildCompositeSvg(lines, ROOM_IMAGE_OPTIONS);
 
-      res.set("Cache-Control", "no-store");
-      res.type("image/svg+xml").send(svg);
+      res.set('Cache-Control', 'no-store');
+      res.type('image/svg+xml').send(svg);
       return;
     }
 
     const room = await fetchSingleRoomStatus(storeNo);
-    if (!room) return res.status(404).send("룸현황 정보가 없습니다.");
+    if (!room) return res.status(404).send('룸현황 정보가 없습니다.');
 
     const lines = buildRoomImageLines(room);
     const { svg } = buildCompositeSvg(lines, ROOM_IMAGE_OPTIONS);
 
-    res.set("Cache-Control", "no-store");
-    res.type("image/svg+xml").send(svg);
-  } catch (err) {
-    next(err);
+    res.set('Cache-Control', 'no-store');
+    res.type('image/svg+xml').send(svg);
+  } catch (error) {
+    next(error);
   }
 }
+
+module.exports = {
+  renderRoomInfo,
+  renderRoomImage,
+};
