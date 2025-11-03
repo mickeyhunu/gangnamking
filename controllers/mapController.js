@@ -1,5 +1,5 @@
 const { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } = require('../lib/constants');
-const { localizeShop } = require('../lib/shopUtils');
+const { localizeShop, findShopByIdentifier } = require('../lib/shopUtils');
 const { getShops } = require('../services/dataStore');
 const { fetchShopLocation } = require('../services/naverMapService');
 const { fetchStaticMapImage } = require('../services/naverStaticMapService');
@@ -29,7 +29,7 @@ async function renderShopStaticMap(req, res) {
   try {
     const { id } = req.params;
     const shops = getShops();
-    const shop = shops.find((item) => item.id === id);
+    const { shop, translationLang } = findShopByIdentifier(shops, id);
 
     if (!shop) {
       res.status(404).json({ error: 'Shop not found.' });
@@ -39,7 +39,9 @@ async function renderShopStaticMap(req, res) {
     const requestedLang = typeof req.query.lang === 'string' ? req.query.lang.trim() : '';
     const normalizedLang = SUPPORTED_LANGUAGES.includes(requestedLang)
       ? requestedLang
-      : DEFAULT_LANGUAGE;
+      : SUPPORTED_LANGUAGES.includes(translationLang)
+        ? translationLang
+        : DEFAULT_LANGUAGE;
     const localizedShop = localizeShop(shop, normalizedLang);
 
     let lat = parseNumber(req.query.lat);

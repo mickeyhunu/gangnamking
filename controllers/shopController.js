@@ -1,5 +1,5 @@
 const { DEFAULT_LANGUAGE, LANGUAGE_LOCALES } = require('../lib/constants');
-const { localizeShop } = require('../lib/shopUtils');
+const { localizeShop, findShopByIdentifier } = require('../lib/shopUtils');
 const { getShops } = require('../services/dataStore');
 const { fetchEntriesForStore, fetchEntryWorkerNames } = require('../services/entryService');
 const { fetchShopLocation } = require('../services/naverMapService');
@@ -140,7 +140,7 @@ function renderIndex(req, res) {
 async function renderShopDetail(req, res, next) {
   try {
     const shops = getShops();
-    const shop = shops.find((item) => item.id === req.params.id);
+    const { shop } = findShopByIdentifier(shops, req.params.id);
 
     if (!shop) {
       return next();
