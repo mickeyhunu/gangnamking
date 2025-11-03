@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express');
 const languageMiddleware = require('./middleware/language');
 const shopRoutes = require('./routes/index');
+const entryRoutes = require('./routes/entry');
 const { initializeDataStore } = require('./services/dataStore');
 const { getNaverMapCredentials } = require('./config/naver');
 
@@ -16,12 +17,15 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(languageMiddleware);
 app.use((req, res, next) => {
   const { clientId } = getNaverMapCredentials();
   res.locals.naverMapClientId = clientId || '';
   next();
 });
+app.use('/entry', entryRoutes);
 app.use('/', shopRoutes);
 
 app.use((req, res) => {
