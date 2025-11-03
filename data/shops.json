@@ -797,7 +797,8 @@
     "pricingSchedule": {
       "unitSuffix": "만",
       "tc": 11,
-      "rt": 5,
+      "wt": 5,
+      "rt": 3,
       "guestCounts": [1, 2, 3, 4],
       "defaultSegmentId": "before-9pm",
       "segments": [
@@ -886,7 +887,8 @@
         "pricing": {
           "base": "9点前主台：₩100,000 · 全时段主台：₩130,000",
           "tc": "TC ₩120,000",
-          "rt": "RT ₩50,000"
+          "wt": "WT ₩50,000",
+          "rt": "RT ₩30,000"
         },
         "seoKeywords": [
           "江南DOPAMINE",

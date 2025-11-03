@@ -208,7 +208,7 @@
   });
 
   try {
-    audio.autoplay = desiredState === 'playing';
+    audio.autoplay = true;
   } catch (error) {
     // Ignore assignment errors
   }
