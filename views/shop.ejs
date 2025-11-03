@@ -278,6 +278,7 @@
           const baseCharge = toNumeric(charges.base);
           const tcCharge = toNumeric(charges.tc);
           const rtCharge = toNumeric(charges.rt);
+          const wtCharge = toNumeric(charges.wt);
           const hasCharges = [baseCharge, tcCharge, rtCharge].every(function (value) {
             return Number.isFinite(value);
           });
@@ -296,7 +297,8 @@
                 return acc;
               }
 
-              const totalCharge = baseCharge + rtCharge + (tcCharge * normalized.count);
+              const normalizedWtCharge = Number.isFinite(wtCharge) ? wtCharge : 0;
+              const totalCharge = baseCharge + rtCharge + normalizedWtCharge + (tcCharge * normalized.count);
 
               acc.push({
                 label: normalized.label,
@@ -321,7 +323,7 @@
           }
 
           const meta = block.meta || (hasCharges
-            ? formatMeta(baseCharge, tcCharge, rtCharge, block)
+            ? formatMeta(baseCharge, tcCharge, rtCharge, wtCharge, block)
             : null);
 
           return {
@@ -346,6 +348,7 @@
 
       const scheduleTc = toNumeric(schedule.tc);
       const scheduleRt = toNumeric(schedule.rt);
+      const scheduleWt = toNumeric(schedule.wt);
       const baseGuests = Array.isArray(schedule.guestCounts) && schedule.guestCounts.length
         ? schedule.guestCounts
         : [1, 2, 3, 4];
@@ -360,6 +363,7 @@
         const baseCharge = toNumeric(segment.base);
         const tcCharge = getSegmentCharge(segment.tc, scheduleTc);
         const rtCharge = getSegmentCharge(segment.rt, scheduleRt);
+        const wtCharge = getSegmentCharge(segment.wt, scheduleWt);
 
         if (![baseCharge, tcCharge, rtCharge].every(function (value) { return Number.isFinite(value); })) {
           return acc;
@@ -380,6 +384,7 @@
             base: baseCharge,
             tc: tcCharge,
             rt: rtCharge,
+            wt: Number.isFinite(wtCharge) ? wtCharge : null,
           },
           guests: segmentGuests,
           amount: mergedAmount,
@@ -416,6 +421,7 @@
       const baseCharge = toNumeric(targetSegment.base);
       const tcCharge = getSegmentCharge(targetSegment.tc, schedule.tc);
       const rtCharge = getSegmentCharge(targetSegment.rt, schedule.rt);
+      const wtCharge = getSegmentCharge(targetSegment.wt, schedule.wt);
 
       if (!Number.isFinite(baseCharge)) {
         return null;
@@ -477,6 +483,10 @@
 
       if (Number.isFinite(rtCharge)) {
         formatted.rt = formatAmount(rtCharge, block);
+      }
+
+      if (Number.isFinite(wtCharge)) {
+        formatted.wt = formatAmount(wtCharge, block);
       }
 
       return formatted;
@@ -688,19 +698,33 @@
       return `${resolvedPrefix}${formattedNumber}${resolvedSuffix}`;
     }
 
-    function formatMeta(baseCharge, tcCharge, rtCharge, block) {
+    function formatMeta(baseCharge, tcCharge, rtCharge, wtCharge, block) {
       const metaLabels = block && block.metaLabels ? block.metaLabels : {};
       const baseLabel = metaLabels.base || pricingText.base || '주대';
       const tcLabel = metaLabels.tc || pricingText.tc || 'TC';
       const rtLabel = metaLabels.rt || pricingText.rt || 'RT';
+      const wtLabel = metaLabels.wt || pricingText.wt || 'WT';
       const amountBlock = block && typeof block === 'object'
         ? block
         : {};
       const formattedBase = formatAmount(baseCharge, amountBlock);
       const formattedTc = formatAmount(tcCharge, amountBlock);
       const formattedRt = formatAmount(rtCharge, amountBlock);
+      const formattedWt = Number.isFinite(wtCharge)
+        ? formatAmount(wtCharge, amountBlock)
+        : null;
 
-      return `${baseLabel} ${formattedBase} · ${tcLabel} ${formattedTc} · ${rtLabel} ${formattedRt}`;
+      const metaParts = [
+        `${baseLabel} ${formattedBase}`,
+        `${tcLabel} ${formattedTc}`,
+        `${rtLabel} ${formattedRt}`,
+      ];
+
+      if (formattedWt) {
+        metaParts.push(`${wtLabel} ${formattedWt}`);
+      }
+
+      return metaParts.join(' · ');
     }
 
     function getLocaleForLang(language) {
@@ -816,6 +840,12 @@
               <span class="pricing-highlight__price-label"><%= pricingText.rt || 'RT' %></span>
               <strong class="pricing-highlight__price-value"><%= resolvedPrimaryPricing.rt || '—' %></strong>
             </article>
+            <% if (resolvedPrimaryPricing.wt) { %>
+              <article class="pricing-highlight__price-card">
+                <span class="pricing-highlight__price-label"><%= pricingText.wt || 'WT' %></span>
+                <strong class="pricing-highlight__price-value"><%= resolvedPrimaryPricing.wt %></strong>
+              </article>
+            <% } %>
           </div>
         </div>
       </div>

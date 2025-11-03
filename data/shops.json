@@ -845,82 +845,84 @@
     "image": "/images/shops/1.2.1win/main.png",
     "translations": {
       "en": {
-        "id": "gangnam-dopamine-karaoke-hyperpublic",
-        "name": "Dopamine Hyperpublic",
+        "id": "songpa-win-karaoke",
+        "name": "Win Karaoke",
         "region": "Seoul",
-        "district": "Gangnam-gu",
-        "category": "Hyperpublic",
-        "address": "142-29 Samseong-dong, Gangnam-gu, Seoul",
+        "district": "Songpa-gu",
+        "category": "Karaoke",
+        "address": "1-7 Seokchon-dong, Songpa-gu, Seoul",
         "hours": "Open 24 hours",
-        "description": "Dopamine energizes Samseong-dong nights with upbeat hyperpublic performances and streamlined late-night service.",
+        "description": "Win Karaoke delivers polished Songpa suites with attentive floor staff and concierge-guided reservations for every party size.",
         "highlights": [
-          "Samseong-dong nightlife hub",
-          "Upbeat performance-focused lineup",
-          "Smooth late-night table service"
+          "Prime Seokchon-dong Songpa location",
+          "Private rooms with seamless service",
+          "Concierge-managed booking support"
         ],
         "pricing": {
-          "base": "Before 9 PM Base: ₩100,000 · All-Time Base: ₩130,000",
-          "tc": "TC ₩120,000",
-          "rt": "RT ₩50,000"
-        },
-        "seoKeywords": [
-          "Gangnam Dopamine",
-          "Dopamine hyperpublic",
-          "Samseong shirt room",
-          "Gangnam karaoke"
-        ]
-      },
-      "zh": {
-        "id": "江南-DOPAMINE-卡拉OK-超級公關",
-        "name": "DOPAMINE 超級公關",
-        "region": "首尔",
-        "district": "江南区",
-        "category": "超級公關",
-        "address": "首爾市江南區三成洞 142-29",
-        "hours": "24 小時營業",
-        "description": "DOPAMINE 以活力舞台與流暢服務，點亮三成洞的夜晚。",
-        "highlights": [
-          "三成洞夜生活核心",
-          "活力表演型陣容",
-          "深夜桌邊服務迅速"
-        ],
-        "pricing": {
-          "base": "9点前主台：₩100,000 · 全时段主台：₩130,000",
-          "tc": "TC ₩120,000",
+          "base": "All-Time Base: ₩90,000",
+          "tc": "TC ₩110,000",
           "wt": "WT ₩50,000",
           "rt": "RT ₩30,000"
         },
         "seoKeywords": [
-          "江南DOPAMINE",
-          "DOPAMINE超級公關",
-          "三成襯衫房",
-          "江南卡拉OK"
+          "Songpa Win Karaoke",
+          "Jamsil karaoke lounge",
+          "Songpa concierge karaoke",
+          "Win karaoke Seoul"
+        ]
+      },
+      "zh": {
+        "id": "松坡-WIN-卡拉OK",
+        "name": "WIN 卡拉OK",
+        "region": "首尔",
+        "district": "松坡区",
+        "category": "卡拉OK",
+        "address": "首尔市松坡区石村洞 1-7",
+        "hours": "24 小时营业",
+        "description": "WIN 卡拉OK 坐落於石村洞核心地段，提供細緻包廂服務與專屬禮賓預約支援。",
+        "highlights": [
+          "松坡石村洞核心位置",
+          "細緻包廂與貼心服務",
+          "禮賓式預約支援"
+        ],
+        "pricing": {
+          "base": "全时段主台：₩90,000",
+          "tc": "TC ₩110,000",
+          "wt": "WT ₩50,000",
+          "rt": "RT ₩30,000"
+        },
+        "seoKeywords": [
+          "松坡 WIN 卡拉OK",
+          "蠶室卡拉OK",
+          "松坡禮賓卡拉OK",
+          "首尔 WIN 卡拉OK"
         ]
       },
       "ja": {
-        "id": "江南-ドーパミン-カラオケ-ハイパーパブリック",
-        "name": "ドーパミン ハイパーパブリック",
+        "id": "松坡-ウィン-カラオケ",
+        "name": "ウィン カラオケ",
         "region": "ソウル",
-        "district": "江南区",
-        "category": "ハイパーパブリック",
-        "address": "ソウル特別市 江南区 三成洞 142-29",
+        "district": "松坡区",
+        "category": "カラオケ",
+        "address": "ソウル特別市 松坡区 石村洞 1-7",
         "hours": "24時間営業",
-        "description": "ドーパミンは三成洞の夜を盛り上げる、テンポ感あるパフォーマンスとスムーズな深夜サービスが特徴のハイパーパブリックです。",
+        "description": "ウィン カラオケは石村洞の好立地にあるプライベートルームで、きめ細かなサービスとコンシェルジュ予約サポートを提供します。",
         "highlights": [
-          "三成洞ナイトライフの中心",
-          "テンポの良いパフォーマンス陣容",
-          "深夜のテーブルサービスがスムーズ"
+          "石村洞の好アクセス",
+          "プライベート感あるルームサービス",
+          "コンシェルジュによる予約サポート"
         ],
         "pricing": {
-          "base": "9時前 基本料金：₩100,000 · オールタイム 基本料金：₩130,000",
-          "tc": "TC ₩120,000",
-          "rt": "RT ₩50,000"
+          "base": "オールタイム 基本料金：₩90,000",
+          "tc": "TC ₩110,000",
+          "wt": "WT ₩50,000",
+          "rt": "RT ₩30,000"
         },
         "seoKeywords": [
-          "江南 ドーパミン",
-          "ドーパミン ハイパーパブリック",
-          "三成 シャツルーム",
-          "江南 カラオケ"
+          "松坡 ウィン カラオケ",
+          "蚕室 カラオケ",
+          "松坡 コンシェルジュ カラオケ",
+          "ソウル ウィン カラオケ"
         ]
       }
     },
