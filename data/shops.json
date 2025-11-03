@@ -803,8 +803,8 @@
       "defaultSegmentId": "before-9pm",
       "segments": [
         {
-          "id": "after-9pm",
-          "label": "오후 9시 이후",
+          "id": "all-time",
+          "label": "ALL 타임",
           "base": 9,
           "highlightLabel": {
             "ko": "ALL 타임 주대",
