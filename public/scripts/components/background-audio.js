@@ -48,11 +48,7 @@
   var desiredState = 'playing';
 
   if (storedState === 'paused') {
-    try {
-      sessionStorage.removeItem(STATE_KEY);
-    } catch (error) {
-      // Ignore storage errors
-    }
+    desiredState = 'paused';
   }
 
   function updateToggleButton() {
@@ -212,7 +208,7 @@
   });
 
   try {
-    audio.autoplay = true;
+    audio.autoplay = desiredState === 'playing';
   } catch (error) {
     // Ignore assignment errors
   }
@@ -221,9 +217,6 @@
     requestPlay();
   } else {
     audio.pause();
+    updateToggleButton();
   }
-
-  requestPlay();
-
-  updateToggleButton();
 })();
