@@ -63,7 +63,8 @@
         "title": "요금 안내",
         "base": "주대",
         "tc": "TC",
-        "rt": "RT"
+        "rt": "RT",
+        "wt": "WT"
       },
       "entries": {
         "title": "출근부 현황",
@@ -222,7 +223,8 @@
         "title": "Pricing guide",
         "base": "Base rate",
         "tc": "TC",
-        "rt": "RT"
+        "rt": "RT",
+        "wt": "WT"
       },
       "entries": {
         "title": "Attendance status",
@@ -397,7 +399,8 @@
         "title": "費用指南",
         "base": "包廂費",
         "tc": "TC",
-        "rt": "RT"
+        "rt": "RT",
+        "wt": "WT"
       },
       "entries": {
         "title": "出勤狀態",
@@ -562,7 +565,8 @@
         "title": "料金案内",
         "base": "基本料金",
         "tc": "TC",
-        "rt": "RT"
+        "rt": "RT",
+        "wt": "WT"
       },
       "entries": {
         "title": "出勤状況",
