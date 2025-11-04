@@ -103,12 +103,44 @@ function buildDistrictMap(shops) {
   }, {});
 }
 
-function buildSeoKeywords(shops) {
-  return [
-    ...new Set(
-      shops.flatMap((shop) => (Array.isArray(shop.seoKeywords) ? shop.seoKeywords : []))
-    ),
-  ];
+function buildSeoKeywords(shops, options = {}) {
+  const keywords = new Set();
+
+  shops.forEach((shop) => {
+    if (!shop || typeof shop !== 'object') {
+      return;
+    }
+
+    const shopKeywords = Array.isArray(shop.seoKeywords) ? shop.seoKeywords : [];
+
+    shopKeywords.forEach((keyword) => {
+      if (typeof keyword !== 'string') {
+        return;
+      }
+
+      const normalized = keyword.trim();
+
+      if (normalized) {
+        keywords.add(normalized);
+      }
+    });
+  });
+
+  const extraKeywords = Array.isArray(options.extraKeywords) ? options.extraKeywords : [];
+
+  extraKeywords.forEach((keyword) => {
+    if (typeof keyword !== 'string') {
+      return;
+    }
+
+    const normalized = keyword.trim();
+
+    if (normalized) {
+      keywords.add(normalized);
+    }
+  });
+
+  return [...keywords];
 }
 
 function renderIndex(req, res) {
@@ -123,7 +155,16 @@ function renderIndex(req, res) {
     }))
     .filter((group) => Array.isArray(group.shops) && group.shops.length > 0);
   const districtMap = buildDistrictMap(localizedShops);
-  const seoKeywords = buildSeoKeywords(localizedShops);
+  const translationSeoKeywords =
+    res.locals.t &&
+    res.locals.t.seo &&
+    Array.isArray(res.locals.t.seo.areaKeywords)
+      ? res.locals.t.seo.areaKeywords
+      : [];
+
+  const seoKeywords = buildSeoKeywords(localizedShops, {
+    extraKeywords: translationSeoKeywords,
+  });
 
   res.render('index', {
     shops: localizedShops,
