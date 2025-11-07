@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
-const COMMUNITY_CONTACT_TEXT = '강남 하퍼 010-8031-9616';
+const COMMUNITY_CONTACT_TEXT = '강남 하퍼 010-5733-8710';
 
 function getQrDataUrl() {
   const imagePath = path.resolve(process.cwd(), 'public/images/community-qr.png');
