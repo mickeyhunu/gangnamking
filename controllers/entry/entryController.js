@@ -1,6 +1,7 @@
 const { pool } = require('../../config/db');
 const fs = require('fs');
 const path = require('path');
+const { getContentProtectionMarkup } = require('./contentProtection');
 
 const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
 const COMMUNITY_CONTACT_TEXT = '강남 하퍼 010-5733-8710';
@@ -652,6 +653,7 @@ async function renderStoreEntries(req, res, next) {
       if (!storeDataList.length) return res.status(404).send('가게를 찾을 수 없습니다.');
 
       const totalEntries = storeDataList.reduce((sum, data) => sum + data.entries.length, 0);
+      const protectionMarkup = getContentProtectionMarkup();
 
       const sections = storeDataList
         .map(({ store, entries, top5 }) => {
@@ -687,6 +689,7 @@ async function renderStoreEntries(req, res, next) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>전체 가게 엔트리</title>
+    ${protectionMarkup}
   </head>
   <body>
       <header class="community-link">강남의 밤 소통방 "강밤" : "<a href="https://open.kakao.com/o/gALpMlRg" target="_blank" rel="noopener noreferrer">https://open.kakao.com/o/gALpMlRg</a>"</header>
@@ -718,12 +721,14 @@ async function renderStoreEntries(req, res, next) {
       ? `<ol class="top-list">${buildTop5Html(top5)}</ol>`
       : '<p class="empty">추천 데이터가 없습니다.</p>';
 
+    const protectionMarkup = getContentProtectionMarkup();
     const html = `<!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(store.storeName)} 엔트리</title>
+    ${protectionMarkup}
   </head>
   <body>
       <header class="community-link">강남의 밤 소통방 "강밤" : "<a href="https://open.kakao.com/o/gALpMlRg" target="_blank" rel="noopener noreferrer">https://open.kakao.com/o/gALpMlRg</a>"</header>

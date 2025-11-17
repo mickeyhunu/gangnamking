@@ -1,4 +1,5 @@
 const { pool } = require('../../config/db');
+const { getContentProtectionMarkup } = require('./contentProtection');
 
 function escapeHtml(str = '') {
   return String(str)
@@ -256,8 +257,9 @@ async function renderRoomInfo(req, res, next) {
         })
         .join('');
 
+      const protectionMarkup = getContentProtectionMarkup();
       const html = `<!DOCTYPE html><html><head><meta charset='UTF-8'>
-<title>전체 가게 룸현황</title></head><body>
+<title>전체 가게 룸현황</title>${protectionMarkup}</head><body>
 <header class="community-link">강남의 밤 소통방 "강밤" : "<a href="https://open.kakao.com/o/gALpMlRg" target="_blank" rel="noopener noreferrer">https://open.kakao.com/o/gALpMlRg</a>"</header>
 <h1>전체 가게 룸현황</h1>
 <a href="/entry/home">← 가게 목록으로</a><br/><br/>
@@ -274,8 +276,9 @@ ${sections}
 
     const detailLines = extractDetailLines(room.detailObj, room.detailRaw);
 
+    const protectionMarkup = getContentProtectionMarkup();
     let html = "<!DOCTYPE html><html><head><meta charset='UTF-8'>";
-    html += `<title>${escapeHtml(room.storeName)} 룸현황</title></head><body>`;
+    html += `<title>${escapeHtml(room.storeName)} 룸현황</title>${protectionMarkup}</head><body>`;
     html += '<header class="community-link">강남의 밤 소통방 "강밤" : "<a href="https://open.kakao.com/o/gALpMlRg" target="_blank" rel="noopener noreferrer">https://open.kakao.com/o/gALpMlRg</a>"</header>';
     html += `<h1>${escapeHtml(room.storeName)} 룸현황</h1>`;
     html += `<a href="/entry/home">← 가게 목록으로</a><br/><br/>`;
