@@ -1,4 +1,5 @@
 const { pool } = require('../../config/db');
+const { getContentProtectionMarkup } = require('./contentProtection');
 
 async function renderHome(req, res, next) {
   try {
@@ -8,7 +9,11 @@ async function renderHome(req, res, next) {
         ORDER BY storeNo ASC`
     );
 
-    let html = "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>가게 목록</title></head><body>";
+    const protectionMarkup = getContentProtectionMarkup();
+    let html =
+      "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>가게 목록</title>" +
+      protectionMarkup +
+      '</head><body>';
     html += '<header class="community-link">강남의 밤 소통방 "강밤" : "<a href="https://open.kakao.com/o/gALpMlRg" target="_blank" rel="noopener noreferrer">https://open.kakao.com/o/gALpMlRg</a>"</header>';
     html += '<h1>가게 목록</h1><ul>';
     stores.forEach((store) => {
