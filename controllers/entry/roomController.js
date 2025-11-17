@@ -1,5 +1,5 @@
 const { pool } = require('../../config/db');
-const { getContentProtectionMarkup } = require('./contentProtection');
+const { getContentProtectionMarkup, getSvgContentProtectionElements } = require('./contentProtection');
 
 function escapeHtml(str = '') {
   return String(str)
@@ -156,17 +156,22 @@ function buildCompositeSvg(lines, options = {}) {
     })
     .join('');
 
+  const { defsMarkup: svgProtectionDefs, scriptMarkup: svgProtectionScript } =
+    getSvgContentProtectionElements();
+
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${estimatedWidth}" height="${totalHeight}" role="img">
   <defs>
     <style>
       text { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; fill: ${textColor}; }
     </style>
+    ${svgProtectionDefs}
   </defs>
   <rect x="0" y="0" rx="${borderRadius}" ry="${borderRadius}" width="${estimatedWidth}" height="${totalHeight}" fill="${background}" stroke="${borderColor}" stroke-width="${borderWidth}" />
   <text x="${padding}" y="${padding}" font-size="${defaultFontSize}" xml:space="preserve">
     ${spans}
   </text>
+  ${svgProtectionScript}
 </svg>`;
 
   return { svg, width: estimatedWidth, height: totalHeight };

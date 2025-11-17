@@ -1,7 +1,7 @@
 const { pool } = require('../../config/db');
 const fs = require('fs');
 const path = require('path');
-const { getContentProtectionMarkup } = require('./contentProtection');
+const { getContentProtectionMarkup, getSvgContentProtectionElements } = require('./contentProtection');
 
 const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
 const COMMUNITY_CONTACT_TEXT = '강남 하퍼 010-5733-8710';
@@ -355,6 +355,8 @@ function renderCompositeSvg(layout, extras = {}) {
   } = layout;
 
   const { overlays = [], overlaysAboveText = [], defs = [] } = extras;
+  const { defsMarkup: svgProtectionDefs, scriptMarkup: svgProtectionScript } =
+    getSvgContentProtectionElements();
 
   const spans = metrics
     .map((line, index) => {
@@ -403,6 +405,7 @@ function renderCompositeSvg(layout, extras = {}) {
 
   const defsContent = [
     `<style>text{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;fill:${textColor};}</style>`,
+    svgProtectionDefs,
     ...defs,
   ].join('\n');
 
@@ -416,6 +419,7 @@ function renderCompositeSvg(layout, extras = {}) {
     ${spans}
   </text>
   ${overlaysAboveText.join('\n')}
+  ${svgProtectionScript}
 </svg>`;
   return svg;
 }
