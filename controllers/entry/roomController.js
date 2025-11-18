@@ -1,14 +1,18 @@
 const { pool } = require('../../config/db');
 const { getContentProtectionMarkup, getSvgContentProtectionElements } = require('./contentProtection');
 
-function escapeHtml(str = '') {
-  return String(str)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
-}
+const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
+const ROOM_PAGE_TEXT = {
+  loading: '룸 정보를 불러오는 중입니다...',
+  error: '룸 정보를 가져오지 못했습니다. 잠시 후 다시 시도해주세요.',
+  detailEmpty: '상세 정보 없음',
+  empty: '등록된 룸현황 정보가 없습니다.',
+  roomLabel: '룸 정보',
+  waitLabel: '웨이팅 정보',
+  updatedLabel: '업데이트',
+  summaryAll: '총 가게 수',
+  summarySingle: '룸현황',
+};
 
 function escapeXml(value = '') {
   return String(value)
@@ -208,6 +212,20 @@ function normalizeRoomRow(room) {
   };
 }
 
+function serializeRoomForPayload(room) {
+  const detailLines = extractDetailLines(room.detailObj, room.detailRaw);
+
+  return {
+    storeNo: room.storeNo,
+    storeName: room.storeName,
+    roomInfo: room.roomInfo,
+    waitInfo: room.waitInfo,
+    updatedAt: room.updatedAt,
+    updatedAtDisplay: room.updatedAtDisplay,
+    detailLines,
+  };
+}
+
 async function fetchSingleRoomStatus(storeNo) {
   const [[room]] = await pool.query(
     `SELECT r.storeNo, s.storeName, r.roomInfo, r.waitInfo, r.roomDetail, r.updatedAt
@@ -235,73 +253,93 @@ async function fetchAllRoomStatuses() {
   return rooms.map(normalizeRoomRow);
 }
 
+async function renderRoomInfoData(req, res, next) {
+  try {
+    const { storeNo } = req.params;
+    const storeId = Number(storeNo);
+
+    if (Number.isNaN(storeId)) {
+      res.status(400).json({ error: '잘못된 매장 번호입니다.' });
+      return;
+    }
+
+    const isAllStores = storeId === 0;
+    if (isAllStores) {
+      const rooms = await fetchAllRoomStatuses();
+      if (!rooms.length) {
+        res.status(404).json({ error: '룸현황 정보가 없습니다.' });
+        return;
+      }
+
+      res.set('Cache-Control', 'no-store');
+      res.json({
+        mode: 'all',
+        totalStores: rooms.length,
+        rooms: rooms.map(serializeRoomForPayload),
+      });
+      return;
+    }
+
+    const room = await fetchSingleRoomStatus(storeId);
+    if (!room) {
+      res.status(404).json({ error: '룸현황 정보가 없습니다.' });
+      return;
+    }
+
+    res.set('Cache-Control', 'no-store');
+    res.json({
+      mode: 'single',
+      totalStores: 1,
+      rooms: [serializeRoomForPayload(room)],
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function renderRoomInfo(req, res, next) {
   try {
     const { storeNo } = req.params;
     const storeId = Number(storeNo);
 
-    if (storeId === 0) {
-      const rooms = await fetchAllRoomStatuses();
-      if (!rooms.length) return res.status(404).send('룸현황 정보가 없습니다.');
-
-      const sections = rooms
-        .map((room) => {
-          const detailLines = extractDetailLines(room.detailObj, room.detailRaw);
-          const detailMarkup = detailLines.length
-            ? `<pre>${escapeHtml(detailLines.join('\n'))}</pre>`
-            : '<p>상세 정보 없음</p>';
-
-          return `<section class="store-section">
-            <h2>${escapeHtml(room.storeName)}</h2>
-            <div>룸 정보: ${escapeHtml(room.roomInfo)}</div>
-            <div>웨이팅 정보: ${escapeHtml(room.waitInfo)}</div>
-            <h3>상세 정보</h3>
-            ${detailMarkup}
-            <div>업데이트: ${escapeHtml(room.updatedAtDisplay)}</div>
-          </section>`;
-        })
-        .join('');
-
-      const protectionMarkup = getContentProtectionMarkup();
-      const html = `<!DOCTYPE html><html><head><meta charset='UTF-8'>
-<title>전체 가게 룸현황</title>${protectionMarkup}</head><body>
-<header class="community-link">강남의 밤 소통방 "강밤" : "<a href="https://open.kakao.com/o/gALpMlRg" target="_blank" rel="noopener noreferrer">https://open.kakao.com/o/gALpMlRg</a>"</header>
-<h1>전체 가게 룸현황</h1>
-<a href="/entry/home">← 가게 목록으로</a><br/><br/>
-<p>총 가게 수: <strong>${rooms.length}</strong>곳</p>
-${sections}
-</body></html>`;
-
-      res.send(html);
+    if (Number.isNaN(storeId)) {
+      res.status(400).send('잘못된 매장 번호입니다.');
       return;
     }
 
-    const room = await fetchSingleRoomStatus(storeNo);
-    if (!room) return res.status(404).send('룸현황 정보가 없습니다.');
+    const isAllStores = storeId === 0;
+    let pageTitle = '전체 가게 룸현황';
+    let pageHeading = '전체 가게 룸현황';
 
-    const detailLines = extractDetailLines(room.detailObj, room.detailRaw);
+    if (!isAllStores) {
+      const room = await fetchSingleRoomStatus(storeId);
+      if (!room) {
+        res.status(404).send('룸현황 정보가 없습니다.');
+        return;
+      }
 
-    const protectionMarkup = getContentProtectionMarkup();
-    let html = "<!DOCTYPE html><html><head><meta charset='UTF-8'>";
-    html += `<title>${escapeHtml(room.storeName)} 룸현황</title>${protectionMarkup}</head><body>`;
-    html += '<header class="community-link">강남의 밤 소통방 "강밤" : "<a href="https://open.kakao.com/o/gALpMlRg" target="_blank" rel="noopener noreferrer">https://open.kakao.com/o/gALpMlRg</a>"</header>';
-    html += `<h1>${escapeHtml(room.storeName)} 룸현황</h1>`;
-    html += `<a href="/entry/home">← 가게 목록으로</a><br/><br/>`;
-
-    html += `<div>룸 정보: ${escapeHtml(room.roomInfo)}</div>`;
-    html += `<div>웨이팅 정보: ${escapeHtml(room.waitInfo)}</div>`;
-
-    html += '<h3>상세 정보</h3>';
-    if (detailLines.length) {
-      html += `<pre>${escapeHtml(detailLines.join('\n'))}</pre>`;
-    } else {
-      html += '<p>상세 정보 없음</p>';
+      pageTitle = `${room.storeName} 룸현황`;
+      pageHeading = `${room.storeName} 룸현황`;
     }
 
-    html += `<div>업데이트: ${escapeHtml(room.updatedAtDisplay)}</div>`;
-    html += '</body></html>';
-
-    res.send(html);
+    res.render('room-map', {
+      pageTitle,
+      pageHeading,
+      isAllStores,
+      dataEndpoint: `/entry/roommap/${storeNo}/data.json`,
+      entryLocale: 'ko',
+      communityLink: COMMUNITY_CHAT_LINK,
+      contentProtectionMarkup: getContentProtectionMarkup(),
+      loadingText: ROOM_PAGE_TEXT.loading,
+      errorText: ROOM_PAGE_TEXT.error,
+      emptyText: ROOM_PAGE_TEXT.empty,
+      detailEmptyText: ROOM_PAGE_TEXT.detailEmpty,
+      roomLabel: ROOM_PAGE_TEXT.roomLabel,
+      waitLabel: ROOM_PAGE_TEXT.waitLabel,
+      updatedLabel: ROOM_PAGE_TEXT.updatedLabel,
+      summaryAllLabel: ROOM_PAGE_TEXT.summaryAll,
+      summarySingleLabel: ROOM_PAGE_TEXT.summarySingle,
+    });
   } catch (error) {
     next(error);
   }
@@ -444,5 +482,6 @@ async function renderRoomImage(req, res, next) {
 
 module.exports = {
   renderRoomInfo,
+  renderRoomInfoData,
   renderRoomImage,
 };
