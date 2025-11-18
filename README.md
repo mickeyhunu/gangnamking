@@ -13,6 +13,13 @@ npm run dev
 
 서버는 기본적으로 `http://localhost:3000` 에서 실행됩니다.
 
+## 로깅과 차단
+
+- 모든 HTTP 요청은 `data/request_logs.jsonl` 파일에 JSON Lines 형태로 저장됩니다. 각 라인은 요청 시각, IP, User-Agent,
+  HTTP 메서드/경로, 동일 IP에서 반복 호출되었는지를 포함하므로 무단 크롤링 근거 자료로 보관할 수 있습니다.
+- 무단 크롤링으로 판별된 IP는 `data/blocked_ips.json` 파일(문자열 배열 형태)에 추가하면 됩니다. 서버가 파일을 자동으로 생성하고
+  로드하며, 차단된 IP에서 요청이 들어오면 403 응답으로 즉시 거부됩니다.
+
 ## 데이터 구조
 
 `data/shops.json` 파일은 다음과 같은 구조의 배열입니다.
