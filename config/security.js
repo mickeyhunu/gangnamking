@@ -3,6 +3,15 @@ const path = require('path');
 
 const BLOCKLIST_FILE = path.join(__dirname, '..', 'data', 'blocked_ips.json');
 
+function persistBlockedIps(ips) {
+  ensureBlocklistFile();
+  fs.writeFileSync(BLOCKLIST_FILE, JSON.stringify(ips, null, 2));
+}
+
+function normalizeIp(ip) {
+  return String(ip || '').trim();
+}
+
 function ensureBlocklistFile() {
   const dir = path.dirname(BLOCKLIST_FILE);
   if (!fs.existsSync(dir)) {
@@ -43,7 +52,27 @@ function reloadBlockedIps() {
 }
 
 function isIpBlocked(ip) {
-  return blockedIps.includes(ip);
+  return blockedIps.includes(normalizeIp(ip));
+}
+
+function addBlockedIp(ip, reason = '') {
+  const normalizedIp = normalizeIp(ip);
+  if (!normalizedIp) {
+    return false;
+  }
+
+  if (blockedIps.includes(normalizedIp)) {
+    return false;
+  }
+
+  blockedIps = [...blockedIps, normalizedIp];
+  persistBlockedIps(blockedIps);
+  if (reason) {
+    console.warn(`[security] IP ${normalizedIp} added to block list. Reason: ${reason}`);
+  } else {
+    console.warn(`[security] IP ${normalizedIp} added to block list.`);
+  }
+  return true;
 }
 
 module.exports = {
@@ -51,4 +80,5 @@ module.exports = {
   getBlockedIps,
   reloadBlockedIps,
   isIpBlocked,
+  addBlockedIp,
 };
