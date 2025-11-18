@@ -5,11 +5,52 @@ const BLOCKLIST_FILE = path.join(__dirname, '..', 'data', 'blocked_ips.json');
 
 function persistBlockedIps(ips) {
   ensureBlocklistFile();
-  fs.writeFileSync(BLOCKLIST_FILE, JSON.stringify(ips, null, 2));
+  fs.writeFileSync(BLOCKLIST_FILE, `${JSON.stringify(ips, null, 2)}\n`);
 }
 
 function normalizeIp(ip) {
   return String(ip || '').trim();
+}
+
+function escapeRegex(value) {
+  const specials = new Set(['.', '*', '+', '?', '^', '$', '{', '}', '(', ')', '|', '[', ']', '\\']);
+  return value
+    .split('')
+    .map((char) => (specials.has(char) ? `\\${char}` : char))
+    .join('');
+}
+
+const wildcardRegexCache = new Map();
+
+function wildcardToRegex(pattern) {
+  let cached = wildcardRegexCache.get(pattern);
+  if (cached) {
+    return cached;
+  }
+
+  const escaped = pattern.split('*').map((segment) => escapeRegex(segment)).join('.*');
+  cached = new RegExp(`^${escaped}$`);
+  wildcardRegexCache.set(pattern, cached);
+  return cached;
+}
+
+function matchesBlockEntry(entry, ip) {
+  const normalizedEntry = normalizeIp(entry);
+  const normalizedIp = normalizeIp(ip);
+
+  if (!normalizedEntry || !normalizedIp) {
+    return false;
+  }
+
+  if (normalizedEntry.includes('*')) {
+    return wildcardToRegex(normalizedEntry).test(normalizedIp);
+  }
+
+  if (normalizedEntry.endsWith('.')) {
+    return normalizedIp.startsWith(normalizedEntry);
+  }
+
+  return normalizedIp === normalizedEntry;
 }
 
 function ensureBlocklistFile() {
@@ -19,7 +60,7 @@ function ensureBlocklistFile() {
   }
 
   if (!fs.existsSync(BLOCKLIST_FILE)) {
-    fs.writeFileSync(BLOCKLIST_FILE, JSON.stringify([], null, 2));
+    fs.writeFileSync(BLOCKLIST_FILE, `${JSON.stringify([], null, 2)}\n`);
   }
 }
 
@@ -52,7 +93,7 @@ function reloadBlockedIps() {
 }
 
 function isIpBlocked(ip) {
-  return blockedIps.includes(normalizeIp(ip));
+  return blockedIps.some((entry) => matchesBlockEntry(entry, ip));
 }
 
 function addBlockedIp(ip, reason = '') {
@@ -61,7 +102,7 @@ function addBlockedIp(ip, reason = '') {
     return false;
   }
 
-  if (blockedIps.includes(normalizedIp)) {
+  if (blockedIps.some((entry) => normalizeIp(entry) === normalizedIp)) {
     return false;
   }
 

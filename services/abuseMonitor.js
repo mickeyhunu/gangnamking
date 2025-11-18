@@ -1,9 +1,9 @@
 const { addBlockedIp } = require('../config/security');
 
 const RATE_LIMIT_WINDOW_MS = Number(process.env.ABUSE_RATE_LIMIT_WINDOW_MS) || 60 * 1000;
-const RATE_LIMIT_MAX_REQUESTS = Number(process.env.ABUSE_RATE_LIMIT_MAX_REQUESTS) || 90;
-const AUTO_BLOCK_THRESHOLD = Number(process.env.ABUSE_AUTO_BLOCK_THRESHOLD) || 5;
-const AUTO_BLOCK_WINDOW_MS = Number(process.env.ABUSE_AUTO_BLOCK_WINDOW_MS) || 10 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = Number(process.env.ABUSE_RATE_LIMIT_MAX_REQUESTS) || 30;
+const AUTO_BLOCK_THRESHOLD = Number(process.env.ABUSE_AUTO_BLOCK_THRESHOLD) || 3;
+const AUTO_BLOCK_WINDOW_MS = Number(process.env.ABUSE_AUTO_BLOCK_WINDOW_MS) || 5 * 60 * 1000;
 
 const stats = new Map();
 
