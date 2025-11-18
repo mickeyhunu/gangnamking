@@ -1,4 +1,7 @@
 User-agent: *
 Disallow: /shops/*/entries.json
+Disallow: /entry/entrymap/
+Disallow: /entry/entrymap/*/data.json
+Disallow: /entry/entrymap/*/entryImage
 Allow: /
 Sitemap: https://roombbang1st.com/sitemap.xml
