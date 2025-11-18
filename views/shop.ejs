@@ -1,6 +1,7 @@
 <%
   const fallbackAltSuffix = (t.shop && t.shop.galleryAltFallback) || '분위기';
   const fallbackAltText = shop.imageAlt || `${shop.name} ${fallbackAltSuffix}`;
+  const resolvedLang = typeof lang === 'string' && lang ? lang : 'ko';
   function normalizeImageEntry(image) {
     if (!image) {
       return null;
@@ -69,11 +70,14 @@
   const entriesTopListTitle = entriesText.topListTitle || '오늘의 인기 멤버 TOP 5';
   const entriesTopListEmptyText = entriesText.topListEmpty || '멤버 데이터가 없습니다.';
   const entriesTopListScoreLabel = entriesText.topListScoreLabel || '합계';
+  const entriesLoadingText = entriesText.loading || '출근부 정보를 불러오는 중입니다...';
+  const entriesErrorText = entriesText.error || '출근부 정보를 가져오지 못했습니다.';
   const entryOverview = entrySummary && typeof entrySummary === 'object' ? entrySummary : {};
   const showEntrySection = Boolean(entryOverview.enabled);
-  const workerNameRows = Array.isArray(entryOverview.workerRows) ? entryOverview.workerRows : [];
-  const hasWorkerNameRows = Boolean(entryOverview.hasWorkerRows);
-  const topEntryList = Array.isArray(entryOverview.topEntries) ? entryOverview.topEntries : [];
+  const entryLocale = resolvedLang;
+  const entryDataEndpoint = showEntrySection
+    ? `/shops/${encodeURIComponent(shop.id)}/entries.json`
+    : '';
   const overviewNavLabel = (t.shop && t.shop.nav && t.shop.nav.overview)
     || pricingHighlight.badge
     || '업소 정보';
@@ -185,7 +189,7 @@
   </section>
 
   <%
-    const activeLang = typeof lang === 'string' && lang ? lang : 'ko';
+    const activeLang = resolvedLang;
 
     const defaultPricingTableData = [
       {
@@ -880,50 +884,48 @@
     </div>
   </section>
 
-  <% if (showEntrySection) { %>
-    <section class="section detail-section store-entries" id="shop-entries">
+  <% if (showEntrySection && entryDataEndpoint) { %>
+    <section
+      class="section detail-section store-entries"
+      id="shop-entries"
+      data-entry-endpoint="<%= entryDataEndpoint %>"
+      data-entry-loading-text="<%= entriesLoadingText %>"
+      data-entry-error-text="<%= entriesErrorText %>"
+      data-entry-locale="<%= entryLocale %>"
+      data-entry-top-score-label="<%= entriesTopListScoreLabel %>"
+    >
       <div class="container detail-section__grid">
         <div class="detail-card detail-card--full">
           <div class="store-entry-header">
             <h2 class="store-entry-header__title"><%= entriesTitleText %></h2>
             <p class="store-entry-summary">
               <span class="store-entry-summary__label"><%= entriesSummaryLabel %></span>
-              <strong class="store-entry-summary__value"><%= entryOverview.totalCount || 0 %></strong>
+              <strong class="store-entry-summary__value" data-entry-total>—</strong>
               <span class="store-entry-summary__unit"><%= entriesSummaryUnit %></span>
             </p>
           </div>
           <div class="store-entry-overview">
-            <div class="store-entry-workers">
+            <div class="store-entry-workers" data-entry-workers>
               <h3 class="store-entry-workers__title"><%= entriesWorkerListTitle %></h3>
-              <% if (hasWorkerNameRows) { %>
-                <ul class="store-entry-workers__list">
-                  <% workerNameRows.forEach(function (row) { %>
-                    <li class="store-entry-workers__item">
-                      <% row.forEach(function (name) { %>
-                        <span class="store-entry-workers__name"><%= name %></span>
-                      <% }); %>
-                    </li>
-                  <% }); %>
-                </ul>
-              <% } else { %>
-                <p class="store-entries__empty"><%= entriesEmptyText %></p>
-              <% } %>
+              <ul class="store-entry-workers__list" data-entry-worker-list hidden></ul>
+              <p
+                class="store-entries__empty"
+                data-entry-empty-message
+                data-entry-empty-default="<%= entriesEmptyText %>"
+              >
+                <%= entriesLoadingText %>
+              </p>
             </div>
-            <div class="store-entry-top">
+            <div class="store-entry-top" data-entry-top>
               <h3 class="store-entry-top__title"><%= entriesTopListTitle %></h3>
-              <% if (topEntryList.length) { %>
-                <ol class="store-entry-top__list">
-                  <% topEntryList.forEach(function (item, index) { %>
-                    <li class="store-entry-top__item">
-                      <span class="store-entry-top__rank"><%= index + 1 %>.</span>
-                      <span class="store-entry-top__name"><%= item.workerName %></span>
-                      <span class="store-entry-top__score"><%= entriesTopListScoreLabel %> <strong><%= item.displayScore %></strong></span>
-                    </li>
-                  <% }); %>
-                </ol>
-              <% } else { %>
-                <p class="store-entries__empty store-entry-top__empty"><%= entriesTopListEmptyText %></p>
-              <% } %>
+              <ol class="store-entry-top__list" data-entry-top-list hidden></ol>
+              <p
+                class="store-entries__empty store-entry-top__empty"
+                data-entry-top-empty
+                data-entry-top-empty-default="<%= entriesTopListEmptyText %>"
+              >
+                <%= entriesLoadingText %>
+              </p>
               <div class="store-entry-top__cta">
                 <a
                   class="store-entry-top__cta-link"

@@ -74,7 +74,9 @@
         "empty": "등록된 출근부 정보가 없습니다.",
         "topListTitle": "오늘의 인기 멤버 TOP 5",
         "topListEmpty": "멤버 데이터가 없습니다.",
-        "topListScoreLabel": "합계"
+        "topListScoreLabel": "합계",
+        "loading": "출근부 정보를 불러오는 중입니다...",
+        "error": "출근부 정보를 가져오지 못했습니다."
       },
       "pricingHighlight": {
         "badge": "업소 정보",
@@ -280,7 +282,9 @@
         "empty": "No attendance information has been registered.",
         "topListTitle": "Top 5 recommended hosts",
         "topListEmpty": "No recommendation data is available.",
-        "topListScoreLabel": "Total"
+        "topListScoreLabel": "Total",
+        "loading": "Loading attendance information...",
+        "error": "We couldn't load the attendance board. Please try again."
       },
       "pricingHighlight": {
         "badge": "Venue info",
@@ -502,7 +506,9 @@
         "empty": "尚未登錄出勤資訊。",
         "topListTitle": "推薦小姐 TOP 5",
         "topListEmpty": "尚無推薦資料。",
-        "topListScoreLabel": "總分"
+        "topListScoreLabel": "總分",
+        "loading": "正在載入出勤資訊...",
+        "error": "無法取得出勤資訊，請稍後再試。"
       },
       "pricingHighlight": {
         "badge": "店家資訊",
@@ -714,7 +720,9 @@
         "empty": "登録された出勤情報はありません。",
         "topListTitle": "おすすめキャスト TOP 5",
         "topListEmpty": "おすすめデータはありません。",
-        "topListScoreLabel": "合計"
+        "topListScoreLabel": "合計",
+        "loading": "出勤情報を読み込み中です…",
+        "error": "出勤情報を取得できませんでした。時間をおいて再度お試しください。"
       },
       "pricingHighlight": {
         "badge": "店舗情報",
