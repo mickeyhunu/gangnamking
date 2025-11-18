@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= pageTitle %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/room-map.css" />
+    <%- contentProtectionMarkup %>
+  </head>
+  <body>
+    <header class="room-map-hero">
+      <div class="room-map-hero__content">
+        <p class="room-map-hero__lead">강남의 밤 소통방 "강밤"</p>
+        <a class="room-map-hero__link" href="<%= communityLink %>" target="_blank" rel="noopener noreferrer">
+          <%= communityLink %>
+        </a>
+      </div>
+    </header>
+    <main class="room-map-page">
+      <header class="room-map-page__header">
+        <h1 class="room-map-page__title"><%= pageHeading %></h1>
+        <a class="room-map-page__back" href="/entry/home">← 가게 목록으로</a>
+      </header>
+      <section
+        class="room-map"
+        data-room-map
+        data-room-mode="<%= isAllStores ? 'all' : 'single' %>"
+        data-room-endpoint="<%= dataEndpoint %>"
+        data-room-locale="<%= entryLocale %>"
+        data-room-loading-text="<%= loadingText %>"
+        data-room-error-text="<%= errorText %>"
+        data-room-empty-text="<%= emptyText %>"
+        data-room-detail-empty="<%= detailEmptyText %>"
+        data-room-room-label="<%= roomLabel %>"
+        data-room-wait-label="<%= waitLabel %>"
+        data-room-updated-label="<%= updatedLabel %>"
+        data-room-summary-all-label="<%= summaryAllLabel %>"
+        data-room-summary-single-label="<%= summarySingleLabel %>"
+      >
+        <p class="room-map__status room-map__status--loading" data-room-loading-message>
+          <%= loadingText %>
+        </p>
+        <p class="room-map__status room-map__status--error" data-room-error-message hidden>
+          <%= errorText %>
+        </p>
+        <p class="room-map__summary" data-room-summary hidden></p>
+        <div class="room-map__stores" data-room-stores hidden></div>
+      </section>
+    </main>
+    <script src="/scripts/pages/room-map.js" defer></script>
+  </body>
+</html>
