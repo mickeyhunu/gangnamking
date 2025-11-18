@@ -72,7 +72,7 @@
   const entryOverview = entrySummary && typeof entrySummary === 'object' ? entrySummary : {};
   const showEntrySection = Boolean(entryOverview.enabled);
   const workerNameRows = Array.isArray(entryOverview.workerRows) ? entryOverview.workerRows : [];
-  const hasWorkerNameRows = false;
+  const hasWorkerNameRows = Boolean(entryOverview.hasWorkerRows);
   const topEntryList = Array.isArray(entryOverview.topEntries) ? entryOverview.topEntries : [];
   const overviewNavLabel = (t.shop && t.shop.nav && t.shop.nav.overview)
     || pricingHighlight.badge
