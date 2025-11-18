@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= pageTitle %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/entry-map.css" />
+    <%- contentProtectionMarkup %>
+  </head>
+  <body>
+    <header class="entry-map-hero">
+      <div class="entry-map-hero__content">
+        <p class="entry-map-hero__lead">강남의 밤 소통방 "강밤"</p>
+        <a class="entry-map-hero__link" href="<%= communityLink %>" target="_blank" rel="noopener noreferrer">
+          <%= communityLink %>
+        </a>
+      </div>
+    </header>
+    <main class="entry-map-page">
+      <header class="entry-map-page__header">
+        <h1 class="entry-map-page__title"><%= pageHeading %></h1>
+        <a class="entry-map-page__back" href="/entry/home">← 가게 목록으로</a>
+      </header>
+      <section
+        class="entry-map"
+        data-entry-map
+        data-entry-mode="<%= isAllStores ? 'all' : 'single' %>"
+        data-entry-endpoint="<%= dataEndpoint %>"
+        data-entry-locale="<%= entryLocale %>"
+        data-entry-worker-empty="<%= workerEmptyText %>"
+        data-entry-top-empty="<%= topEmptyText %>"
+        data-entry-loading-text="<%= loadingText %>"
+        data-entry-error-text="<%= errorText %>"
+        data-entry-top-score-label="<%= topScoreLabel %>"
+      >
+        <p class="entry-map__status entry-map__status--loading" data-entry-loading-message>
+          <%= loadingText %>
+        </p>
+        <p class="entry-map__status entry-map__status--error" data-entry-error-message hidden>
+          <%= errorText %>
+        </p>
+        <p class="entry-map__summary" data-entry-summary hidden></p>
+        <div class="entry-map__stores" data-entry-stores hidden></div>
+      </section>
+    </main>
+    <script src="/scripts/pages/entry-map.js" defer></script>
+  </body>
+</html>

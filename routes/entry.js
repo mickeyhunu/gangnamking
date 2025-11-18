@@ -2,6 +2,7 @@ const express = require('express');
 const { renderHome } = require('../controllers/entry/storeController');
 const {
   renderStoreEntries,
+  renderStoreEntriesData,
   renderStoreEntryImage,
   renderTodayImage,
 } = require('../controllers/entry/entryController');
@@ -14,6 +15,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/home', renderHome);
+router.get('/entrymap/:storeNo/data.json', renderStoreEntriesData);
 router.get('/entrymap/:storeNo', renderStoreEntries);
 router.get('/entrymap/:storeNo/entryImage', renderStoreEntryImage);
 router.get('/roommap/:storeNo', renderRoomInfo);

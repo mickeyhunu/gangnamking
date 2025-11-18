@@ -101,6 +101,248 @@
     });
   }
 
+  const entrySections = Array.from(document.querySelectorAll('[data-entry-endpoint]'));
+
+  if (entrySections.length && typeof window.fetch === 'function') {
+    entrySections.forEach((section) => {
+      const endpoint = (section.dataset.entryEndpoint || '').trim();
+      if (!endpoint) {
+        return;
+      }
+
+      const totalNode = section.querySelector('[data-entry-total]');
+      const workerList = section.querySelector('[data-entry-worker-list]');
+      const workerEmpty = section.querySelector('[data-entry-empty-message]');
+      const topList = section.querySelector('[data-entry-top-list]');
+      const topEmpty = section.querySelector('[data-entry-top-empty]');
+      const loadingText = section.dataset.entryLoadingText || '';
+      const errorText = section.dataset.entryErrorText || '';
+      const scoreLabel = section.dataset.entryTopScoreLabel || '';
+      const locale = section.dataset.entryLocale || 'ko';
+      const workerEmptyDefault = workerEmpty
+        ? workerEmpty.dataset.entryEmptyDefault || workerEmpty.textContent || ''
+        : '';
+      const topEmptyDefault = topEmpty
+        ? topEmpty.dataset.entryTopEmptyDefault || topEmpty.textContent || workerEmptyDefault
+        : workerEmptyDefault;
+      let numberFormatter;
+
+      try {
+        numberFormatter = new Intl.NumberFormat(locale);
+      } catch (error) {
+        numberFormatter = new Intl.NumberFormat();
+      }
+
+      function setWorkerMessage(message) {
+        if (workerEmpty) {
+          workerEmpty.textContent = message || '';
+          workerEmpty.hidden = !message;
+        }
+      }
+
+      function setTopMessage(message) {
+        if (topEmpty) {
+          topEmpty.textContent = message || '';
+          topEmpty.hidden = !message;
+        }
+      }
+
+      function renderWorkerRows(rows) {
+        if (!workerList) {
+          return false;
+        }
+
+        workerList.innerHTML = '';
+
+        if (!Array.isArray(rows) || !rows.length) {
+          workerList.hidden = true;
+          return false;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        rows.forEach((row) => {
+          if (!Array.isArray(row) || !row.length) {
+            return;
+          }
+
+          const item = document.createElement('li');
+          item.className = 'store-entry-workers__item';
+
+          row.forEach((name) => {
+            if (typeof name !== 'string' || !name.trim()) {
+              return;
+            }
+            const span = document.createElement('span');
+            span.className = 'store-entry-workers__name';
+            span.textContent = name;
+            item.appendChild(span);
+          });
+
+          if (item.childElementCount) {
+            fragment.appendChild(item);
+          }
+        });
+
+        if (!fragment.childElementCount) {
+          workerList.hidden = true;
+          return false;
+        }
+
+        workerList.appendChild(fragment);
+        workerList.hidden = false;
+        return true;
+      }
+
+      function renderTopEntries(entries) {
+        if (!topList) {
+          return false;
+        }
+
+        topList.innerHTML = '';
+
+        if (!Array.isArray(entries) || !entries.length) {
+          topList.hidden = true;
+          return false;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        entries.forEach((entry, index) => {
+          if (!entry || typeof entry.workerName !== 'string' || !entry.workerName.trim()) {
+            return;
+          }
+
+          const item = document.createElement('li');
+          item.className = 'store-entry-top__item';
+
+          const rank = document.createElement('span');
+          rank.className = 'store-entry-top__rank';
+          rank.textContent = `${index + 1}.`;
+
+          const name = document.createElement('span');
+          name.className = 'store-entry-top__name';
+          name.textContent = entry.workerName;
+
+          const score = document.createElement('span');
+          score.className = 'store-entry-top__score';
+          if (scoreLabel) {
+            score.appendChild(document.createTextNode(`${scoreLabel} `));
+          }
+          const strong = document.createElement('strong');
+          const displayScore = Number(entry.displayScore);
+          strong.textContent = numberFormatter.format(
+            Number.isFinite(displayScore) ? displayScore : 0
+          );
+          score.appendChild(strong);
+
+          item.appendChild(rank);
+          item.appendChild(name);
+          item.appendChild(score);
+          fragment.appendChild(item);
+        });
+
+        if (!fragment.childElementCount) {
+          topList.hidden = true;
+          return false;
+        }
+
+        topList.appendChild(fragment);
+        topList.hidden = false;
+        return true;
+      }
+
+      function applySummary(summary) {
+        if (!summary || summary.enabled === false) {
+          setWorkerMessage(workerEmptyDefault);
+          setTopMessage(topEmptyDefault);
+          if (workerList) {
+            workerList.hidden = true;
+            workerList.innerHTML = '';
+          }
+          if (topList) {
+            topList.hidden = true;
+            topList.innerHTML = '';
+          }
+          if (totalNode) {
+            totalNode.textContent = '0';
+          }
+          return;
+        }
+
+        if (totalNode) {
+          const total = Number(summary.totalCount);
+          totalNode.textContent = numberFormatter.format(
+            Number.isFinite(total) ? total : 0
+          );
+        }
+
+        const hasWorkers = renderWorkerRows(summary.workerRows);
+        if (workerEmpty) {
+          workerEmpty.hidden = hasWorkers;
+          if (!hasWorkers) {
+            workerEmpty.textContent = workerEmptyDefault;
+          }
+        }
+
+        const hasTopEntries = renderTopEntries(summary.topEntries);
+        if (topEmpty) {
+          topEmpty.hidden = hasTopEntries;
+          if (!hasTopEntries) {
+            topEmpty.textContent = topEmptyDefault;
+          }
+        }
+      }
+
+      function showError() {
+        if (workerList) {
+          workerList.hidden = true;
+          workerList.innerHTML = '';
+        }
+        if (topList) {
+          topList.hidden = true;
+          topList.innerHTML = '';
+        }
+        setWorkerMessage(errorText || workerEmptyDefault);
+        setTopMessage(errorText || topEmptyDefault);
+      }
+
+      function showLoading() {
+        setWorkerMessage(loadingText || workerEmptyDefault);
+        setTopMessage(loadingText || topEmptyDefault);
+        if (workerList) {
+          workerList.hidden = true;
+        }
+        if (topList) {
+          topList.hidden = true;
+        }
+      }
+
+      async function fetchEntries() {
+        showLoading();
+        try {
+          const response = await window.fetch(endpoint, {
+            headers: {
+              Accept: 'application/json',
+            },
+            credentials: 'same-origin',
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch entry summary');
+          }
+
+          const payload = await response.json();
+          applySummary(payload && typeof payload === 'object' ? payload : null);
+        } catch (error) {
+          showError();
+        }
+      }
+
+      fetchEntries();
+    });
+  }
+
   const seoEditor = document.querySelector('[data-seo-editor]');
   if (seoEditor) {
     const textarea = seoEditor.querySelector('textarea');

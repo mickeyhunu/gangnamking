@@ -5,6 +5,13 @@ const { getContentProtectionMarkup, getSvgContentProtectionElements } = require(
 
 const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
 const COMMUNITY_CONTACT_TEXT = '강남 하퍼 010-5733-8710';
+const ENTRY_PAGE_TEXT = {
+  loading: '출근부 정보를 불러오는 중입니다...',
+  error: '출근부 정보를 가져오지 못했습니다. 잠시 후 다시 시도해주세요.',
+  workerEmpty: '등록된 출근부 정보가 없습니다.',
+  topEmpty: '추천 데이터가 없습니다.',
+  topScoreLabel: '합계',
+};
 
 function getQrDataUrl() {
   const imagePath = path.resolve(process.cwd(), 'public/images/community-qr.png');
@@ -242,12 +249,48 @@ async function fetchAllStoreEntries() {
   return results;
 }
 
+async function fetchStoreMetadata(storeNo) {
+  const [[store]] = await pool.query(
+    `SELECT storeNo, storeName
+       FROM INFO_STORE
+      WHERE storeNo=?`,
+    [storeNo]
+  );
+
+  return store || null;
+}
+
 function chunkArray(items, size) {
   const chunks = [];
   for (let start = 0; start < items.length; start += size) {
     chunks.push(items.slice(start, start + size));
   }
   return chunks;
+}
+
+function buildWorkerRows(entries) {
+  const workerNames = entries
+    .map((entry) => (typeof entry.workerName === 'string' ? entry.workerName.trim() : ''))
+    .filter(Boolean);
+
+  return chunkArray(workerNames, 10);
+}
+
+function buildTopEntriesPayload(topEntries) {
+  return topEntries.map((entry) => ({
+    name: entry.workerName ?? '',
+    score: Math.max(0, (entry.total ?? 0) - 6),
+  }));
+}
+
+function buildStoreEntryPayload(store, entries, top5) {
+  return {
+    storeNo: store.storeNo,
+    storeName: store.storeName,
+    totalWorkers: entries.length,
+    workerRows: buildWorkerRows(entries),
+    topEntries: buildTopEntriesPayload(top5),
+  };
 }
 
 function buildEntryRowsHtml(entries) {
@@ -652,109 +695,78 @@ async function renderStoreEntries(req, res, next) {
     const { storeNo } = req.params;
     const storeId = Number(storeNo);
 
+    if (!Number.isFinite(storeId) || storeId < 0) {
+      return res.status(400).send('잘못된 경로입니다.');
+    }
+
+    let storeName = '';
+    let pageTitle = '전체 가게 엔트리';
+    let pageHeading = '전체 가게 엔트리';
+    const isAllStores = storeId === 0;
+
+    if (!isAllStores) {
+      const store = await fetchStoreMetadata(storeId);
+      if (!store) return res.status(404).send('가게를 찾을 수 없습니다.');
+      storeName = store.storeName;
+      pageTitle = `${storeName} 엔트리`;
+      pageHeading = `${storeName} 엔트리`;
+    }
+
+    const entryLocale = 'ko-KR';
+    const dataEndpoint = `/entry/entrymap/${storeId}/data.json`;
+
+    res.render('entry-map', {
+      contentProtectionMarkup: getContentProtectionMarkup(),
+      communityLink: COMMUNITY_CHAT_LINK,
+      pageTitle,
+      pageHeading,
+      storeName,
+      entryLocale,
+      isAllStores,
+      dataEndpoint,
+      loadingText: ENTRY_PAGE_TEXT.loading,
+      errorText: ENTRY_PAGE_TEXT.error,
+      workerEmptyText: ENTRY_PAGE_TEXT.workerEmpty,
+      topEmptyText: ENTRY_PAGE_TEXT.topEmpty,
+      topScoreLabel: ENTRY_PAGE_TEXT.topScoreLabel,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function renderStoreEntriesData(req, res, next) {
+  try {
+    const { storeNo } = req.params;
+    const storeId = Number(storeNo);
+
+    if (!Number.isFinite(storeId) || storeId < 0) {
+      return res.status(400).json({ error: '잘못된 요청입니다.' });
+    }
+
     if (storeId === 0) {
       const storeDataList = await fetchAllStoreEntries();
-      if (!storeDataList.length) return res.status(404).send('가게를 찾을 수 없습니다.');
+      if (!storeDataList.length) {
+        return res.status(404).json({ error: '가게를 찾을 수 없습니다.' });
+      }
 
-      const totalEntries = storeDataList.reduce((sum, data) => sum + data.entries.length, 0);
-      const protectionMarkup = getContentProtectionMarkup();
+      const stores = storeDataList.map(({ store, entries, top5 }) =>
+        buildStoreEntryPayload(store, entries, top5)
+      );
+      const totalEntries = stores.reduce((sum, data) => sum + data.totalWorkers, 0);
 
-      const sections = storeDataList
-        .map(({ store, entries, top5 }) => {
-          const entryListMarkup = entries.length
-            ? `<ul class="entry-list">${buildEntryRowsHtml(entries)}</ul>`
-            : '<p class="empty">엔트리가 없습니다.</p>';
-          const topListMarkup = top5.length
-            ? `<ol class="top-list">${buildTop5Html(top5)}</ol>`
-            : '<p class="empty">추천 데이터가 없습니다.</p>';
-
-          return `<section class="store-section">
-            <header class="store-header">
-              <h2>${escapeHtml(store.storeName)}</h2>
-              <p class="summary">총 출근인원: <strong>${entries.length}</strong>명</p>
-            </header>
-            <div class="store-content">
-              <div class="entry-section">
-                <h3>엔트리 목록</h3>
-                ${entryListMarkup}
-              </div>
-              <div class="top-section">
-                <h3>오늘의 인기 멤버 TOP 5</h3>
-                ${topListMarkup}
-              </div>
-            </div>
-          </section>`;
-        })
-        .join('');
-
-      const html = `<!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>전체 가게 엔트리</title>
-    ${protectionMarkup}
-  </head>
-  <body>
-      <header class="community-link">강남의 밤 소통방 "강밤" : "<a href="https://open.kakao.com/o/gALpMlRg" target="_blank" rel="noopener noreferrer">https://open.kakao.com/o/gALpMlRg</a>"</header>
-      <div class="container">
-        <header class="page-header">
-          <h1>전체 가게 엔트리</h1>
-          <a class="back-link" href="/entry/home">← 가게 목록으로</a>
-        </header>
-        <p class="summary">총 출근인원: <strong>${totalEntries}</strong>명 / 가게 수: <strong>${storeDataList.length}</strong>곳</p>
-        ${sections}
-      </div>
-    </body>
-  </html>`;
-
-      res.send(html);
+      res.set('Cache-Control', 'no-store');
+      res.json({ scope: 'all', totalEntries, storeCount: stores.length, stores });
       return;
     }
 
-    const data = await fetchSingleStoreEntries(storeNo);
-    if (!data) return res.status(404).send('가게를 찾을 수 없습니다.');
+    const data = await fetchSingleStoreEntries(storeId);
+    if (!data) {
+      return res.status(404).json({ error: '가게를 찾을 수 없습니다.' });
+    }
 
-    const { store, entries, top5 } = data;
-    const totalCount = entries.length;
-
-    const entryListMarkup = entries.length
-      ? `<ul class="entry-list">${buildEntryRowsHtml(entries)}</ul>`
-      : '<p class="empty">엔트리가 없습니다.</p>';
-    const topListMarkup = top5.length
-      ? `<ol class="top-list">${buildTop5Html(top5)}</ol>`
-      : '<p class="empty">추천 데이터가 없습니다.</p>';
-
-    const protectionMarkup = getContentProtectionMarkup();
-    const html = `<!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>${escapeHtml(store.storeName)} 엔트리</title>
-    ${protectionMarkup}
-  </head>
-  <body>
-      <header class="community-link">강남의 밤 소통방 "강밤" : "<a href="https://open.kakao.com/o/gALpMlRg" target="_blank" rel="noopener noreferrer">https://open.kakao.com/o/gALpMlRg</a>"</header>
-      <div class="container">
-        <header class="page-header">
-          <h1>${escapeHtml(store.storeName)} 엔트리</h1>
-          <a class="back-link" href="/entry/home">← 가게 목록으로</a>
-        </header>
-        <p class="summary">총 출근인원: <strong>${totalCount}</strong>명</p>
-      <section>
-        <h2>엔트리 목록</h2>
-        ${entryListMarkup}
-      </section>
-      <section>
-        <h2>오늘의 인기 멤버 TOP 5</h2>
-          ${topListMarkup}
-        </section>
-      </div>
-    </body>
-  </html>`;
-
-    res.send(html);
+    res.set('Cache-Control', 'no-store');
+    res.json({ scope: 'single', store: buildStoreEntryPayload(data.store, data.entries, data.top5) });
   } catch (error) {
     next(error);
   }
@@ -850,6 +862,7 @@ function renderTodayImage(_, res) {
 
 module.exports = {
   renderStoreEntries,
+  renderStoreEntriesData,
   renderStoreEntryImage,
   renderTodayImage,
 };
