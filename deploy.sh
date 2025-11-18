@@ -12,3 +12,7 @@
 # git pull --ff-only origin "main"
 # sudo nginx -t && sudo systemctl reload nginx --- 적용
 # pm2 restart room1st --- 재실행
+
+# git add .
+# git commit -m "Update"
+# git push origin main
