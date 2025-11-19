@@ -445,7 +445,7 @@
 .store-entry-workers__name {
   display: inline-flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   text-align: left;
   white-space: nowrap;
 }
