@@ -448,6 +448,12 @@
   justify-content: flex-start;
   text-align: left;
   white-space: nowrap;
+  padding: 0.2rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(8, 5, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-accent-inset);
+  color: var(--color-text);
 }
 
 .store-entry-top {
