@@ -58,6 +58,12 @@ body {
   margin: 0;
 }
 
+.entry-map-page__subtitle {
+  margin: 0;
+  color: var(--entry-muted);
+  font-weight: 500;
+}
+
 .entry-map-page__back {
   color: var(--entry-accent);
   text-decoration: none;
@@ -157,12 +163,14 @@ body {
 .entry-name {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   padding: 2px 8px;
   border-radius: 999px;
   background-color: #eef2ff;
   color: #3730a3;
   font-weight: 600;
   font-size: 0.95rem;
+  text-align: center;
 }
 
 .entry-empty,
@@ -199,6 +207,77 @@ body {
   font-weight: 500;
 }
 
+.entry-home-page__header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.entry-home__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.entry-store-card {
+  border: 1px solid var(--entry-border);
+  border-radius: 14px;
+  padding: 20px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+}
+
+.entry-store-card--all {
+  background: linear-gradient(135deg, #eef2ff, #fef9c3);
+}
+
+.entry-store-card__heading {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.entry-store-card__number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: #e0e7ff;
+  color: #312e81;
+  font-weight: 700;
+}
+
+.entry-store-card__name {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.entry-store-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.entry-store-card__link {
+  flex: 1;
+  text-align: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #fff;
+  background-color: var(--entry-accent);
+}
+
+.entry-store-card__link--secondary {
+  background-color: #1d4ed8;
+}
+
 @media (max-width: 640px) {
   .entry-map {
     padding: 16px;
@@ -206,5 +285,9 @@ body {
 
   .entry-card__body {
     grid-template-columns: 1fr;
+  }
+
+  .entry-store-card__actions {
+    flex-direction: column;
   }
 }

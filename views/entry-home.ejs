@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= pageTitle %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/entry-map.css" />
+    <%- contentProtectionMarkup %>
+  </head>
+  <body>
+    <header class="entry-map-hero">
+      <div class="entry-map-hero__content">
+        <p class="entry-map-hero__lead">강남의 밤 소통방 "강밤"</p>
+        <a class="entry-map-hero__link" href="<%= communityLink %>" target="_blank" rel="noopener noreferrer">
+          <%= communityLink %>
+        </a>
+      </div>
+    </header>
+    <main class="entry-map-page entry-home-page">
+      <header class="entry-map-page__header entry-home-page__header">
+        <h1 class="entry-map-page__title"><%= pageHeading %></h1>
+        <p class="entry-map-page__subtitle">총 <strong><%= totalStores %></strong>개의 가게가 등록되어 있습니다.</p>
+      </header>
+      <section class="entry-home__grid" aria-label="가게 목록">
+        <% stores.forEach(function(store) { %>
+          <article class="entry-store-card <%= store.isAllStores ? 'entry-store-card--all' : '' %>">
+            <div class="entry-store-card__heading">
+              <span class="entry-store-card__number"><%= store.isAllStores ? '전체' : store.storeNo %></span>
+              <h2 class="entry-store-card__name"><%= store.storeName %></h2>
+            </div>
+            <div class="entry-store-card__actions">
+              <a class="entry-store-card__link" href="<%= store.entryUrl %>">엔트리 보러가기</a>
+              <a class="entry-store-card__link entry-store-card__link--secondary" href="<%= store.roomUrl %>">룸현황 보러가기</a>
+            </div>
+          </article>
+        <% }) %>
+      </section>
+    </main>
+  </body>
+</html>
