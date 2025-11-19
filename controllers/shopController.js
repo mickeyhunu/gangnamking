@@ -69,6 +69,8 @@ function buildEntryTopList(entries, limit = 5) {
     .slice(0, Math.max(0, limit));
 }
 
+const ENTRY_ROW_SIZE = 5;
+
 function buildEntrySummary(entries, workerNames) {
   const normalizedWorkerNames = Array.isArray(workerNames)
     ? workerNames
@@ -76,7 +78,7 @@ function buildEntrySummary(entries, workerNames) {
         .filter(Boolean)
     : [];
 
-  const workerRows = chunkArray(normalizedWorkerNames, 10);
+  const workerRows = chunkArray(normalizedWorkerNames, ENTRY_ROW_SIZE);
 
   return {
     enabled: false,

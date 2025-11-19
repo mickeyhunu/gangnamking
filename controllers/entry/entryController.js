@@ -249,6 +249,8 @@ async function fetchAllStoreEntries() {
   return results;
 }
 
+const ENTRY_ROW_SIZE = 5;
+
 async function fetchStoreMetadata(storeNo) {
   const [[store]] = await pool.query(
     `SELECT storeNo, storeName
@@ -273,7 +275,7 @@ function buildWorkerRows(entries) {
     .map((entry) => (typeof entry.workerName === 'string' ? entry.workerName.trim() : ''))
     .filter(Boolean);
 
-  return chunkArray(workerNames, 10);
+  return chunkArray(workerNames, ENTRY_ROW_SIZE);
 }
 
 function buildTopEntriesPayload(topEntries) {
@@ -294,7 +296,7 @@ function buildStoreEntryPayload(store, entries, top5) {
 }
 
 function buildEntryRowsHtml(entries) {
-  const entryRows = chunkArray(entries, 10);
+  const entryRows = chunkArray(entries, ENTRY_ROW_SIZE);
   return entryRows
     .map((row) => {
       const names = row
@@ -560,7 +562,7 @@ function buildStoreEntryLines(store, entries, top5) {
   if (entries.length) {
     lines.push({ text: '엔트리 목록', fontSize: 30, fontWeight: '700', gapBefore: 28 });
 
-    const entryRows = chunkArray(entries, 10);
+    const entryRows = chunkArray(entries, ENTRY_ROW_SIZE);
     entryRows.forEach((row, index) => {
       const chunkText = row
         .map((entry) => entry.workerName ?? '')
@@ -622,7 +624,7 @@ function buildAllStoreEntryLines(storeDataList) {
     });
 
     if (data.entries.length) {
-      const entryRows = chunkArray(data.entries, 10);
+      const entryRows = chunkArray(data.entries, ENTRY_ROW_SIZE);
       entryRows.forEach((row, index) => {
         lines.push({
           text: row.map((entry) => entry.workerName ?? '').join(' '),
