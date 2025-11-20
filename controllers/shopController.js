@@ -195,7 +195,7 @@ async function renderShopDetail(req, res, next) {
     const normalizedStoreNo = Number(storeNoRaw);
     const hasStoreNo = Number.isFinite(normalizedStoreNo) && normalizedStoreNo > 0;
 
-    const entrySummary = {
+    let entrySummary = {
       enabled: hasStoreNo,
       totalCount: 0,
       workerRows: [],
@@ -269,6 +269,17 @@ async function renderShopDetail(req, res, next) {
         }
       } catch (error) {
         // Intentionally ignore location lookup errors so the page can render without map data.
+      }
+    }
+
+    if (hasStoreNo) {
+      try {
+        entrySummary = await fetchShopEntrySummary(localizedShop);
+      } catch (error) {
+        console.warn(
+          '[shopController] Failed to prefetch entry summary:',
+          error.message
+        );
       }
     }
 
