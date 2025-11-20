@@ -18,6 +18,16 @@
     roomSummarySingleLabel,
   } = section.dataset;
 
+  const preloadedNode = document.getElementById('room-map-preloaded-data');
+  let preloadedPayload = null;
+  if (preloadedNode) {
+    try {
+      preloadedPayload = JSON.parse(preloadedNode.textContent || 'null');
+    } catch (error) {
+      preloadedPayload = null;
+    }
+  }
+
   function escapeHtml(value = '') {
     return String(value)
       .replace(/&/g, '&amp;')
@@ -70,16 +80,22 @@
 
   async function hydrate() {
     try {
-      const response = await fetch(endpoint, {
-        credentials: 'same-origin',
-        headers: { Accept: 'application/json' },
-      });
+      const payload = preloadedPayload
+        ? preloadedPayload
+        : await (async () => {
+            const response = await fetch(endpoint, {
+              credentials: 'same-origin',
+              headers: { Accept: 'application/json' },
+            });
 
-      if (!response.ok) {
-        throw new Error('Failed to load room data');
-      }
+            if (!response.ok) {
+              throw new Error('Failed to load room data');
+            }
 
-      const payload = await response.json();
+            return response.json();
+          })();
+
+      preloadedPayload = null;
       const rooms = Array.isArray(payload.rooms) ? payload.rooms : [];
 
       if (!rooms.length) {

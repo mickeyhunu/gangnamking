@@ -310,6 +310,7 @@ async function renderRoomInfo(req, res, next) {
     const isAllStores = storeId === 0;
     let pageTitle = '전체 가게 룸현황';
     let pageHeading = '전체 가게 룸현황';
+    let preloadedData = null;
 
     if (!isAllStores) {
       const room = await fetchSingleRoomStatus(storeId);
@@ -320,6 +321,19 @@ async function renderRoomInfo(req, res, next) {
 
       pageTitle = `${room.storeName} 룸현황`;
       pageHeading = `${room.storeName} 룸현황`;
+
+      preloadedData = {
+        mode: 'single',
+        totalStores: 1,
+        rooms: [serializeRoomForPayload(room)],
+      };
+    } else {
+      const rooms = await fetchAllRoomStatuses();
+      preloadedData = {
+        mode: 'all',
+        totalStores: rooms.length,
+        rooms: rooms.map(serializeRoomForPayload),
+      };
     }
 
     res.render('room-map', {
@@ -327,6 +341,7 @@ async function renderRoomInfo(req, res, next) {
       pageHeading,
       isAllStores,
       dataEndpoint: `/entry/roommap/${storeNo}/data.json`,
+      preloadedData,
       entryLocale: 'ko',
       communityLink: COMMUNITY_CHAT_LINK,
       contentProtectionMarkup: getContentProtectionMarkup(),
