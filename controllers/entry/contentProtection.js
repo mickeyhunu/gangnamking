@@ -9,7 +9,7 @@ const SHARED_PROTECTION_CSS = `
     body,
     svg {
       -webkit-touch-callout: none;
-      touch-action: none;
+      touch-action: pan-y;
     }
 
     img,
