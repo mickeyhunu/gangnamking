@@ -716,6 +716,29 @@ async function renderStoreEntries(req, res, next) {
 
     const entryLocale = 'ko-KR';
     const dataEndpoint = `/entry/entrymap/${storeId}/data.json`;
+    let preloadedData = null;
+
+    try {
+      if (storeId === 0) {
+        const storeDataList = await fetchAllStoreEntries();
+        const stores = storeDataList.map(({ store, entries, top5 }) =>
+          buildStoreEntryPayload(store, entries, top5)
+        );
+        const totalEntries = stores.reduce((sum, data) => sum + data.totalWorkers, 0);
+
+        preloadedData = { scope: 'all', totalEntries, storeCount: stores.length, stores };
+      } else {
+        const data = await fetchSingleStoreEntries(storeId);
+        if (data) {
+          preloadedData = {
+            scope: 'single',
+            store: buildStoreEntryPayload(data.store, data.entries, data.top5),
+          };
+        }
+      }
+    } catch (error) {
+      preloadedData = null;
+    }
 
     res.render('entry-map', {
       contentProtectionMarkup: getContentProtectionMarkup(),
@@ -726,6 +749,7 @@ async function renderStoreEntries(req, res, next) {
       entryLocale,
       isAllStores,
       dataEndpoint,
+      preloadedData,
       loadingText: ENTRY_PAGE_TEXT.loading,
       errorText: ENTRY_PAGE_TEXT.error,
       workerEmptyText: ENTRY_PAGE_TEXT.workerEmpty,

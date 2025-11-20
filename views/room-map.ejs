@@ -53,6 +53,9 @@
         <div class="room-map__stores" data-room-stores hidden></div>
       </section>
     </main>
+    <script id="room-map-preloaded-data" type="application/json">
+      <%- JSON.stringify(preloadedData || null) %>
+    </script>
     <script src="/scripts/pages/room-map.js" defer></script>
   </body>
 </html>

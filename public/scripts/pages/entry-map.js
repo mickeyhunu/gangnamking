@@ -27,6 +27,16 @@
     numberFormatter = new Intl.NumberFormat();
   }
 
+  const preloadedNode = document.getElementById('entry-map-preloaded-data');
+  let preloadedPayload = null;
+  if (preloadedNode) {
+    try {
+      preloadedPayload = JSON.parse(preloadedNode.textContent || 'null');
+    } catch (error) {
+      preloadedPayload = null;
+    }
+  }
+
   function setVisibility(node, visible) {
     if (!node) return;
     if (visible) {
@@ -184,16 +194,22 @@
   async function loadEntries() {
     showLoading();
     try {
-      const response = await fetch(endpoint, {
-        headers: { 'Accept': 'application/json' },
-        credentials: 'same-origin',
-      });
+      const payload = preloadedPayload
+        ? preloadedPayload
+        : await (async () => {
+            const response = await fetch(endpoint, {
+              headers: { Accept: 'application/json' },
+              credentials: 'same-origin',
+            });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch entry data');
-      }
+            if (!response.ok) {
+              throw new Error('Failed to fetch entry data');
+            }
 
-      const payload = await response.json();
+            return response.json();
+          })();
+
+      preloadedPayload = null;
       const isAll = payload.scope === 'all';
       const stores = isAll ? payload.stores || [] : [payload.store].filter(Boolean);
 

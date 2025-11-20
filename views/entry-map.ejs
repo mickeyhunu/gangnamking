@@ -49,6 +49,9 @@
         <div class="entry-map__stores" data-entry-stores hidden></div>
       </section>
     </main>
+    <script id="entry-map-preloaded-data" type="application/json">
+      <%- JSON.stringify(preloadedData || null) %>
+    </script>
     <script src="/scripts/pages/entry-map.js" defer></script>
   </body>
 </html>
