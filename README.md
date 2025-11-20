@@ -23,6 +23,19 @@ npm run dev
 - 요청 속도가 비정상적으로 빠른 IP는 자동으로 rate limit(기본 60초 동안 30회) 되며, 제한을 3회 이상 반복 초과하면 5분 내에서 `blocked_ips.json`
   에 자동 추가되어 장기 차단됩니다. 필요 시 `ABUSE_RATE_LIMIT_*` 및 `ABUSE_AUTO_BLOCK_*` 환경 변수를 이용해 기준을 조정할 수 있습니다.
 
+## 보호된 출근부 API
+
+- `GET /shops/:id/entries.json` 엔드포인트는 토큰·세션 기반 인증이 필요합니다. `PROTECTED_ENTRY_TOKENS` 환경 변수에 콤마로 구분된 토큰 목록을 설정하고,
+  클라이언트는 `Authorization: Bearer <token>` 헤더(또는 `token` 쿼리 파라미터, `SESSION_COOKIE_NAME` 쿠키)를 포함해야 합니다.
+- 허용되지 않은 요청은 401(미인증) 또는 403(권한 없음) 상태 코드로 거부되며 JSON 본문을 반환하지 않습니다.
+- `config/reverse-proxy.conf` 파일에는 Nginx/Apache에서 동일 경로를 차단하는 2중 방어 예시가 포함되어 있습니다.
+
+## CORS 및 WAF
+
+- `CORS_ALLOWED_ORIGINS` 환경 변수에 허용할 Origin을 콤마로 지정하면 해당 도메인만 CORS 요청이 통과합니다(와일드카드 `*` 지원).
+- User-Agent가 누락되었거나 크롤러 패턴을 포함하는 경우, 또는 짧은 시간 동안 `/shops/*/entries.json`을 과도하게 호출하는 경우 WAF와 rate limiter가 403/429로 차단합니다.
+- 민감한 출근부 데이터는 서버에서 HTML에 선렌더링되므로, 정상 사용자는 추가 JSON 호출 없이도 페이지 내에서 즉시 확인할 수 있습니다.
+
 ## 데이터 구조
 
 `data/shops.json` 파일은 다음과 같은 구조의 배열입니다.

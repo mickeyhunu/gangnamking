@@ -110,6 +110,10 @@
         return;
       }
 
+      if ((section.dataset.entryPrefilled || '').toLowerCase() === 'true') {
+        return;
+      }
+
       const totalNode = section.querySelector('[data-entry-total]');
       const workerList = section.querySelector('[data-entry-worker-list]');
       const workerEmpty = section.querySelector('[data-entry-empty-message]');

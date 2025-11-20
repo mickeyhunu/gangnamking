@@ -74,6 +74,25 @@
   const entriesErrorText = entriesText.error || '출근부 정보를 가져오지 못했습니다.';
   const entryOverview = entrySummary && typeof entrySummary === 'object' ? entrySummary : {};
   const showEntrySection = Boolean(entryOverview.enabled);
+  const entrySnapshot = showEntrySection ? entryOverview : null;
+  const entrySnapshotWorkers = entrySnapshot && Array.isArray(entrySnapshot.workerRows)
+    ? entrySnapshot.workerRows
+    : [];
+  const entrySnapshotTop = entrySnapshot && Array.isArray(entrySnapshot.topEntries)
+    ? entrySnapshot.topEntries
+    : [];
+  const entryHasPrefilledWorkers = entrySnapshotWorkers.length > 0;
+  const entryHasPrefilledTop = entrySnapshotTop.length > 0;
+  const workerEmptyMessage = entryHasPrefilledWorkers
+    ? ''
+    : entrySnapshot
+      ? entriesEmptyText
+      : entriesLoadingText;
+  const topEmptyMessage = entryHasPrefilledTop
+    ? ''
+    : entrySnapshot
+      ? entriesTopListEmptyText
+      : entriesLoadingText;
   const entryLocale = resolvedLang;
   const entryDataEndpoint = showEntrySection
     ? `/shops/${encodeURIComponent(shop.id)}/entries.json`
@@ -893,6 +912,7 @@
       data-entry-error-text="<%= entriesErrorText %>"
       data-entry-locale="<%= entryLocale %>"
       data-entry-top-score-label="<%= entriesTopListScoreLabel %>"
+      data-entry-prefilled="<%= entryHasPrefilledWorkers || entryHasPrefilledTop ? 'true' : 'false' %>"
     >
       <div class="container detail-section__grid">
         <div class="detail-card detail-card--full">
@@ -900,31 +920,65 @@
             <h2 class="store-entry-header__title"><%= entriesTitleText %></h2>
             <p class="store-entry-summary">
               <span class="store-entry-summary__label"><%= entriesSummaryLabel %></span>
-              <strong class="store-entry-summary__value" data-entry-total>—</strong>
+              <strong class="store-entry-summary__value" data-entry-total>
+                <%= entrySnapshot ? entrySnapshot.totalCount : '—' %>
+              </strong>
               <span class="store-entry-summary__unit"><%= entriesSummaryUnit %></span>
             </p>
           </div>
           <div class="store-entry-overview">
             <div class="store-entry-workers" data-entry-workers>
               <h3 class="store-entry-workers__title"><%= entriesWorkerListTitle %></h3>
-              <ul class="store-entry-workers__list" data-entry-worker-list hidden></ul>
+              <ul class="store-entry-workers__list" data-entry-worker-list <%= entryHasPrefilledWorkers ? '' : 'hidden' %>>
+                <% if (entryHasPrefilledWorkers) { %>
+                  <% entrySnapshotWorkers.forEach(function(row) { %>
+                    <% if (Array.isArray(row) && row.length) { %>
+                      <li class="store-entry-workers__item">
+                        <% row.forEach(function(name) { %>
+                          <% if (typeof name === 'string' && name.trim()) { %>
+                            <span class="store-entry-workers__name"><%= name %></span>
+                          <% } %>
+                        <% }); %>
+                      </li>
+                    <% } %>
+                  <% }); %>
+                <% } %>
+              </ul>
               <p
                 class="store-entries__empty"
                 data-entry-empty-message
                 data-entry-empty-default="<%= entriesEmptyText %>"
+                <%= entryHasPrefilledWorkers ? 'hidden' : '' %>
               >
-                <%= entriesLoadingText %>
+                <%= workerEmptyMessage %>
               </p>
             </div>
             <div class="store-entry-top" data-entry-top>
               <h3 class="store-entry-top__title"><%= entriesTopListTitle %></h3>
-              <ol class="store-entry-top__list" data-entry-top-list hidden></ol>
+              <ol class="store-entry-top__list" data-entry-top-list <%= entryHasPrefilledTop ? '' : 'hidden' %>>
+                <% if (entryHasPrefilledTop) { %>
+                  <% entrySnapshotTop.forEach(function(entry, index) { %>
+                    <% if (entry && entry.workerName) { %>
+                      <li class="store-entry-top__item">
+                        <span class="store-entry-top__rank"><%= index + 1 %></span>
+                        <span class="store-entry-top__name"><%= entry.workerName %></span>
+                        <% if (entry.score != null) { %>
+                          <span class="store-entry-top__score">
+                            <%= entriesTopListScoreLabel %>: <%= entry.score %>
+                          </span>
+                        <% } %>
+                      </li>
+                    <% } %>
+                  <% }); %>
+                <% } %>
+              </ol>
               <p
                 class="store-entries__empty store-entry-top__empty"
                 data-entry-top-empty
                 data-entry-top-empty-default="<%= entriesTopListEmptyText %>"
+                <%= entryHasPrefilledTop ? 'hidden' : '' %>
               >
-                <%= entriesLoadingText %>
+                <%= topEmptyMessage %>
               </p>
               <div class="store-entry-top__cta">
                 <a
