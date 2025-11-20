@@ -171,6 +171,7 @@ body {
   font-weight: 600;
   font-size: 0.95rem;
   text-align: center;
+  white-space: nowrap;
 }
 
 .entry-empty,
@@ -289,5 +290,13 @@ body {
 
   .entry-store-card__actions {
     flex-direction: column;
+  }
+
+  .entry-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
   }
 }
