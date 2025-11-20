@@ -6,8 +6,11 @@ const languageMiddleware = require('./middleware/language');
 const requestLoggingMiddleware = require('./middleware/requestLogger');
 const abuseProtectorMiddleware = require('./middleware/abuseProtector');
 const ipBlockerMiddleware = require('./middleware/ipBlocker');
+const corsGuardMiddleware = require('./middleware/corsGuard');
+const wafMiddleware = require('./middleware/waf');
 const shopRoutes = require('./routes/index');
 const entryRoutes = require('./routes/entry');
+const protectedEntryRoutes = require('./routes/protectedEntries');
 const { initializeDataStore } = require('./services/dataStore');
 const { getNaverMapCredentials } = require('./config/naver');
 
@@ -22,7 +25,24 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use((req, _res, next) => {
+  const rawCookieHeader = req.headers.cookie || '';
+  const cookies = {};
+
+  rawCookieHeader.split(';').forEach((segment) => {
+    const [name, ...rest] = segment.trim().split('=');
+    if (!name) {
+      return;
+    }
+    cookies[name] = rest.join('=').trim();
+  });
+
+  req.cookies = cookies;
+  next();
+});
 app.use(requestLoggingMiddleware);
+app.use(corsGuardMiddleware);
+app.use(wafMiddleware);
 app.use(abuseProtectorMiddleware);
 app.use(ipBlockerMiddleware);
 app.use(languageMiddleware);
@@ -31,6 +51,7 @@ app.use((req, res, next) => {
   res.locals.naverMapClientId = clientId || '';
   next();
 });
+app.use('/shops', protectedEntryRoutes);
 app.use('/entry', entryRoutes);
 app.use('/', shopRoutes);
 
