@@ -477,19 +477,23 @@ async function renderRoomImage(req, res, next) {
       const lines = buildAllRoomImageLines(rooms);
       const { svg } = buildCompositeSvg(lines, ROOM_IMAGE_OPTIONS);
 
-      res.set('Cache-Control', 'no-store');
+      res.set('Cache-Control', 'private, no-store');
       res.type('image/svg+xml').send(svg);
-      return;
+    } else {
+      const room = await fetchSingleRoomStatus(storeNo);
+      if (!room) return res.status(404).send('룸현황 정보가 없습니다.');
+
+      const lines = buildRoomImageLines(room);
+      const { svg } = buildCompositeSvg(lines, ROOM_IMAGE_OPTIONS);
+
+      res.set('Cache-Control', 'private, no-store');
+      res.type('image/svg+xml').send(svg);
     }
 
-    const room = await fetchSingleRoomStatus(storeNo);
-    if (!room) return res.status(404).send('룸현황 정보가 없습니다.');
-
-    const lines = buildRoomImageLines(room);
-    const { svg } = buildCompositeSvg(lines, ROOM_IMAGE_OPTIONS);
-
-    res.set('Cache-Control', 'no-store');
-    res.type('image/svg+xml').send(svg);
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const referer = req.get('referer') || '직접 요청';
+    const userAgent = req.get('user-agent') || '알 수 없음';
+    console.log(`[ROOMIMAGE ACCESS] IP:${ip} REF:${referer} UA:${userAgent}`);
   } catch (error) {
     next(error);
   }
