@@ -295,38 +295,6 @@ function buildStoreEntryPayload(store, entries, top5) {
   };
 }
 
-function buildEntriesFromRows(workerRows = []) {
-  return workerRows.flatMap((row) =>
-    row.map((workerName) => ({ workerName }))
-  );
-}
-
-function buildTopEntriesFromPayload(topEntries = []) {
-  return topEntries.map((entry) => ({
-    workerName: entry.name ?? '',
-    total: (entry.score ?? 0) + 6,
-  }));
-}
-
-async function buildStoreEntriesDataset(storeId) {
-  if (storeId === 0) {
-    const storeDataList = await fetchAllStoreEntries();
-    if (!storeDataList.length) return null;
-
-    const stores = storeDataList.map(({ store, entries, top5 }) =>
-      buildStoreEntryPayload(store, entries, top5)
-    );
-    const totalEntries = stores.reduce((sum, data) => sum + data.totalWorkers, 0);
-
-    return { scope: 'all', totalEntries, storeCount: stores.length, stores };
-  }
-
-  const data = await fetchSingleStoreEntries(storeId);
-  if (!data) return null;
-
-  return { scope: 'single', store: buildStoreEntryPayload(data.store, data.entries, data.top5) };
-}
-
 function buildEntryRowsHtml(entries) {
   const entryRows = chunkArray(entries, ENTRY_ROW_SIZE);
   return entryRows
@@ -751,7 +719,23 @@ async function renderStoreEntries(req, res, next) {
     let preloadedData = null;
 
     try {
-      preloadedData = await buildStoreEntriesDataset(storeId);
+      if (storeId === 0) {
+        const storeDataList = await fetchAllStoreEntries();
+        const stores = storeDataList.map(({ store, entries, top5 }) =>
+          buildStoreEntryPayload(store, entries, top5)
+        );
+        const totalEntries = stores.reduce((sum, data) => sum + data.totalWorkers, 0);
+
+        preloadedData = { scope: 'all', totalEntries, storeCount: stores.length, stores };
+      } else {
+        const data = await fetchSingleStoreEntries(storeId);
+        if (data) {
+          preloadedData = {
+            scope: 'single',
+            store: buildStoreEntryPayload(data.store, data.entries, data.top5),
+          };
+        }
+      }
     } catch (error) {
       preloadedData = null;
     }
@@ -786,13 +770,29 @@ async function renderStoreEntriesData(req, res, next) {
       return res.status(400).json({ error: '잘못된 요청입니다.' });
     }
 
-    const payload = await buildStoreEntriesDataset(storeId);
-    if (!payload) {
+    if (storeId === 0) {
+      const storeDataList = await fetchAllStoreEntries();
+      if (!storeDataList.length) {
+        return res.status(404).json({ error: '가게를 찾을 수 없습니다.' });
+      }
+
+      const stores = storeDataList.map(({ store, entries, top5 }) =>
+        buildStoreEntryPayload(store, entries, top5)
+      );
+      const totalEntries = stores.reduce((sum, data) => sum + data.totalWorkers, 0);
+
+      res.set('Cache-Control', 'no-store');
+      res.json({ scope: 'all', totalEntries, storeCount: stores.length, stores });
+      return;
+    }
+
+    const data = await fetchSingleStoreEntries(storeId);
+    if (!data) {
       return res.status(404).json({ error: '가게를 찾을 수 없습니다.' });
     }
 
     res.set('Cache-Control', 'no-store');
-    res.json(payload);
+    res.json({ scope: 'single', store: buildStoreEntryPayload(data.store, data.entries, data.top5) });
   } catch (error) {
     next(error);
   }
@@ -803,19 +803,9 @@ async function renderStoreEntryImage(req, res, next) {
     const { storeNo } = req.params;
     const storeId = Number(storeNo);
 
-    if (!Number.isFinite(storeId) || storeId < 0) {
-      return res.status(400).send('잘못된 경로입니다.');
-    }
-
-    const payload = await buildStoreEntriesDataset(storeId);
-    if (!payload) return res.status(404).send('가게를 찾을 수 없습니다.');
-
-    if (payload.scope === 'all') {
-      const storeDataList = payload.stores.map((store) => ({
-        store: { storeNo: store.storeNo, storeName: store.storeName },
-        entries: buildEntriesFromRows(store.workerRows),
-        top5: buildTopEntriesFromPayload(store.topEntries),
-      }));
+    if (storeId === 0) {
+      const storeDataList = await fetchAllStoreEntries();
+      if (!storeDataList.length) return res.status(404).send('가게를 찾을 수 없습니다.');
 
       const lines = buildAllStoreEntryLines(storeDataList);
       const layout = computeCompositeLayout(lines, STORE_IMAGE_OPTIONS);
@@ -825,14 +815,12 @@ async function renderStoreEntryImage(req, res, next) {
       res.set('Cache-Control', 'no-store');
       res.type('image/svg+xml').send(svg);
     } else {
-      const storeData = payload.store;
-      const store = { storeNo: storeData.storeNo, storeName: storeData.storeName };
-      const entries = buildEntriesFromRows(storeData.workerRows);
-      const top5 = buildTopEntriesFromPayload(storeData.topEntries);
+      const data = await fetchSingleStoreEntries(storeNo);
+      if (!data) return res.status(404).send('가게를 찾을 수 없습니다.');
 
-      const lines = buildStoreEntryLines(store, entries, top5);
+      const lines = buildStoreEntryLines(data.store, data.entries, data.top5);
       const layout = computeCompositeLayout(lines, STORE_IMAGE_OPTIONS);
-      const decorations = buildStoreImageDecorations(layout, top5);
+      const decorations = buildStoreImageDecorations(layout, data.top5);
       const svg = renderCompositeSvg(layout, decorations);
 
       res.set('Cache-Control', 'no-store');
