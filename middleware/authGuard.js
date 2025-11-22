@@ -6,10 +6,6 @@ const configuredTokens = (process.env.PROTECTED_ENTRY_TOKENS || '')
 
 const allowedTokens = new Set(configuredTokens);
 
-function isProtectionDisabled() {
-  return allowedTokens.size === 0;
-}
-
 function extractToken(req) {
   const authHeader = req.get('authorization') || '';
   if (authHeader.toLowerCase().startsWith('bearer ')) {
@@ -37,10 +33,6 @@ function isValidToken(token) {
 }
 
 function authGuard(req, res, next) {
-  if (isProtectionDisabled()) {
-    return next();
-  }
-
   const token = extractToken(req);
 
   if (!token) {
