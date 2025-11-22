@@ -716,29 +716,7 @@ async function renderStoreEntries(req, res, next) {
 
     const entryLocale = 'ko-KR';
     const dataEndpoint = `/entry/entrymap/${storeId}/data.json`;
-    let preloadedData = null;
-
-    try {
-      if (storeId === 0) {
-        const storeDataList = await fetchAllStoreEntries();
-        const stores = storeDataList.map(({ store, entries, top5 }) =>
-          buildStoreEntryPayload(store, entries, top5)
-        );
-        const totalEntries = stores.reduce((sum, data) => sum + data.totalWorkers, 0);
-
-        preloadedData = { scope: 'all', totalEntries, storeCount: stores.length, stores };
-      } else {
-        const data = await fetchSingleStoreEntries(storeId);
-        if (data) {
-          preloadedData = {
-            scope: 'single',
-            store: buildStoreEntryPayload(data.store, data.entries, data.top5),
-          };
-        }
-      }
-    } catch (error) {
-      preloadedData = null;
-    }
+    const preloadedData = null;
 
     res.render('entry-map', {
       contentProtectionMarkup: getContentProtectionMarkup(),
@@ -812,7 +790,7 @@ async function renderStoreEntryImage(req, res, next) {
       const decorations = buildStoreImageDecorations(layout);
       const svg = renderCompositeSvg(layout, decorations);
 
-      res.set('Cache-Control', 'no-store');
+      res.set('Cache-Control', 'private, no-store');
       res.type('image/svg+xml').send(svg);
     } else {
       const data = await fetchSingleStoreEntries(storeNo);
@@ -823,7 +801,7 @@ async function renderStoreEntryImage(req, res, next) {
       const decorations = buildStoreImageDecorations(layout, data.top5);
       const svg = renderCompositeSvg(layout, decorations);
 
-      res.set('Cache-Control', 'no-store');
+      res.set('Cache-Control', 'private, no-store');
       res.type('image/svg+xml').send(svg);
     }
 
