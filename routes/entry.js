@@ -22,7 +22,7 @@ router.get('/', (req, res) => {
 router.get('/home', renderHome);
 router.get('/entrymap/:storeNo/data.json', authGuard, renderStoreEntriesData);
 router.get('/entrymap/:storeNo', renderStoreEntries);
-router.get('/entrymap/:storeNo/entryImage', renderStoreEntryImage);
+router.get('/entrymap/:storeNo/entryImage', authGuard, renderStoreEntryImage);
 router.get('/roommap/:storeNo/data.json', authGuard, renderRoomInfoData);
 router.get('/roommap/:storeNo', renderRoomInfo);
 router.get('/roommap/:storeNo/roomImage', renderRoomImage);
