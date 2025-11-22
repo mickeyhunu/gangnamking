@@ -28,6 +28,8 @@ npm run dev
 - `GET /shops/:id/entries.json` 엔드포인트는 토큰·세션 기반 인증이 필요합니다. `PROTECTED_ENTRY_TOKENS` 환경 변수에 콤마로 구분된 토큰 목록을 설정하고,
   클라이언트는 `Authorization: Bearer <token>` 헤더(또는 `token` 쿼리 파라미터, `SESSION_COOKIE_NAME` 쿠키)를 포함해야 합니다.
 - 허용되지 않은 요청은 401(미인증) 또는 403(권한 없음) 상태 코드로 거부되며 JSON 본문을 반환하지 않습니다.
+- 토큰을 하나도 설정하지 않으면 기본적으로 로컬/사설망(127.0.0.1, 10.x, 192.168.x, 172.16–31)에서 들어오는 요청만 통과합니다.
+  외부 공개가 필요하면 토큰을 설정하거나, 환경 변수 `PROTECTED_ENTRY_ALLOW_LOCAL_BYPASS=false`로 로컬 우회를 차단하세요.
 - `config/reverse-proxy.conf` 파일에는 Nginx/Apache에서 동일 경로를 차단하는 2중 방어 예시가 포함되어 있습니다.
 
 ## CORS 및 WAF
