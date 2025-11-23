@@ -1,7 +1,6 @@
 const { pool } = require('../../config/db');
 const fs = require('fs');
 const path = require('path');
-const sharp = require('sharp');
 const { getContentProtectionMarkup, getSvgContentProtectionElements } = require('./contentProtection');
 
 const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
@@ -27,12 +26,6 @@ function getQrDataUrl() {
 }
 
 const COMMUNITY_QR_IMAGE_SRC = getQrDataUrl();
-
-function svgToPng(svg) {
-  return sharp(Buffer.from(svg))
-    .png({ compressionLevel: 9, adaptiveFiltering: true })
-    .toBuffer();
-}
 
 function escapeXml(value = '') {
   return String(value)
@@ -796,10 +789,9 @@ async function renderStoreEntryImage(req, res, next) {
       const layout = computeCompositeLayout(lines, STORE_IMAGE_OPTIONS);
       const decorations = buildStoreImageDecorations(layout);
       const svg = renderCompositeSvg(layout, decorations);
-      const png = await svgToPng(svg);
 
       res.set('Cache-Control', 'private, no-store');
-      res.type('image/png').send(png);
+      res.type('image/svg+xml').send(svg);
     } else {
       const data = await fetchSingleStoreEntries(storeNo);
       if (!data) return res.status(404).send('가게를 찾을 수 없습니다.');
@@ -808,10 +800,9 @@ async function renderStoreEntryImage(req, res, next) {
       const layout = computeCompositeLayout(lines, STORE_IMAGE_OPTIONS);
       const decorations = buildStoreImageDecorations(layout, data.top5);
       const svg = renderCompositeSvg(layout, decorations);
-      const png = await svgToPng(svg);
 
       res.set('Cache-Control', 'private, no-store');
-      res.type('image/png').send(png);
+      res.type('image/svg+xml').send(svg);
     }
 
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -859,7 +850,7 @@ function getAdjustedSeoulDate(now = new Date()) {
   return new Date(Date.UTC(year, month - 1, day));
 }
 
-async function renderTodayImage(_, res, next) {
+function renderTodayImage(_, res) {
   const adjustedDate = getAdjustedSeoulDate();
   const todayText = new Intl.DateTimeFormat('ko-KR', {
     month: 'long',
@@ -867,15 +858,10 @@ async function renderTodayImage(_, res, next) {
     timeZone: 'Asia/Seoul',
   }).format(adjustedDate);
 
-  try {
-    const svg = buildTodaySvg(todayText);
-    const png = await svgToPng(svg);
+  const svg = buildTodaySvg(todayText);
 
-    res.set('Cache-Control', 'no-store');
-    res.type('image/png').send(png);
-  } catch (error) {
-    next(error);
-  }
+  res.set('Cache-Control', 'no-store');
+  res.type('image/svg+xml').send(svg);
 }
 
 module.exports = {

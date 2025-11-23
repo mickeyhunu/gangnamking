@@ -1,5 +1,4 @@
 const { pool } = require('../../config/db');
-const sharp = require('sharp');
 const { getContentProtectionMarkup, getSvgContentProtectionElements } = require('./contentProtection');
 
 const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
@@ -14,12 +13,6 @@ const ROOM_PAGE_TEXT = {
   summaryAll: '총 가게 수',
   summarySingle: '룸현황',
 };
-
-function svgToPng(svg) {
-  return sharp(Buffer.from(svg))
-    .png({ compressionLevel: 9, adaptiveFiltering: true })
-    .toBuffer();
-}
 
 function escapeXml(value = '') {
   return String(value)
@@ -483,20 +476,18 @@ async function renderRoomImage(req, res, next) {
 
       const lines = buildAllRoomImageLines(rooms);
       const { svg } = buildCompositeSvg(lines, ROOM_IMAGE_OPTIONS);
-      const png = await svgToPng(svg);
 
       res.set('Cache-Control', 'private, no-store');
-      res.type('image/png').send(png);
+      res.type('image/svg+xml').send(svg);
     } else {
       const room = await fetchSingleRoomStatus(storeNo);
       if (!room) return res.status(404).send('룸현황 정보가 없습니다.');
 
       const lines = buildRoomImageLines(room);
       const { svg } = buildCompositeSvg(lines, ROOM_IMAGE_OPTIONS);
-      const png = await svgToPng(svg);
 
       res.set('Cache-Control', 'private, no-store');
-      res.type('image/png').send(png);
+      res.type('image/svg+xml').send(svg);
     }
 
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
