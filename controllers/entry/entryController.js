@@ -817,7 +817,7 @@ async function renderStoreEntryImage(req, res, next) {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const referer = req.get('referer') || '직접 요청';
     const userAgent = req.get('user-agent') || '알 수 없음';
-    console.log(`[ENTRYIMAGE ACCESS] IP:${ip} REF:${referer} UA:${userAgent}`);
+    //console.log(`[ENTRYIMAGE ACCESS] IP:${ip} REF:${referer} UA:${userAgent}`);
   } catch (error) {
     next(error);
   }
