@@ -697,26 +697,20 @@ async function renderStoreEntries(req, res, next) {
     const { storeNo } = req.params;
     const storeId = Number(storeNo);
 
-    if (!Number.isFinite(storeId) || storeId < 0) {
-      return res.status(400).send('잘못된 경로입니다.');
+    const { status, payload } = await buildStoreEntriesPayload(storeId);
+    if (status !== 200) {
+      const message = status === 400 ? '잘못된 경로입니다.' : '가게를 찾을 수 없습니다.';
+      return res.status(status).send(message);
     }
 
-    let storeName = '';
-    let pageTitle = '전체 가게 엔트리';
-    let pageHeading = '전체 가게 엔트리';
-    const isAllStores = storeId === 0;
-
-    if (!isAllStores) {
-      const store = await fetchStoreMetadata(storeId);
-      if (!store) return res.status(404).send('가게를 찾을 수 없습니다.');
-      storeName = store.storeName;
-      pageTitle = `${storeName} 엔트리`;
-      pageHeading = `${storeName} 엔트리`;
-    }
+    const isAllStores = payload.scope === 'all';
+    const storeName = isAllStores ? '' : payload.store.storeName;
+    const pageTitle = isAllStores ? '전체 가게 엔트리' : `${storeName} 엔트리`;
+    const pageHeading = pageTitle;
 
     const entryLocale = 'ko-KR';
     const dataEndpoint = `/entry/entrymap/${storeId}/data.json`;
-    const preloadedData = null;
+    const preloadedData = payload;
 
     res.render('entry-map', {
       contentProtectionMarkup: getContentProtectionMarkup(),
@@ -744,36 +738,50 @@ async function renderStoreEntriesData(req, res, next) {
     const { storeNo } = req.params;
     const storeId = Number(storeNo);
 
-    if (!Number.isFinite(storeId) || storeId < 0) {
-      return res.status(400).json({ error: '잘못된 요청입니다.' });
-    }
+    const { status, payload } = await buildStoreEntriesPayload(storeId);
 
-    if (storeId === 0) {
-      const storeDataList = await fetchAllStoreEntries();
-      if (!storeDataList.length) {
-        return res.status(404).json({ error: '가게를 찾을 수 없습니다.' });
-      }
-
-      const stores = storeDataList.map(({ store, entries, top5 }) =>
-        buildStoreEntryPayload(store, entries, top5)
-      );
-      const totalEntries = stores.reduce((sum, data) => sum + data.totalWorkers, 0);
-
-      res.set('Cache-Control', 'no-store');
-      res.json({ scope: 'all', totalEntries, storeCount: stores.length, stores });
-      return;
-    }
-
-    const data = await fetchSingleStoreEntries(storeId);
-    if (!data) {
-      return res.status(404).json({ error: '가게를 찾을 수 없습니다.' });
+    if (status !== 200) {
+      return res.status(status).json(payload);
     }
 
     res.set('Cache-Control', 'no-store');
-    res.json({ scope: 'single', store: buildStoreEntryPayload(data.store, data.entries, data.top5) });
+    res.json(payload);
   } catch (error) {
     next(error);
   }
+}
+
+async function buildStoreEntriesPayload(storeId) {
+  if (!Number.isFinite(storeId) || storeId < 0) {
+    return { status: 400, payload: { error: '잘못된 요청입니다.' } };
+  }
+
+  if (storeId === 0) {
+    const storeDataList = await fetchAllStoreEntries();
+    if (!storeDataList.length) {
+      return { status: 404, payload: { error: '가게를 찾을 수 없습니다.' } };
+    }
+
+    const stores = storeDataList.map(({ store, entries, top5 }) =>
+      buildStoreEntryPayload(store, entries, top5)
+    );
+    const totalEntries = stores.reduce((sum, data) => sum + data.totalWorkers, 0);
+
+    return {
+      status: 200,
+      payload: { scope: 'all', totalEntries, storeCount: stores.length, stores },
+    };
+  }
+
+  const data = await fetchSingleStoreEntries(storeId);
+  if (!data) {
+    return { status: 404, payload: { error: '가게를 찾을 수 없습니다.' } };
+  }
+
+  return {
+    status: 200,
+    payload: { scope: 'single', store: buildStoreEntryPayload(data.store, data.entries, data.top5) },
+  };
 }
 
 async function renderStoreEntryImage(req, res, next) {
