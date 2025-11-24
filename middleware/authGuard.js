@@ -4,7 +4,7 @@ const configuredTokens = (process.env.PROTECTED_ENTRY_TOKENS || '')
   .map((token) => token.trim())
   .filter(Boolean);
 
-const allowLocalBypass = (process.env.PROTECTED_ENTRY_ALLOW_LOCAL_BYPASS || 'true')
+const allowLocalBypass = (process.env.PROTECTED_ENTRY_ALLOW_LOCAL_BYPASS || 'false')
   .toLowerCase()
   .trim() === 'true';
 
@@ -30,7 +30,7 @@ function extractToken(req) {
 
 function isValidToken(token) {
   if (allowedTokens.size === 0) {
-    // No tokens configured: only allow local/private traffic to prevent public bypass.
+    // No tokens configured: require explicit bypass conditions instead of public access.
     return false;
   }
 
@@ -41,7 +41,7 @@ function isValidToken(token) {
   return allowedTokens.has(token);
 }
 
-function isPrivateIp(ipAddress) {
+function isLoopbackIp(ipAddress) {
   if (!ipAddress) {
     return false;
   }
@@ -52,19 +52,6 @@ function isPrivateIp(ipAddress) {
     return true;
   }
 
-  if (normalized.startsWith('10.')) {
-    return true;
-  }
-
-  if (normalized.startsWith('192.168.')) {
-    return true;
-  }
-
-  if (normalized.startsWith('172.')) {
-    const secondOctet = Number.parseInt(normalized.split('.')[1], 10);
-    return Number.isInteger(secondOctet) && secondOctet >= 16 && secondOctet <= 31;
-  }
-
   return false;
 }
 
@@ -73,7 +60,7 @@ function canBypassWithoutTokens(req) {
     return false;
   }
 
-  return isPrivateIp(req.ip);
+  return isLoopbackIp(req.ip);
 }
 
 function authGuard(req, res, next) {
