@@ -27,14 +27,6 @@ function getQrDataUrl() {
 
 const COMMUNITY_QR_IMAGE_SRC = getQrDataUrl();
 
-function encodeNameToken(name = '') {
-  const trimmed = String(name).trim();
-  if (!trimmed) return '';
-
-  const reversed = [...trimmed].reverse().join('');
-  return Buffer.from(reversed, 'utf8').toString('base64');
-}
-
 function escapeXml(value = '') {
   return String(value)
     .replace(/&/g, '&amp;')
@@ -280,9 +272,7 @@ function chunkArray(items, size) {
 
 function buildWorkerRows(entries) {
   const workerNames = entries
-    .map((entry) =>
-      typeof entry.workerName === 'string' ? encodeNameToken(entry.workerName.trim()) : ''
-    )
+    .map((entry) => (typeof entry.workerName === 'string' ? entry.workerName.trim() : ''))
     .filter(Boolean);
 
   return chunkArray(workerNames, ENTRY_ROW_SIZE);
@@ -290,7 +280,7 @@ function buildWorkerRows(entries) {
 
 function buildTopEntriesPayload(topEntries) {
   return topEntries.map((entry) => ({
-    nameToken: encodeNameToken(entry.workerName ?? ''),
+    name: entry.workerName ?? '',
     score: Math.max(0, (entry.total ?? 0) - 6),
   }));
 }
@@ -310,12 +300,7 @@ function buildEntryRowsHtml(entries) {
   return entryRows
     .map((row) => {
       const names = row
-        .map(
-          (entry) =>
-            `<span class="entry-name" data-name-token="${escapeHtml(
-              encodeNameToken(entry.workerName ?? '')
-            )}">${escapeHtml(encodeNameToken(entry.workerName ?? ''))}</span>`
-        )
+        .map((entry) => `<span class="entry-name">${escapeHtml(entry.workerName ?? '')}</span>`)
         .join(' ');
       return `<div class="entry-row">${names}</div>`;
     })
@@ -591,10 +576,10 @@ function buildStoreEntryLines(store, entries, top5) {
       });
     });
 
-      if (top5.length) {
-        lines.push({ text: '오늘의 인기 멤버 TOP 5', fontSize: 30, fontWeight: '700', gapBefore: 32 });
+    if (top5.length) {
+      lines.push({ text: '오늘의 인기 멤버 TOP 5', fontSize: 30, fontWeight: '700', gapBefore: 32 });
 
-        top5.forEach((entry, index) => {
+      top5.forEach((entry, index) => {
         const name = entry.workerName ?? '';
         const total = entry.total - 6 ?? 0;
         lines.push({
