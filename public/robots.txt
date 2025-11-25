@@ -1,9 +1,11 @@
 User-agent: *
 Disallow: /shops/*/entries.json
 Disallow: /entry/entrymap/
+Disallow: /entry/entrymap/*
 Disallow: /entry/entrymap/*/data.json
 Disallow: /entry/entrymap/*/entryImage
 Disallow: /entry/roommap/
+Disallow: /entry/roommap/*
 Disallow: /entry/roommap/*/data.json
 Disallow: /entry/roommap/*/roomImage
 Allow: /
