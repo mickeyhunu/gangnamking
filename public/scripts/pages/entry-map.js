@@ -37,6 +37,40 @@
     }
   }
 
+  function decodeNameToken(token) {
+    if (typeof token !== 'string' || !token.trim()) {
+      return '';
+    }
+
+    try {
+      const binary = atob(token);
+      const bytes = new Uint8Array(binary.length);
+
+      for (let i = 0; i < binary.length; i += 1) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+
+      const decoded = new TextDecoder().decode(bytes);
+      return [...decoded].reverse().join('');
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function resolveName(value) {
+    if (typeof value === 'string') {
+      const decoded = decodeNameToken(value);
+      return decoded || value;
+    }
+
+    if (value && typeof value.nameToken === 'string') {
+      const decoded = decodeNameToken(value.nameToken);
+      return decoded || '';
+    }
+
+    return '';
+  }
+
   function setVisibility(node, visible) {
     if (!node) return;
     if (visible) {
@@ -90,13 +124,14 @@
       }
       const rowEl = document.createElement('div');
       rowEl.className = 'entry-row';
-      row.forEach((name) => {
-        if (typeof name !== 'string' || !name.trim()) {
+      row.forEach((nameValue) => {
+        const decodedName = resolveName(nameValue).trim();
+        if (!decodedName) {
           return;
         }
         const badge = document.createElement('span');
         badge.className = 'entry-name';
-        badge.textContent = name;
+        badge.textContent = decodedName;
         rowEl.appendChild(badge);
       });
       if (rowEl.childElementCount) {
@@ -131,7 +166,8 @@
 
       const name = document.createElement('span');
       name.className = 'top-list__name';
-      name.textContent = `${index + 1}. ${entry.name || ''}`;
+      const resolvedName = resolveName(entry);
+      name.textContent = `${index + 1}. ${resolvedName || ''}`;
 
       const score = document.createElement('span');
       score.className = 'top-list__score';
