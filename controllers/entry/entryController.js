@@ -697,6 +697,18 @@ async function renderStoreEntries(req, res, next) {
     const { storeNo } = req.params;
     const storeId = Number(storeNo);
 
+    const sessionCookieName = process.env.SESSION_COOKIE_NAME || 'session_token';
+    const requestToken = typeof req.query.token === 'string' ? req.query.token.trim() : '';
+    const tokenQuery = requestToken ? `?token=${encodeURIComponent(requestToken)}` : '';
+
+    if (requestToken) {
+      res.cookie(sessionCookieName, requestToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+      });
+    }
+
     const { status, payload } = await buildStoreEntriesPayload(storeId);
     if (status !== 200) {
       const message = status === 400 ? '잘못된 경로입니다.' : '가게를 찾을 수 없습니다.';
@@ -709,7 +721,7 @@ async function renderStoreEntries(req, res, next) {
     const pageHeading = pageTitle;
 
     const entryLocale = 'ko-KR';
-    const dataEndpoint = `/entry/entrymap/${storeId}/data.json`;
+    const dataEndpoint = `/entry/entrymap/${storeId}/data.json${tokenQuery}`;
     const preloadedData = payload;
 
     res.render('entry-map', {
