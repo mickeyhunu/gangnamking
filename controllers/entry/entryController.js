@@ -27,6 +27,15 @@ function getQrDataUrl() {
 
 const COMMUNITY_QR_IMAGE_SRC = getQrDataUrl();
 
+function obfuscateName(name = '') {
+  const trimmed = String(name).trim();
+  if (!trimmed) return '';
+  if (trimmed.length === 1) return trimmed;
+  if (trimmed.length === 2) return `${trimmed[0]}●`;
+  const masked = '●'.repeat(Math.max(1, trimmed.length - 2));
+  return `${trimmed[0]}${masked}${trimmed[trimmed.length - 1]}`;
+}
+
 function escapeXml(value = '') {
   return String(value)
     .replace(/&/g, '&amp;')
@@ -272,7 +281,9 @@ function chunkArray(items, size) {
 
 function buildWorkerRows(entries) {
   const workerNames = entries
-    .map((entry) => (typeof entry.workerName === 'string' ? entry.workerName.trim() : ''))
+    .map((entry) =>
+      typeof entry.workerName === 'string' ? obfuscateName(entry.workerName.trim()) : ''
+    )
     .filter(Boolean);
 
   return chunkArray(workerNames, ENTRY_ROW_SIZE);
@@ -280,7 +291,7 @@ function buildWorkerRows(entries) {
 
 function buildTopEntriesPayload(topEntries) {
   return topEntries.map((entry) => ({
-    name: entry.workerName ?? '',
+    name: obfuscateName(entry.workerName ?? ''),
     score: Math.max(0, (entry.total ?? 0) - 6),
   }));
 }
@@ -300,7 +311,10 @@ function buildEntryRowsHtml(entries) {
   return entryRows
     .map((row) => {
       const names = row
-        .map((entry) => `<span class="entry-name">${escapeHtml(entry.workerName ?? '')}</span>`)
+        .map(
+          (entry) =>
+            `<span class="entry-name">${escapeHtml(obfuscateName(entry.workerName ?? ''))}</span>`
+        )
         .join(' ');
       return `<div class="entry-row">${names}</div>`;
     })
@@ -533,7 +547,7 @@ function buildStoreImageDecorations(layout, top5 = []) {
 function buildTop5Html(top5) {
   return top5
     .map((entry) => {
-      const name = escapeHtml(entry.workerName ?? '');
+      const name = escapeHtml(obfuscateName(entry.workerName ?? ''));
       const total = entry.total - 6 ?? 0;
       return `<li><span class="name"> ${name}</span><span class="score"> - 합계 ${total}</span></li>`;
     })
@@ -565,7 +579,7 @@ function buildStoreEntryLines(store, entries, top5) {
     const entryRows = chunkArray(entries, ENTRY_ROW_SIZE);
     entryRows.forEach((row, index) => {
       const chunkText = row
-        .map((entry) => entry.workerName ?? '')
+        .map((entry) => obfuscateName(entry.workerName ?? ''))
         .join(' ');
 
       lines.push({
@@ -580,7 +594,7 @@ function buildStoreEntryLines(store, entries, top5) {
       lines.push({ text: '오늘의 인기 멤버 TOP 5', fontSize: 30, fontWeight: '700', gapBefore: 32 });
 
       top5.forEach((entry, index) => {
-        const name = entry.workerName ?? '';
+        const name = obfuscateName(entry.workerName ?? '');
         const total = entry.total - 6 ?? 0;
         lines.push({
           text: `${index + 1}. ${name} - 합계 ${total}`,
@@ -627,7 +641,7 @@ function buildAllStoreEntryLines(storeDataList) {
       const entryRows = chunkArray(data.entries, ENTRY_ROW_SIZE);
       entryRows.forEach((row, index) => {
         lines.push({
-          text: row.map((entry) => entry.workerName ?? '').join(' '),
+          text: row.map((entry) => obfuscateName(entry.workerName ?? '')).join(' '),
           fontSize: 24,
           lineHeight: 34,
           gapBefore: index === 0 ? 12 : 8,
@@ -645,7 +659,7 @@ function buildAllStoreEntryLines(storeDataList) {
         data.top5.forEach((entry, index) => {
           const total = entry.total - 6 ?? 0;
           lines.push({
-            text: `${index + 1}. ${entry.workerName ?? ''} - 합계 ${total}`,
+            text: `${index + 1}. ${obfuscateName(entry.workerName ?? '')} - 합계 ${total}`,
             fontSize: 24,
             lineHeight: 34,
             gapBefore: index === 0 ? 10 : 6,
