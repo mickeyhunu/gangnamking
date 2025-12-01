@@ -64,11 +64,13 @@ router.post('/verify', async (req, res) => {
   if (success) {
     const expiresAt = getVerificationExpiry();
 
+    const isSecureRequest = req.secure || req.headers['x-forwarded-proto'] === 'https';
+
     res.cookie(TURNSTILE_COOKIE_NAME, expiresAt, {
       maxAge: DEFAULT_COOKIE_TTL_MS,
       httpOnly: true,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecureRequest,
       path: '/',
     });
 
