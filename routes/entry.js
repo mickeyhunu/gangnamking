@@ -13,12 +13,10 @@ const {
 } = require('../controllers/entry/roomController');
 const authGuard = require('../middleware/authGuard');
 const entryCrawlerBlocker = require('../middleware/entryCrawlerBlocker');
-const entryMapIpFilter = require('../middleware/entryMapIpFilter');
 
 const router = express.Router();
 
 router.use(entryCrawlerBlocker);
-router.use('/entrymap', entryMapIpFilter);
 
 router.get('/', (req, res) => {
   res.redirect('/entry/home');
