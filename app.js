@@ -8,9 +8,11 @@ const abuseProtectorMiddleware = require('./middleware/abuseProtector');
 const ipBlockerMiddleware = require('./middleware/ipBlocker');
 const corsGuardMiddleware = require('./middleware/corsGuard');
 const wafMiddleware = require('./middleware/waf');
+const cloudflareTurnstileMiddleware = require('./middleware/cloudflareTurnstile');
 const shopRoutes = require('./routes/index');
 const entryRoutes = require('./routes/entry');
 const protectedEntryRoutes = require('./routes/protectedEntries');
+const cloudflareRoutes = require('./routes/cloudflare');
 const { initializeDataStore } = require('./services/dataStore');
 const { getNaverMapCredentials } = require('./config/naver');
 
@@ -45,12 +47,18 @@ app.use(corsGuardMiddleware);
 app.use(wafMiddleware);
 app.use(abuseProtectorMiddleware);
 app.use(ipBlockerMiddleware);
+app.use(
+  cloudflareTurnstileMiddleware({
+    protectedPrefixes: ['/entry', '/shops'],
+  })
+);
 app.use(languageMiddleware);
 app.use((req, res, next) => {
   const { clientId } = getNaverMapCredentials();
   res.locals.naverMapClientId = clientId || '';
   next();
 });
+app.use('/cloudflare', cloudflareRoutes);
 app.use('/shops', protectedEntryRoutes);
 app.use('/entry', entryRoutes);
 app.use('/', shopRoutes);
