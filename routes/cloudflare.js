@@ -11,25 +11,51 @@ const {
 
 const router = express.Router();
 
+function normalizeNextPath(rawNextPath, fallback = '/') {
+  if (typeof rawNextPath !== 'string') {
+    return fallback;
+  }
+
+  const trimmed = rawNextPath.trim();
+  if (!trimmed) {
+    return fallback;
+  }
+
+  let decoded = trimmed;
+  try {
+    decoded = decodeURIComponent(trimmed);
+  } catch (error) {
+    decoded = trimmed;
+  }
+
+  if (!decoded.startsWith('/')) {
+    return fallback;
+  }
+
+  return decoded;
+}
+
 router.get('/challenge', (req, res) => {
   if (!isTurnstileConfigured()) {
-    return res.redirect(req.query.next || '/');
+    return res.redirect(normalizeNextPath(req.query.next));
   }
+
+  const nextPath = normalizeNextPath(req.query.next);
 
   return res.render('cloudflare-challenge', {
     pageTitle: 'Cloudflare 인증 필요',
     siteKey: getTurnstileSiteKey(),
-    nextPath: typeof req.query.next === 'string' && req.query.next.trim() ? req.query.next : '/',
+    nextPath,
     errorMessage: '',
   });
 });
 
 router.post('/verify', async (req, res) => {
   if (!isTurnstileConfigured()) {
-    return res.redirect(req.body.next || '/');
+    return res.redirect(normalizeNextPath(req.body.next));
   }
 
-  const nextPath = typeof req.body.next === 'string' && req.body.next.trim() ? req.body.next : '/';
+  const nextPath = normalizeNextPath(req.body.next);
   const token = req.body['cf-turnstile-response'];
   const ip = getClientIp(req);
 
