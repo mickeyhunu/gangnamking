@@ -38,14 +38,6 @@ npm run dev
 - User-Agent가 누락되었거나 크롤러 패턴을 포함하는 경우, 또는 짧은 시간 동안 `/shops/*/entries.json`을 과도하게 호출하는 경우 WAF와 rate limiter가 403/429로 차단합니다.
 - 민감한 출근부 데이터는 서버에서 HTML에 선렌더링되므로, 정상 사용자는 추가 JSON 호출 없이도 페이지 내에서 즉시 확인할 수 있습니다.
 
-## Cloudflare Turnstile 적용
-
-- Cloudflare Turnstile을 사용해 `/entry` 및 `/shops` 경로에 대한 봇 트래픽을 차단합니다. 다음 환경 변수를 설정하면 즉시 활성화됩니다.
-  - `CLOUDFLARE_TURNSTILE_SITE_KEY`: Cloudflare Turnstile 사이트 키
-  - `CLOUDFLARE_TURNSTILE_SECRET_KEY`: Turnstile 시크릿 키
-  - `CLOUDFLARE_TURNSTILE_COOKIE_TTL_MS` (선택): 인증 유지 시간(기본 6시간)
-- 인증이 필요한 사용자는 `/cloudflare/challenge` 페이지로 리디렉션되며 Turnstile 검증에 성공하면 쿠키가 설정되고 요청이 계속 진행됩니다.
-
 ## 데이터 구조
 
 `data/shops.json` 파일은 다음과 같은 구조의 배열입니다.
