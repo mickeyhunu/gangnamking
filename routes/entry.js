@@ -13,25 +13,22 @@ const {
 } = require('../controllers/entry/roomController');
 const authGuard = require('../middleware/authGuard');
 const entryCrawlerBlocker = require('../middleware/entryCrawlerBlocker');
-const entryShield = require('../middleware/entryShield');
-const signedUrlGuard = require('../middleware/signedUrlGuard');
 
 const router = express.Router();
 
 router.use(entryCrawlerBlocker);
-router.use(entryShield);
 
 router.get('/', (req, res) => {
   res.redirect('/entry/home');
 });
 
 router.get('/home', renderHome);
-router.get('/entrymap/:storeNo/data.json', authGuard, signedUrlGuard, renderStoreEntriesData);
-router.get('/entrymap/:storeNo', signedUrlGuard, renderStoreEntries);
-router.get('/entrymap/:storeNo/entryImagege1', signedUrlGuard, renderStoreEntryImage);
-router.get('/roommap/:storeNo/data.json', authGuard, signedUrlGuard, renderRoomInfoData);
-router.get('/roommap/:storeNo', signedUrlGuard, renderRoomInfo);
-router.get('/roommap/:storeNo/roomImagege1', signedUrlGuard, renderRoomImage);
-router.get('/today', signedUrlGuard, renderTodayImage);
+router.get('/entrymap/:storeNo/data.json', authGuard, renderStoreEntriesData);
+router.get('/entrymap/:storeNo', renderStoreEntries);
+router.get('/entrymap/:storeNo/entryImagege1', renderStoreEntryImage);
+router.get('/roommap/:storeNo/data.json', authGuard, renderRoomInfoData);
+router.get('/roommap/:storeNo', renderRoomInfo);
+router.get('/roommap/:storeNo/roomImagege1', renderRoomImage);
+router.get('/today', renderTodayImage);
 
 module.exports = router;
