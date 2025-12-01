@@ -64,7 +64,9 @@ router.post('/verify', async (req, res) => {
   if (success) {
     const expiresAt = getVerificationExpiry();
 
-    const isSecureRequest = req.secure || req.headers['x-forwarded-proto'] === 'https';
+    const forwardedProto = req.headers['x-forwarded-proto'];
+    const isSecureRequest =
+      req.secure || (typeof forwardedProto === 'string' && forwardedProto.split(',')[0].trim() === 'https');
 
     res.cookie(TURNSTILE_COOKIE_NAME, expiresAt, {
       maxAge: DEFAULT_COOKIE_TTL_MS,
