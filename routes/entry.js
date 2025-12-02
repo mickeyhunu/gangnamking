@@ -12,11 +12,8 @@ const {
   renderRoomImage,
 } = require('../controllers/entry/roomController');
 const authGuard = require('../middleware/authGuard');
-const entryCrawlerBlocker = require('../middleware/entryCrawlerBlocker');
 
 const router = express.Router();
-
-router.use(entryCrawlerBlocker);
 
 router.get('/', (req, res) => {
   res.redirect('/entry/home');
