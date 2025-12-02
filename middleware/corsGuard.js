@@ -1,4 +1,5 @@
 const { wildcardToRegex } = require('../lib/patternUtils');
+const { isSecurityGuardsEnabled } = require('../config/features');
 
 const DEFAULT_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000'];
 const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
@@ -21,6 +22,10 @@ function isOriginAllowed(origin) {
 }
 
 function corsGuard(req, res, next) {
+  if (!isSecurityGuardsEnabled()) {
+    return next();
+  }
+
   const origin = req.get('origin');
   const hasOrigin = typeof origin === 'string' && origin.trim() !== '';
 

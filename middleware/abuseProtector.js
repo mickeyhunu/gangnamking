@@ -1,7 +1,12 @@
 const { evaluateRequest } = require('../services/abuseMonitor');
 const getClientIp = require('../lib/getClientIp');
+const { isSecurityGuardsEnabled } = require('../config/features');
 
 function abuseProtector(req, res, next) {
+  if (!isSecurityGuardsEnabled()) {
+    return next();
+  }
+
   const ip = getClientIp(req);
   const { limited, blocked } = evaluateRequest(ip);
 
