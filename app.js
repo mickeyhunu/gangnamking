@@ -65,6 +65,11 @@ app.use((err, req, res, next) => {
     return next(err);
   }
 
+  console.error(
+    `[Error] ${req.method} ${req.originalUrl}:`,
+    err && err.stack ? err.stack : err
+  );
+
   res.status(500).send('Internal Server Error');
 });
 
