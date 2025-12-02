@@ -15,17 +15,17 @@ const authGuard = require('../middleware/authGuard');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.redirect('/entry/home');
-});
+// router.get('/', (req, res) => {
+//   res.redirect('/entry');
+// });
 
-router.get('/home', renderHome);
-router.get('/entrymap/:storeNo/data.json', authGuard, renderStoreEntriesData);
-router.get('/entrymap/:storeNo', renderStoreEntries);
-router.get('/entrymap/:storeNo/entryImagege1', renderStoreEntryImage);
-router.get('/roommap/:storeNo/data.json', authGuard, renderRoomInfoData);
-router.get('/roommap/:storeNo', renderRoomInfo);
-router.get('/roommap/:storeNo/roomImagege1', renderRoomImage);
+router.get('/', renderHome);
+router.get('/:storeNo/data.json', authGuard, renderStoreEntriesData);
+router.get('/:storeNo', renderStoreEntries);
+router.get('/:storeNo/entryImage', renderStoreEntryImage);
+router.get('/:storeNo/data.json', authGuard, renderRoomInfoData);
+router.get('/:storeNo', renderRoomInfo);
+router.get('/:storeNo/roomImage', renderRoomImage);
 router.get('/today', renderTodayImage);
 
 module.exports = router;

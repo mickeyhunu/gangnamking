@@ -5,7 +5,9 @@ const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
 
 async function renderHome(req, res, next) {
   try {
-    const stores = getShops()
+    const shops = Array.isArray(getShops()) ? getShops() : [];
+
+    const stores = shops
       .map((shop) => ({
         storeNo: shop.storeNo,
         storeName: shop.name,
