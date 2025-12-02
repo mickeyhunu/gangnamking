@@ -7,7 +7,6 @@ const requestLoggingMiddleware = require('./middleware/requestLogger');
 const abuseProtectorMiddleware = require('./middleware/abuseProtector');
 const ipBlockerMiddleware = require('./middleware/ipBlocker');
 const corsGuardMiddleware = require('./middleware/corsGuard');
-const wafMiddleware = require('./middleware/waf');
 const shopRoutes = require('./routes/index');
 const entryRoutes = require('./routes/entry');
 const protectedEntryRoutes = require('./routes/protectedEntries');
@@ -42,7 +41,6 @@ app.use((req, _res, next) => {
 });
 app.use(requestLoggingMiddleware);
 app.use(corsGuardMiddleware);
-app.use(wafMiddleware);
 app.use(abuseProtectorMiddleware);
 app.use(ipBlockerMiddleware);
 app.use(languageMiddleware);
