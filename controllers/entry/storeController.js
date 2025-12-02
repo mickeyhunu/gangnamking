@@ -1,15 +1,17 @@
-const { pool } = require('../../config/db');
+const { getShops } = require('../../services/dataStore');
 const { getContentProtectionMarkup } = require('./contentProtection');
 
 const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
 
 async function renderHome(req, res, next) {
   try {
-    const [stores] = await pool.query(
-      `SELECT storeNo, storeName
-         FROM INFO_STORE
-        ORDER BY storeNo ASC`
-    );
+    const stores = getShops()
+      .map((shop) => ({
+        storeNo: shop.storeNo,
+        storeName: shop.name,
+      }))
+      .filter((shop) => typeof shop.storeNo === 'number' && shop.storeName)
+      .sort((a, b) => a.storeNo - b.storeNo);
 
     const storeCards = stores.map((store) => ({
       storeNo: store.storeNo,
