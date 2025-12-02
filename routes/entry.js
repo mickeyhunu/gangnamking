@@ -20,12 +20,12 @@ const router = express.Router();
 // });
 
 router.get('/', renderHome);
-router.get('/:storeNo/data.json', authGuard, renderStoreEntriesData);
-router.get('/:storeNo', renderStoreEntries);
-router.get('/:storeNo/entryImage', renderStoreEntryImage);
-router.get('/:storeNo/data.json', authGuard, renderRoomInfoData);
-router.get('/:storeNo', renderRoomInfo);
-router.get('/:storeNo/roomImage', renderRoomImage);
+router.get('/entrymap/:storeNo/data.json', authGuard, renderStoreEntriesData);
+router.get('/entrymap/:storeNo', renderStoreEntries);
+router.get('/entrymap/:storeNo/entryImage', renderStoreEntryImage);
+router.get('/roommap/:storeNo/data.json', authGuard, renderRoomInfoData);
+router.get('/roommap/:storeNo', renderRoomInfo);
+router.get('/roommap/:storeNo/roomImage', renderRoomImage);
 router.get('/today', renderTodayImage);
 
 module.exports = router;
