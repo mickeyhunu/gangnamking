@@ -2,6 +2,15 @@ const { reportSuspiciousActivity } = require('../services/abuseMonitor');
 const getClientIp = require('../lib/getClientIp');
 const { wildcardToRegex } = require('../lib/patternUtils');
 
+const allowedAgentRules = [
+  /googlebot/i,
+  /bingbot/i,
+  /yahoo! slurp/i,
+  /yandexbot/i,
+  /naverbot/i,
+  /daumoa/i,
+];
+
 const suspiciousAgentRules = [
   /curl/i,
   /python-requests/i,
@@ -22,6 +31,10 @@ const pathRequestLog = new Map();
 function isSuspiciousAgent(agent) {
   if (!agent || typeof agent !== 'string') {
     return true;
+  }
+
+  if (allowedAgentRules.some((rule) => rule.test(agent))) {
+    return false;
   }
 
   return suspiciousAgentRules.some((rule) => rule.test(agent));
