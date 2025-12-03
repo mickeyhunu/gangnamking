@@ -927,18 +927,13 @@
             </p>
           </div>
           <div class="store-entry-overview">
-            <div class="store-entry-workers" data-entry-workers data-nosnippet>
+            <div class="store-entry-workers" data-entry-workers>
               <h3 class="store-entry-workers__title"><%= entriesWorkerListTitle %></h3>
-              <ul
-                class="store-entry-workers__list"
-                data-entry-worker-list
-                data-nosnippet
-                <%= entryHasPrefilledWorkers ? '' : 'hidden' %>
-              >
+              <ul class="store-entry-workers__list" data-entry-worker-list <%= entryHasPrefilledWorkers ? '' : 'hidden' %>>
                 <% if (entryHasPrefilledWorkers) { %>
                   <% entrySnapshotWorkers.forEach(function(row) { %>
                     <% if (Array.isArray(row) && row.length) { %>
-                      <li class="store-entry-workers__item" data-nosnippet>
+                      <li class="store-entry-workers__item">
                         <% row.forEach(function(name) { %>
                           <% if (typeof name === 'string' && name.trim()) { %>
                             <span class="store-entry-workers__name"><%= name %></span>
@@ -958,18 +953,13 @@
                 <%= workerEmptyMessage %>
               </p>
             </div>
-            <div class="store-entry-top" data-entry-top data-nosnippet>
+            <div class="store-entry-top" data-entry-top>
               <h3 class="store-entry-top__title"><%= entriesTopListTitle %></h3>
-              <ol
-                class="store-entry-top__list"
-                data-entry-top-list
-                data-nosnippet
-                <%= entryHasPrefilledTop ? '' : 'hidden' %>
-              >
+              <ol class="store-entry-top__list" data-entry-top-list <%= entryHasPrefilledTop ? '' : 'hidden' %>>
                 <% if (entryHasPrefilledTop) { %>
                   <% entrySnapshotTop.forEach(function(entry, index) { %>
                     <% if (entry && entry.workerName) { %>
-                      <li class="store-entry-top__item" data-nosnippet>
+                      <li class="store-entry-top__item">
                         <span class="store-entry-top__rank"><%= index + 1 %></span>
                         <span class="store-entry-top__name"><%= entry.workerName %></span>
                         <% if (entry.score != null) { %>
