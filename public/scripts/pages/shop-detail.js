@@ -110,8 +110,16 @@
         return;
       }
 
-      if ((section.dataset.entryPrefilled || '').toLowerCase() === 'true') {
-        return;
+      const isPrefilled = (section.dataset.entryPrefilled || '').toLowerCase() === 'true';
+      const prefillNode = section.querySelector('[data-entry-prefill]');
+      let prefillSummary = null;
+
+      if (prefillNode && prefillNode.textContent) {
+        try {
+          prefillSummary = JSON.parse(prefillNode.textContent);
+        } catch (error) {
+          prefillSummary = null;
+        }
       }
 
       const totalNode = section.querySelector('[data-entry-total]');
@@ -341,6 +349,14 @@
         } catch (error) {
           showError();
         }
+      }
+
+      if (prefillSummary) {
+        applySummary(prefillSummary);
+      }
+
+      if (isPrefilled) {
+        return;
       }
 
       fetchEntries();
