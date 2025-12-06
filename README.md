@@ -23,6 +23,9 @@ npm run dev
 - `npm run find:crawlers -- --min-requests 10 --min-paths 3 --min-repeat 2 --block` 명령으로 로그를 스캔해 반복적으로 여러 경로를
   긁는 크롤러를 찾을 수 있습니다. Googlebot, Naver Yeti, Daumoa, Kakao 미리보기 등 SEO·미리보기용 크롤러는 User-Agent 기반으로
   자동 제외되며, `--block` 옵션을 주면 탐지된 IP를 `data/blocked_ips.json`에 즉시 추가합니다(확인만 하고 싶다면 `--block`을 빼세요).
+- `/shops/*` 경로는 User-Agent가 비어 있거나 `facebookexternalhit`, `kakaotalk`(스크랩), `headless`, `python-requests`, `httpclient`,
+  `curl`, `wget`, `spider`, `crawler`, `bot` 등 크롤러 패턴을 포함하면 자동으로 403을 반환합니다. 차단 목록은 환경 변수
+  `CRAWLER_USER_AGENT_BLOCKLIST`(콤마 구분 정규식)로 확장할 수 있으며, 적용 경로도 `CRAWLER_PATH_PREFIX`로 변경 가능합니다.
 - 요청 속도가 비정상적으로 빠른 IP는 자동으로 rate limit(기본 60초 동안 30회) 되며, 제한을 3회 이상 반복 초과하면 5분 내에서 `blocked_ips.json`
   에 자동 추가되어 장기 차단됩니다. 필요 시 `ABUSE_RATE_LIMIT_*` 및 `ABUSE_AUTO_BLOCK_*` 환경 변수를 이용해 기준을 조정할 수 있습니다.
 - 광고 심사 등 일시적으로 모든 차단을 해제해야 할 때는 환경 변수 `SECURITY_GUARDS_ENABLED=false`를 설정하세요. CORS, IP 차단, 자동 차단
