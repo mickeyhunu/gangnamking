@@ -33,6 +33,7 @@ npm run dev
 - 토큰을 하나도 설정하지 않으면 기본적으로 로컬/사설망(127.0.0.1, 10.x, 192.168.x, 172.16–31)에서 들어오는 요청만 통과합니다.
   외부 공개가 필요하면 토큰을 설정하거나, 환경 변수 `PROTECTED_ENTRY_ALLOW_LOCAL_BYPASS=false`로 로컬 우회를 차단하세요.
 - `config/reverse-proxy.conf` 파일에는 Nginx/Apache에서 동일 경로를 차단하는 2중 방어 예시가 포함되어 있습니다.
+- 출근부 섹션의 데이터 호출을 늦추고 싶다면 `ENTRY_LOAD_DELAY_SECONDS` 환경 변수에 원하는 지연 시간을 초 단위로 지정하세요.
 
 ## CORS 및 WAF
 

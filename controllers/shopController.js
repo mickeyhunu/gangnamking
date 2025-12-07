@@ -4,6 +4,26 @@ const { getShops } = require('../services/dataStore');
 const { fetchEntriesForStore, fetchEntryWorkerNames } = require('../services/entryService');
 const { fetchShopLocation } = require('../services/naverMapService');
 
+const DEFAULT_ENTRY_LOAD_DELAY_MS = 0;
+
+function getEntryLoadDelayMs() {
+  const rawSeconds = process.env.ENTRY_LOAD_DELAY_SECONDS;
+
+  if (rawSeconds === undefined) {
+    return DEFAULT_ENTRY_LOAD_DELAY_MS;
+  }
+
+  const parsedSeconds = Number(rawSeconds);
+
+  if (!Number.isFinite(parsedSeconds) || parsedSeconds < 0) {
+    return DEFAULT_ENTRY_LOAD_DELAY_MS;
+  }
+
+  return Math.round(parsedSeconds * 1000);
+}
+
+const ENTRY_LOAD_DELAY_MS = getEntryLoadDelayMs();
+
 function toFiniteNumber(value) {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric : 0;
@@ -286,6 +306,7 @@ async function renderShopDetail(req, res, next) {
     res.render('shop', {
       shop: localizedShop,
       entrySummary,
+      entryLoadDelayMs: ENTRY_LOAD_DELAY_MS,
       shopLocation,
       mapAuthErrorCode,
       seoKeywords: Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : [],
