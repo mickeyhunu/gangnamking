@@ -97,6 +97,10 @@
   const entryDataEndpoint = showEntrySection
     ? `/shops/${encodeURIComponent(shop.id)}/entries.json`
     : '';
+  const rawEntryLoadDelay = Number(entryLoadDelayMs);
+  const entryLoadDelayMsValue = Number.isFinite(rawEntryLoadDelay) && rawEntryLoadDelay > 0
+    ? Math.floor(rawEntryLoadDelay)
+    : 0;
   const overviewNavLabel = (t.shop && t.shop.nav && t.shop.nav.overview)
     || pricingHighlight.badge
     || '업소 정보';
@@ -921,6 +925,7 @@
       data-entry-locale="<%= entryLocale %>"
       data-entry-top-score-label="<%= entriesTopListScoreLabel %>"
       data-entry-prefilled="<%= entryHasPrefilledWorkers || entryHasPrefilledTop ? 'true' : 'false' %>"
+      data-entry-delay-ms="<%= entryLoadDelayMsValue %>"
     >
       <div class="container detail-section__grid">
         <div class="detail-card detail-card--full">
