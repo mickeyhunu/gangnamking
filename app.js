@@ -6,7 +6,6 @@ const languageMiddleware = require('./middleware/language');
 const requestLoggingMiddleware = require('./middleware/requestLogger');
 const abuseProtectorMiddleware = require('./middleware/abuseProtector');
 const ipBlockerMiddleware = require('./middleware/ipBlocker');
-const crawlerBlockerMiddleware = require('./middleware/crawlerBlocker');
 const corsGuardMiddleware = require('./middleware/corsGuard');
 const shopRoutes = require('./routes/index');
 const entryRoutes = require('./routes/entry');
@@ -44,7 +43,6 @@ app.use(requestLoggingMiddleware);
 app.use(corsGuardMiddleware);
 app.use(abuseProtectorMiddleware);
 app.use(ipBlockerMiddleware);
-app.use(crawlerBlockerMiddleware);
 app.use(languageMiddleware);
 app.use((req, res, next) => {
   const { clientId } = getNaverMapCredentials();
