@@ -131,18 +131,29 @@
       const errorText = section.dataset.entryErrorText || '';
       const scoreLabel = section.dataset.entryTopScoreLabel || '';
       const locale = section.dataset.entryLocale || 'ko';
+      const lazyLoad = (section.dataset.entryLazy || '').toLowerCase() !== 'false';
+      const sentinel =
+        section.previousElementSibling && section.previousElementSibling.dataset.entrySentinel !== undefined
+          ? section.previousElementSibling
+          : null;
       const workerEmptyDefault = workerEmpty
         ? workerEmpty.dataset.entryEmptyDefault || workerEmpty.textContent || ''
         : '';
       const topEmptyDefault = topEmpty
         ? topEmpty.dataset.entryTopEmptyDefault || topEmpty.textContent || workerEmptyDefault
         : workerEmptyDefault;
+      let hasActivated = false;
       let numberFormatter;
 
       try {
         numberFormatter = new Intl.NumberFormat(locale);
       } catch (error) {
         numberFormatter = new Intl.NumberFormat();
+      }
+
+      function revealSection() {
+        section.hidden = false;
+        section.classList.remove('store-entries--pending');
       }
 
       function setWorkerMessage(message) {
@@ -355,11 +366,35 @@
         applySummary(prefillSummary);
       }
 
-      if (isPrefilled) {
+      function activateSection() {
+        if (hasActivated) {
+          return;
+        }
+
+        hasActivated = true;
+        revealSection();
+
+        if (!isPrefilled) {
+          fetchEntries();
+        }
+      }
+
+      if (!lazyLoad || !sentinel || !('IntersectionObserver' in window)) {
+        activateSection();
         return;
       }
 
-      fetchEntries();
+      const observer = new IntersectionObserver(
+        (entries, obs) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            obs.disconnect();
+            activateSection();
+          }
+        },
+        { rootMargin: '160px 0px' }
+      );
+
+      observer.observe(sentinel);
     });
   }
 
