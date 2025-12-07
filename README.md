@@ -20,9 +20,6 @@ npm run dev
 - 무단 크롤링으로 판별된 IP는 `data/blocked_ips.json` 파일(문자열 배열 형태)에 추가하면 됩니다. 서버가 파일을 자동으로 생성하고
   로드하며, 차단된 IP에서 요청이 들어오면 403 응답으로 즉시 거부됩니다. IP 전체 대역을 막고 싶다면 와일드카드(`*`)를 사용할 수
   있습니다. 예: `"3.34.*"` 또는 `"3.36.*"`.
-- `npm run find:crawlers -- --min-requests 10 --min-paths 3 --min-repeat 2 --block` 명령으로 로그를 스캔해 반복적으로 여러 경로를
-  긁는 크롤러를 찾을 수 있습니다. Googlebot, Naver Yeti, Daumoa, Kakao 미리보기 등 SEO·미리보기용 크롤러는 User-Agent 기반으로
-  자동 제외되며, `--block` 옵션을 주면 탐지된 IP를 `data/blocked_ips.json`에 즉시 추가합니다(확인만 하고 싶다면 `--block`을 빼세요).
 - 요청 속도가 비정상적으로 빠른 IP는 자동으로 rate limit(기본 60초 동안 30회) 되며, 제한을 3회 이상 반복 초과하면 5분 내에서 `blocked_ips.json`
   에 자동 추가되어 장기 차단됩니다. 필요 시 `ABUSE_RATE_LIMIT_*` 및 `ABUSE_AUTO_BLOCK_*` 환경 변수를 이용해 기준을 조정할 수 있습니다.
 - 광고 심사 등 일시적으로 모든 차단을 해제해야 할 때는 환경 변수 `SECURITY_GUARDS_ENABLED=false`를 설정하세요. CORS, IP 차단, 자동 차단
