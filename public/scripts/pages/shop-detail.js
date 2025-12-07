@@ -131,10 +131,6 @@
       const errorText = section.dataset.entryErrorText || '';
       const scoreLabel = section.dataset.entryTopScoreLabel || '';
       const locale = section.dataset.entryLocale || 'ko';
-      const rawLoadDelay = Number(section.dataset.entryDelayMs || 0);
-      const loadDelayMs = Number.isFinite(rawLoadDelay) && rawLoadDelay > 0
-        ? rawLoadDelay
-        : 0;
       const workerEmptyDefault = workerEmpty
         ? workerEmpty.dataset.entryEmptyDefault || workerEmpty.textContent || ''
         : '';
@@ -363,13 +359,7 @@
         return;
       }
 
-      if (loadDelayMs > 0) {
-        window.setTimeout(() => {
-          fetchEntries();
-        }, loadDelayMs);
-      } else {
-        fetchEntries();
-      }
+      fetchEntries();
     });
   }
 
