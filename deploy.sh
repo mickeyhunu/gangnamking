@@ -16,3 +16,9 @@ pm2 restart room1st --- 재실행
 git add .
 git commit -m "Update"
 git push origin main
+
+git restore data/request_logs.jsonl
+git pull --ff-only origin main
+
+git fetch origin
+git reset --hard origin/main

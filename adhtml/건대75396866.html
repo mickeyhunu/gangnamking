@@ -26,39 +26,45 @@
     50% { opacity: 0.4; }
   }
 
+/* 화면 전체에 레인보우 테두리 오버레이 */
+  #rainbow-frame {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999999;
+
+      /* 레인보우 흐르는 효과 */
+      background: linear-gradient(
+          90deg,
+          red, orange, yellow, green, cyan, blue, purple, red
+      );
+      background-size: 300% 300%;
+      animation: rainbowFlow 4s linear infinite;
+
+      /* 안쪽이 비어 보이도록 마스크 */
+      -webkit-mask:
+          linear-gradient(#000 0 0) content-box, 
+          linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+
+      padding: 6px;  /* 테두리 두께 */
+  }
+
+  @keyframes rainbowFlow {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+  }
+
   /* ===== 모바일 전용 ===== */
   @media (min-width: 769px) {
-    #rainbow-frame,
     .ddoong-frame {
       display: none;
     }
   }
 
   @media (max-width: 769px) {
-    /* 무지개 테두리 */
-    #rainbow-frame {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      border: 7px solid red;       /* 기본 두께와 초기색 */
-      border-radius: 0;            /* 필요시 20px 등으로 조정 */
-      pointer-events: none;        /* 클릭 방해 안 함 */
-      z-index: 99999;
-      box-sizing: border-box;
-      animation: rainbow 1s linear infinite;
-    }
-
-    /* 빨주노초파남보 순환 */
-    @keyframes rainbow {
-      0%   { border-color: #ff0000; } /* 빨강 */
-      15%  { border-color: #ff7a00; } /* 주황 */
-      30%  { border-color: #ffee00; } /* 노랑 */
-      45%  { border-color: #00ff00; } /* 초록 */
-      60%  { border-color: #007bff; } /* 파랑 */
-      75%  { border-color: #4b0082; } /* 남(인디고) */
-      90%  { border-color: #8a2be2; } /* 보라 */
-      100% { border-color: #ff0000; } /* 다시 빨강 */
-    }
-
     /* 우리만 아는 하단 프레임 */
     .ddoong-frame {
       position: fixed;
@@ -129,10 +135,10 @@
     box-shadow:0 6px 18px rgba(255,45,85,0.35);
     animation:blink 0.3s infinite;
   ">
-  <a href='tel:01080319616'
+  <a href='tel:01075396866'
      aria-label='전화 연결'
      style='color:#fff;text-decoration:none;display:inline-block;'>
-    강남 최저가 ALL타임 10만원
+    건대 1등
   </a>
 </div>
 
@@ -154,51 +160,47 @@
     box-shadow:0 6px 18px rgba(255,45,85,0.35);
     animation:blink 0.3s infinite;
   ">
-  <a href='tel:01080319616'
+  <a href='tel:01075396866'
      aria-label='전화 연결'
      style='color:#fff;text-decoration:none;display:inline-block;'>
     클릭시 전화연결
   </a>
 </div>
 
-<a href="tel:01080319616"><div class="text phone">010-8031-9616</div></a>
+<a href="tel:01075396866"><div class="text phone">010-7539-6866</div></a>
 
 <br><br><br>
 
-<div class="text">⚡진짜 10만원 맞습니다⚡</div>
+<div class="text">⚡대학생들 출근중⚡</div>
 <br>
-<div class="text">⚡가.격.폭.행⚡</div>
+<div class="text">⚡무조건 20대⚡</div>
 <br>
-<div class="text">전화주세요.</div>
+<div class="text">⚡딱 한번만 찾아주세요⚡</div>
+<br>
+<div class="text">⚡만들어 드릴게요⚡</div>
 
 <br><br><br>
 
-<a href="tel:01080319616"><div class="text phone">010-8031-9616</div></a>
+<a href="tel:01075396866"><div class="text phone">010-7539-6866</div></a>
 
 <br><br><br>
 
-<div class="text">⚡가격만 싸다? No⚡</div>
-<br>
-<div class="text">⚡자신있습니다.⚡</div>
-<br>
-<div class="text">전화주세요.</div>
+<p style="text-align:center;">
+  <a href="tel:01075396866">
+    <img src="/data/editor/2512/c9c928ea1e6e24f830f7b6f92f21426f_1765139749_4688.gif" alt="">
+  </a>
+</p>
 
 <br><br><br>
 
-<a href="tel:01080319616"><div class="text phone">010-8031-9616</div></a>
+<a href="tel:01075396866"><div class="text phone">010-7539-6866</div></a>
 
 <br><br><br>
 
 <div class="text phone">#20대 #수위룸 #룸떡집 #진짜임</div>
 
-<p style="text-align:center;">
-  <a href="tel:01080319616">
-    <img src="/data/editor/2510/749ae9b1924d21215bd7d4a815dff48e_1760958602_4776.gif" alt="">
-  </a>
-</p>
-
 <!-- ✅ 트래킹 픽셀 -->
-<img src="https://www.adplus.store/api/track?adCode=og_2_3" alt="" style="width:1px;height:1px;border:0;display:none;" />
+<img src="https://www.adplus.store/api/track?adCode=og_2_2" alt="" style="width:1px;height:1px;border:0;display:none;" />
 
 <!-- ✅ 배경 음악 -->
 <audio id="bgm" autoplay loop playsinline>
