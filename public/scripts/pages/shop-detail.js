@@ -330,8 +330,12 @@
         }
       }
 
-      async function fetchEntries() {
-        showLoading();
+      async function fetchEntries(options = {}) {
+        const { showLoading: shouldShowLoading = true } = options;
+
+        if (shouldShowLoading) {
+          showLoading();
+        }
         try {
           const response = await window.fetch(endpoint, {
             headers: {
@@ -351,15 +355,21 @@
         }
       }
 
-      if (prefillSummary) {
-        applySummary(prefillSummary);
-      }
+      const activationDelayMs = 3000;
+      window.setTimeout(() => {
+        if (prefillSummary) {
+          applySummary(prefillSummary);
 
-      if (isPrefilled) {
-        return;
-      }
+          if (!isPrefilled) {
+            fetchEntries({ showLoading: false });
+          }
+          return;
+        }
 
-      fetchEntries();
+        if (!isPrefilled) {
+          fetchEntries();
+        }
+      }, activationDelayMs);
     });
   }
 
