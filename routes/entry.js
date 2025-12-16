@@ -12,7 +12,6 @@ const {
   renderRoomImage,
 } = require('../controllers/entry/roomController');
 const authGuard = require('../middleware/authGuard');
-const entryImageGuard = require('../middleware/entryImageGuard');
 
 const router = express.Router();
 
@@ -23,7 +22,7 @@ const router = express.Router();
 router.get('/', renderHome);
 router.get('/entrymap/:storeNo/data.json', authGuard, renderStoreEntriesData);
 router.get('/entrymap/:storeNo', renderStoreEntries);
-router.get('/entrymap/:storeNo/entryImage', entryImageGuard, renderStoreEntryImage);
+router.get('/entrymap/:storeNo/entryImage', renderStoreEntryImage);
 router.get('/roommap/:storeNo/data.json', authGuard, renderRoomInfoData);
 router.get('/roommap/:storeNo', renderRoomInfo);
 router.get('/roommap/:storeNo/roomImage', renderRoomImage);
