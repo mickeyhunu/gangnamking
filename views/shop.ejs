@@ -72,8 +72,7 @@
   const entriesTopListScoreLabel = entriesText.topListScoreLabel || '합계';
   const entriesLoadingText = entriesText.loading || '출근부 정보를 불러오는 중입니다...';
   const entriesErrorText = entriesText.error || '출근부 정보를 가져오지 못했습니다.';
-  <!-- @TODO@ 엔트리 -->
-  const entryOverview = false <!--  entrySummary && typeof entrySummary === 'object' ? entrySummary : {}; -->
+  const entryOverview = entrySummary && typeof entrySummary === 'object' ? entrySummary : {};
   const showEntrySection = Boolean(entryOverview.enabled);
   const entrySnapshot = showEntrySection ? entryOverview : null;
   const entrySnapshotWorkers = entrySnapshot && Array.isArray(entrySnapshot.workerRows)
@@ -904,8 +903,7 @@
     </div>
   </section>
 
-  <!-- @TODO@ 엔트리 -->
-  <!-- <% if (showEntrySection && entryDataEndpoint) { %>
+  <% if (showEntrySection && entryDataEndpoint) { %>
     <% const entryPrefillData =
       entryHasPrefilledWorkers || entryHasPrefilledTop
         ? {
@@ -986,7 +984,7 @@
         </div>
       </div>
     </section>
-  <% } %> -->
+  <% } %>
 
   <div class="seo-keywords" aria-hidden="true">
     <%- (seoKeywords || []).join(', ') %>
