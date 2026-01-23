@@ -18,6 +18,17 @@ npm run dev
 - 모든 HTTP 요청은 `data/request_logs.jsonl` 파일에 JSON Lines 형태로 저장됩니다. 각 라인은 요청 시각, IP, User-Agent,
   HTTP 메서드/경로, 동일 IP에서 반복 호출되었는지를 포함하므로 무단 크롤링 근거 자료로 보관할 수 있습니다.
 
+## Cloudflare Bot 차단
+
+- Cloudflare Bot Management(또는 Super Bot Fight Mode)에서 전달되는 헤더를 기반으로 봇 요청을 차단합니다.
+- 기본 동작:
+  - `cf-verified-bot: true` 는 허용합니다(검색 엔진 등).
+  - `cf-client-bot: true` 이거나 `cf-bot-score`가 임계값 이하이면 403으로 차단합니다.
+- 환경 변수:
+  - `CF_BOT_BLOCK_ENABLED=true|false` (기본값: true)
+  - `CF_BOT_ALLOW_VERIFIED=true|false` (기본값: true)
+  - `CF_BOT_SCORE_THRESHOLD=숫자` (기본값: 30)
+
 ## 보호된 출근부 API
 
 - `GET /shops/:id/entries.json` 엔드포인트는 토큰·세션 기반 인증이 필요합니다. `PROTECTED_ENTRY_TOKENS` 환경 변수에 콤마로 구분된 토큰 목록을 설정하고,

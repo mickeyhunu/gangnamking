@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express');
 const languageMiddleware = require('./middleware/language');
 const requestLoggingMiddleware = require('./middleware/requestLogger');
+const cloudflareBotGuard = require('./middleware/cloudflareBotGuard');
 const shopRoutes = require('./routes/index');
 const entryRoutes = require('./routes/entry');
 const protectedEntryRoutes = require('./routes/protectedEntries');
@@ -37,6 +38,7 @@ app.use((req, _res, next) => {
   next();
 });
 app.use(requestLoggingMiddleware);
+app.use(cloudflareBotGuard);
 app.use(languageMiddleware);
 app.use((req, res, next) => {
   const { clientId } = getNaverMapCredentials();
