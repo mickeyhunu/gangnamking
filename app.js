@@ -4,10 +4,6 @@ const path = require('path');
 const express = require('express');
 const languageMiddleware = require('./middleware/language');
 const requestLoggingMiddleware = require('./middleware/requestLogger');
-const abuseProtectorMiddleware = require('./middleware/abuseProtector');
-const ipBlockerMiddleware = require('./middleware/ipBlocker');
-const corsGuardMiddleware = require('./middleware/corsGuard');
-const referrerGuardMiddleware = require('./middleware/referrerGuard');
 const shopRoutes = require('./routes/index');
 const entryRoutes = require('./routes/entry');
 const protectedEntryRoutes = require('./routes/protectedEntries');
@@ -41,10 +37,6 @@ app.use((req, _res, next) => {
   next();
 });
 app.use(requestLoggingMiddleware);
-app.use(corsGuardMiddleware);
-app.use(referrerGuardMiddleware);
-app.use(abuseProtectorMiddleware);
-app.use(ipBlockerMiddleware);
 app.use(languageMiddleware);
 app.use((req, res, next) => {
   const { clientId } = getNaverMapCredentials();
