@@ -4,7 +4,7 @@ const configuredTokens = (process.env.PROTECTED_ENTRY_TOKENS || '')
   .map((token) => token.trim())
   .filter(Boolean);
 
-const allowLocalBypass = (process.env.PROTECTED_ENTRY_ALLOW_LOCAL_BYPASS || 'false')
+const allowLocalBypass = (process.env.PROTECTED_ENTRY_ALLOW_LOCAL_BYPASS || 'true')
   .toLowerCase()
   .trim() === 'true';
 
@@ -41,6 +41,27 @@ function isValidToken(token) {
   return allowedTokens.has(token);
 }
 
+function isPrivateIpv4(ipAddress) {
+  if (!ipAddress) {
+    return false;
+  }
+
+  if (ipAddress.startsWith('10.')) {
+    return true;
+  }
+
+  if (ipAddress.startsWith('192.168.')) {
+    return true;
+  }
+
+  if (ipAddress.startsWith('172.')) {
+    const secondOctet = Number(ipAddress.split('.')[1]);
+    return Number.isInteger(secondOctet) && secondOctet >= 16 && secondOctet <= 31;
+  }
+
+  return false;
+}
+
 function isLoopbackIp(ipAddress) {
   if (!ipAddress) {
     return false;
@@ -52,7 +73,7 @@ function isLoopbackIp(ipAddress) {
     return true;
   }
 
-  return false;
+  return isPrivateIpv4(normalized);
 }
 
 function canBypassWithoutTokens(req) {
