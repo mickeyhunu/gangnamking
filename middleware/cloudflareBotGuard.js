@@ -21,6 +21,10 @@ const parseNumber = (value, fallback) => {
     return fallback;
   }
 
+  if (!value.trim()) {
+    return fallback;
+  }
+
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
 };
