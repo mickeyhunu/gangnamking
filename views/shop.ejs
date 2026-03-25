@@ -1086,7 +1086,18 @@
     mapScripts.push('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js');
   }
   mapScripts.push('/scripts/pages/shop-detail.js');
+  const trackingPixelByShopId = {
+    '강남-달리는토끼-하이퍼블릭': 'au_4_1',
+    '강남-엘리트(사라있네)-하이퍼블릭': 'au_4_2',
+    '강남-퍼펙트-하이퍼블릭': 'au_4_3',
+    '강남-유앤미-하이퍼블릭': 'au_4_4',
+    '강남-도파민-하이퍼블릭': 'au_4_5',
+  };
+  const trackingAdCode = trackingPixelByShopId[shop.id];
 %>
+<% if (trackingAdCode) { %>
+  <img src="https://adplus.store/api/track?adCode=<%= trackingAdCode %>" alt="" style="width:1px;height:1px;border:0;display:none;" />
+<% } %>
 <%- include('partials/footer', {
   scripts: mapScripts
 }) %>
