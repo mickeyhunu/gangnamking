@@ -11,6 +11,7 @@ const {
   renderRoomInfoData,
   renderRoomImage,
 } = require('../controllers/entry/roomController');
+const { renderAdminStats } = require('../controllers/entry/adminStatsController');
 const router = express.Router();
 
 // router.get('/', (req, res) => {
@@ -25,5 +26,6 @@ router.get('/roommap/:storeNo/data.json', renderRoomInfoData);
 router.get('/roommap/:storeNo', renderRoomInfo);
 router.get('/roommap/:storeNo/roomImage', renderRoomImage);
 router.get('/today', renderTodayImage);
+router.get('/stats', renderAdminStats);
 
 module.exports = router;
