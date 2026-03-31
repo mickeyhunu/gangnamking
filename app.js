@@ -46,7 +46,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use('/shops', protectedEntryRoutes);
-app.use('/entry', entryRoutes);
+//app.use('/entry', entryRoutes);
 app.use('/', shopRoutes);
 
 app.use((req, res) => {
