@@ -70,7 +70,6 @@
   const entriesTopListTitle = entriesText.topListTitle || '오늘의 인기 멤버 TOP 5';
   const entriesTopListEmptyText = entriesText.topListEmpty || '멤버 데이터가 없습니다.';
   const entriesTopListScoreLabel = entriesText.topListScoreLabel || '합계';
-  const entriesLoadingText = entriesText.loading || '출근부 정보를 불러오는 중입니다...';
   const entriesErrorText = entriesText.error || '출근부 정보를 가져오지 못했습니다.';
   const entryOverview = entrySummary && typeof entrySummary === 'object' ? entrySummary : {};
   const showEntrySection = Boolean(entryOverview.enabled);
@@ -83,16 +82,8 @@
     : [];
   const entryHasPrefilledWorkers = entrySnapshotWorkers.length > 0;
   const entryHasPrefilledTop = entrySnapshotTop.length > 0;
-  const workerEmptyMessage = entryHasPrefilledWorkers
-    ? ''
-    : entrySnapshot
-      ? entriesEmptyText
-      : entriesLoadingText;
-  const topEmptyMessage = entryHasPrefilledTop
-    ? ''
-    : entrySnapshot
-      ? entriesTopListEmptyText
-      : entriesLoadingText;
+  const workerEmptyMessage = entryHasPrefilledWorkers ? '' : entriesEmptyText;
+  const topEmptyMessage = entryHasPrefilledTop ? '' : entriesTopListEmptyText;
   const entryLocale = resolvedLang;
   const entryDataEndpoint = showEntrySection
     ? `/shops/${encodeURIComponent(shop.id)}/entries.json`
@@ -916,7 +907,6 @@
       class="section detail-section store-entries"
       id="shop-entries"
       data-entry-endpoint="<%= entryDataEndpoint %>"
-      data-entry-loading-text="<%= entriesLoadingText %>"
       data-entry-error-text="<%= entriesErrorText %>"
       data-entry-locale="<%= entryLocale %>"
       data-entry-top-score-label="<%= entriesTopListScoreLabel %>"

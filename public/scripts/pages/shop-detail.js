@@ -127,7 +127,6 @@
       const workerEmpty = section.querySelector('[data-entry-empty-message]');
       const topList = section.querySelector('[data-entry-top-list]');
       const topEmpty = section.querySelector('[data-entry-top-empty]');
-      const loadingText = section.dataset.entryLoadingText || '불러오는 중입니다 ..';
       const errorText = section.dataset.entryErrorText || '';
       const scoreLabel = section.dataset.entryTopScoreLabel || '';
       const locale = section.dataset.entryLocale || 'ko';
@@ -319,23 +318,7 @@
         setTopMessage(topEmptyDefault);
       }
 
-      function showLoading() {
-        setWorkerMessage(loadingText || workerEmptyDefault);
-        setTopMessage(loadingText || topEmptyDefault);
-        if (workerList) {
-          workerList.hidden = true;
-        }
-        if (topList) {
-          topList.hidden = true;
-        }
-      }
-
-      async function fetchEntries(options = {}) {
-        const { showLoading: shouldShowLoading = true } = options;
-
-        if (shouldShowLoading) {
-          showLoading();
-        }
+      async function fetchEntries() {
         try {
           const response = await window.fetch(endpoint, {
             headers: {
@@ -355,22 +338,18 @@
         }
       }
 
-      const activationDelayMs = 3000;
-      showLoading();
-      window.setTimeout(() => {
-        if (prefillSummary) {
-          applySummary(prefillSummary);
-
-          if (!isPrefilled) {
-            fetchEntries({ showLoading: false });
-          }
-          return;
-        }
+      if (prefillSummary) {
+        applySummary(prefillSummary);
 
         if (!isPrefilled) {
           fetchEntries();
         }
-      }, activationDelayMs);
+        return;
+      }
+
+      if (!isPrefilled) {
+        fetchEntries();
+      }
     });
   }
 
