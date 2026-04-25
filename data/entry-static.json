@@ -1,18 +1,213 @@
 [
   {
     "storeNo": 1,
-    "storeName": "샘플 매장",
+    "storeName": "달토",
     "entries": [
       {
-        "workerName": "샘플 멤버A",
-        "mentionCount": 5,
-        "insertCount": 10,
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 5,
         "createdAt": "2026-04-25T09:00:00+09:00"
       },
       {
-        "workerName": "샘플 멤버B",
-        "mentionCount": 2,
+        "workerName": "사이트이동",
+        "mentionCount": 0,
         "insertCount": 4,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "구글",
+        "mentionCount": 0,
+        "insertCount": 3,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "검색",
+        "mentionCount": 0,
+        "insertCount": 2,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 1,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      }
+    ]
+  },
+  {
+    "storeNo": 2,
+    "storeName": "엘리트",
+    "entries": [
+      {
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 5,
+        "createdAt": "2026-04-25T09:00:00+09:00"
+      },
+      {
+        "workerName": "사이트이동",
+        "mentionCount": 0,
+        "insertCount": 4,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "구글",
+        "mentionCount": 0,
+        "insertCount": 3,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "검색",
+        "mentionCount": 0,
+        "insertCount": 2,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 1,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      }
+    ]
+  },
+  {
+    "storeNo": 3,
+    "storeName": "디저트",
+    "entries": [
+      {
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 5,
+        "createdAt": "2026-04-25T09:00:00+09:00"
+      },
+      {
+        "workerName": "사이트이동",
+        "mentionCount": 0,
+        "insertCount": 4,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "구글",
+        "mentionCount": 0,
+        "insertCount": 3,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "검색",
+        "mentionCount": 0,
+        "insertCount": 2,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 1,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      }
+    ]
+  },{
+    "storeNo": 4,
+    "storeName": "유앤미",
+    "entries": [
+      {
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 5,
+        "createdAt": "2026-04-25T09:00:00+09:00"
+      },
+      {
+        "workerName": "사이트이동",
+        "mentionCount": 0,
+        "insertCount": 4,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "구글",
+        "mentionCount": 0,
+        "insertCount": 3,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "검색",
+        "mentionCount": 0,
+        "insertCount": 2,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 1,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      }
+    ]
+  },{
+    "storeNo": 5,
+    "storeName": "도파민",
+    "entries": [
+      {
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 5,
+        "createdAt": "2026-04-25T09:00:00+09:00"
+      },
+      {
+        "workerName": "사이트이동",
+        "mentionCount": 0,
+        "insertCount": 4,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "구글",
+        "mentionCount": 0,
+        "insertCount": 3,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "검색",
+        "mentionCount": 0,
+        "insertCount": 2,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 1,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      }
+    ]
+  },{
+    "storeNo": 6,
+    "storeName": "윈",
+    "entries": [
+      {
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 5,
+        "createdAt": "2026-04-25T09:00:00+09:00"
+      },
+      {
+        "workerName": "사이트이동",
+        "mentionCount": 0,
+        "insertCount": 4,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "구글",
+        "mentionCount": 0,
+        "insertCount": 3,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "검색",
+        "mentionCount": 0,
+        "insertCount": 2,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      },
+      {
+        "workerName": "미드나잇맨즈",
+        "mentionCount": 0,
+        "insertCount": 1,
         "createdAt": "2026-04-25T08:30:00+09:00"
       }
     ]
