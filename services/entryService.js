@@ -1,4 +1,7 @@
-const { pool } = require('../config/db');
+const fs = require('fs');
+const path = require('path');
+
+const STATIC_ENTRY_DATA_PATH = path.resolve(process.cwd(), 'data/entry-static.json');
 
 function toNumber(value) {
   const numeric = Number(value);
@@ -42,37 +45,26 @@ function normalizeEntry(row) {
 }
 
 async function fetchEntriesForStore(storeNo, options = {}) {
-  if (!storeNo) {
+  const normalizedStoreNo = Number(storeNo);
+  if (!Number.isFinite(normalizedStoreNo) || normalizedStoreNo <= 0) {
     return [];
   }
 
-  if (!pool || typeof pool.query !== 'function') {
+  const stores = readStaticEntryStores();
+  const matchedStore = stores.find((store) => store.storeNo === normalizedStoreNo);
+
+  if (!matchedStore || !Array.isArray(matchedStore.entries)) {
     return [];
   }
 
-  const requiredEnv = [process.env.DB_HOST, process.env.DB_USER, process.env.DB_NAME];
-
-  if (requiredEnv.some((value) => !value)) {
-    return [];
-  }
-
-  try {
-    const [rows] = await pool.query(
-      `SELECT workerName, mentionCount, insertCount, createdAt
-         FROM ENTRY_TODAY
-        WHERE storeNo=?
-        ORDER BY createdAt DESC`,
-      [storeNo]
-    );
-
-    const normalized = Array.isArray(rows)
-      ? rows.map(normalizeEntry).filter(Boolean)
-      : [];
-
-    return normalized;
-  } catch (error) {
-    return [];
-  }
+  return matchedStore.entries
+    .map(normalizeEntry)
+    .filter(Boolean)
+    .sort((a, b) => {
+      const aTime = a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
+      const bTime = b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
+      return bTime - aTime;
+    });
 }
 
 async function fetchEntryWorkerNames(storeNo, options = {}) {
@@ -96,3 +88,32 @@ module.exports = {
   fetchEntriesForStore,
   fetchEntryWorkerNames,
 };
+
+function readStaticEntryStores() {
+  try {
+    const raw = fs.readFileSync(STATIC_ENTRY_DATA_PATH, 'utf8');
+    const parsed = JSON.parse(raw);
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed
+      .map((store) => {
+        const storeNo = Number(store.storeNo);
+        if (!Number.isFinite(storeNo)) {
+          return null;
+        }
+
+        const entries = Array.isArray(store.entries) ? store.entries : [];
+
+        return {
+          storeNo,
+          entries,
+        };
+      })
+      .filter(Boolean);
+  } catch (error) {
+    return [];
+  }
+}
