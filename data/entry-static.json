@@ -1,0 +1,20 @@
+[
+  {
+    "storeNo": 1,
+    "storeName": "샘플 매장",
+    "entries": [
+      {
+        "workerName": "샘플 멤버A",
+        "mentionCount": 5,
+        "insertCount": 10,
+        "createdAt": "2026-04-25T09:00:00+09:00"
+      },
+      {
+        "workerName": "샘플 멤버B",
+        "mentionCount": 2,
+        "insertCount": 4,
+        "createdAt": "2026-04-25T08:30:00+09:00"
+      }
+    ]
+  }
+]
