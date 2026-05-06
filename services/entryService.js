@@ -1,7 +1,9 @@
 const fs = require('fs');
 const path = require('path');
+const { pool } = require('../config/db');
 
 const STATIC_ENTRY_DATA_PATH = path.resolve(process.cwd(), 'data/entry-static.json');
+const ENTRY_DYNAMIC_DISPLAY_LIMIT = 10;
 
 function toNumber(value) {
   const numeric = Number(value);
@@ -31,9 +33,13 @@ function normalizeEntry(row) {
     return null;
   }
 
-  const workerName = typeof row.workerName === 'string' ? row.workerName : '';
-  const mentionCount = toNumber(row.mentionCount ?? row.mentions ?? row.mention);
-  const insertCount = toNumber(row.insertCount ?? row.inserts ?? row.insert);
+  const workerName = typeof row.workerName === 'string' ? row.workerName.trim() : '';
+  if (!workerName) {
+    return null;
+  }
+
+  const mentionCount = Math.max(0, toNumber(row.mentionCount ?? row.mentions ?? row.mention));
+  const insertCount = Math.max(0, toNumber(row.insertCount ?? row.inserts ?? row.insert));
   const createdAt = toDate(row.createdAt ?? row.timestamp ?? row.loggedAt);
 
   return {
@@ -44,27 +50,112 @@ function normalizeEntry(row) {
   };
 }
 
+function shuffleEntries(entries) {
+  const shuffled = [...entries];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
+function limitEntries(entries, limit = ENTRY_DYNAMIC_DISPLAY_LIMIT) {
+  const normalizedLimit = Number(limit);
+  if (!Number.isFinite(normalizedLimit) || normalizedLimit <= 0) {
+    return [];
+  }
+
+  return entries.slice(0, normalizedLimit);
+}
+
+function readStaticEntryStores() {
+  try {
+    const raw = fs.readFileSync(STATIC_ENTRY_DATA_PATH, 'utf8');
+    const parsed = JSON.parse(raw);
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed
+      .map((store) => {
+        const storeNo = Number(store.storeNo);
+        const storeName = typeof store.storeName === 'string' ? store.storeName.trim() : '';
+        if (!Number.isFinite(storeNo)) {
+          return null;
+        }
+
+        const entries = Array.isArray(store.entries)
+          ? store.entries.map(normalizeEntry).filter(Boolean)
+          : [];
+
+        return {
+          storeNo,
+          storeName,
+          entries,
+        };
+      })
+      .filter(Boolean);
+  } catch (error) {
+    return [];
+  }
+}
+
+function fetchStaticEntriesForStore(storeNo) {
+  const normalizedStoreNo = Number(storeNo);
+  if (!Number.isFinite(normalizedStoreNo) || normalizedStoreNo <= 0) {
+    return [];
+  }
+
+  const matchedStore = readStaticEntryStores().find((store) => store.storeNo === normalizedStoreNo);
+  return matchedStore && Array.isArray(matchedStore.entries) ? matchedStore.entries : [];
+}
+
+async function fetchDatabaseEntriesForStore(storeNo) {
+  const normalizedStoreNo = Number(storeNo);
+  if (!Number.isFinite(normalizedStoreNo) || normalizedStoreNo <= 0) {
+    return [];
+  }
+
+  if (!pool || typeof pool.query !== 'function') {
+    return [];
+  }
+
+  const requiredEnv = [process.env.DB_HOST, process.env.DB_USER, process.env.DB_NAME];
+
+  if (requiredEnv.some((value) => !value)) {
+    return [];
+  }
+
+  try {
+    const [rows] = await pool.query(
+      `SELECT workerName, mentionCount, insertCount, createdAt
+         FROM ENTRY_TODAY
+        WHERE storeNo=?
+        ORDER BY createdAt DESC`,
+      [normalizedStoreNo]
+    );
+
+    return Array.isArray(rows) ? rows.map(normalizeEntry).filter(Boolean) : [];
+  } catch (error) {
+    return [];
+  }
+}
+
 async function fetchEntriesForStore(storeNo, options = {}) {
   const normalizedStoreNo = Number(storeNo);
   if (!Number.isFinite(normalizedStoreNo) || normalizedStoreNo <= 0) {
     return [];
   }
 
-  const stores = readStaticEntryStores();
-  const matchedStore = stores.find((store) => store.storeNo === normalizedStoreNo);
+  const dynamicDisplayLimit = options.limit ?? ENTRY_DYNAMIC_DISPLAY_LIMIT;
+  const staticEntries = fetchStaticEntriesForStore(normalizedStoreNo);
+  const databaseEntries = await fetchDatabaseEntriesForStore(normalizedStoreNo);
+  const limitedDatabaseEntries = limitEntries(shuffleEntries(databaseEntries), dynamicDisplayLimit);
 
-  if (!matchedStore || !Array.isArray(matchedStore.entries)) {
-    return [];
-  }
-
-  return matchedStore.entries
-    .map(normalizeEntry)
-    .filter(Boolean)
-    .sort((a, b) => {
-      const aTime = a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
-      const bTime = b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
-      return bTime - aTime;
-    });
+  return shuffleEntries([...staticEntries, ...limitedDatabaseEntries]);
 }
 
 async function fetchEntryWorkerNames(storeNo, options = {}) {
@@ -85,35 +176,8 @@ async function fetchEntryWorkerNames(storeNo, options = {}) {
 }
 
 module.exports = {
+  ENTRY_DYNAMIC_DISPLAY_LIMIT,
   fetchEntriesForStore,
   fetchEntryWorkerNames,
+  readStaticEntryStores,
 };
-
-function readStaticEntryStores() {
-  try {
-    const raw = fs.readFileSync(STATIC_ENTRY_DATA_PATH, 'utf8');
-    const parsed = JSON.parse(raw);
-
-    if (!Array.isArray(parsed)) {
-      return [];
-    }
-
-    return parsed
-      .map((store) => {
-        const storeNo = Number(store.storeNo);
-        if (!Number.isFinite(storeNo)) {
-          return null;
-        }
-
-        const entries = Array.isArray(store.entries) ? store.entries : [];
-
-        return {
-          storeNo,
-          entries,
-        };
-      })
-      .filter(Boolean);
-  } catch (error) {
-    return [];
-  }
-}
