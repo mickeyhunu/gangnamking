@@ -3,7 +3,7 @@ const path = require('path');
 const { pool } = require('../config/db');
 
 const STATIC_ENTRY_DATA_PATH = path.resolve(process.cwd(), 'data/entry-static.json');
-const ENTRY_DISPLAY_LIMIT = 10;
+const ENTRY_DYNAMIC_DISPLAY_LIMIT = 10;
 
 function toNumber(value) {
   const numeric = Number(value);
@@ -61,7 +61,7 @@ function shuffleEntries(entries) {
   return shuffled;
 }
 
-function limitEntries(entries, limit = ENTRY_DISPLAY_LIMIT) {
+function limitEntries(entries, limit = ENTRY_DYNAMIC_DISPLAY_LIMIT) {
   const normalizedLimit = Number(limit);
   if (!Number.isFinite(normalizedLimit) || normalizedLimit <= 0) {
     return [];
@@ -150,12 +150,12 @@ async function fetchEntriesForStore(storeNo, options = {}) {
     return [];
   }
 
-  const displayLimit = options.limit ?? ENTRY_DISPLAY_LIMIT;
+  const dynamicDisplayLimit = options.limit ?? ENTRY_DYNAMIC_DISPLAY_LIMIT;
   const staticEntries = fetchStaticEntriesForStore(normalizedStoreNo);
   const databaseEntries = await fetchDatabaseEntriesForStore(normalizedStoreNo);
-  const combinedEntries = [...staticEntries, ...databaseEntries];
+  const limitedDatabaseEntries = limitEntries(shuffleEntries(databaseEntries), dynamicDisplayLimit);
 
-  return limitEntries(shuffleEntries(combinedEntries), displayLimit);
+  return shuffleEntries([...staticEntries, ...limitedDatabaseEntries]);
 }
 
 async function fetchEntryWorkerNames(storeNo, options = {}) {
@@ -176,7 +176,7 @@ async function fetchEntryWorkerNames(storeNo, options = {}) {
 }
 
 module.exports = {
-  ENTRY_DISPLAY_LIMIT,
+  ENTRY_DYNAMIC_DISPLAY_LIMIT,
   fetchEntriesForStore,
   fetchEntryWorkerNames,
   readStaticEntryStores,
