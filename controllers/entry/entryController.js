@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const { getContentProtectionMarkup, getSvgContentProtectionElements } = require('./contentProtection');
+const { fetchEntriesForStore, readStaticEntryStores: readEntryStoreMetadata } = require('../../services/entryService');
 
 const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
 const COMMUNITY_CONTACT_TEXT = '강남 하퍼 010-5733-8710';
-const STATIC_ENTRY_DATA_PATH = path.resolve(process.cwd(), 'data/entry-static.json');
 const ENTRY_PAGE_TEXT = {
   loading: '출근부 정보를 불러오는 중입니다...',
   error: '출근부 정보를 가져오지 못했습니다. 잠시 후 다시 시도해주세요.',
@@ -202,8 +202,7 @@ async function fetchSingleStoreEntries(storeNo, storeRow = null) {
     return null;
   }
 
-  const source = stores.find((entry) => entry.store.storeNo === Number(store.storeNo));
-  const entries = source ? source.entries : [];
+  const entries = await fetchEntriesForStore(store.storeNo);
 
   const ranked = entries.map((entry) => ({
     ...entry,
@@ -240,59 +239,22 @@ async function fetchStoreMetadata(storeNo) {
 }
 
 function readStaticEntryStores() {
-  try {
-    const raw = fs.readFileSync(STATIC_ENTRY_DATA_PATH, 'utf8');
-    const parsed = JSON.parse(raw);
+  return readEntryStoreMetadata()
+    .map((store) => {
+      const storeNo = Number(store.storeNo);
+      const storeName = typeof store.storeName === 'string' ? store.storeName.trim() : '';
 
-    if (!Array.isArray(parsed)) {
-      console.warn('[entryController] Invalid static entry data: root value must be an array.');
-      return [];
-    }
+      if (!Number.isFinite(storeNo) || !storeName) {
+        return null;
+      }
 
-    return parsed
-      .map((store) => {
-        const storeNo = Number(store.storeNo);
-        const storeName = typeof store.storeName === 'string' ? store.storeName.trim() : '';
-
-        if (!Number.isFinite(storeNo) || !storeName) {
-          return null;
-        }
-
-        const entries = Array.isArray(store.entries)
-          ? store.entries
-              .map((entry) => {
-                const workerName = typeof entry.workerName === 'string' ? entry.workerName.trim() : '';
-                if (!workerName) {
-                  return null;
-                }
-
-                return {
-                  workerName,
-                  mentionCount: Math.max(0, Number(entry.mentionCount) || 0),
-                  insertCount: Math.max(0, Number(entry.insertCount) || 0),
-                  createdAt: entry.createdAt || null,
-                };
-              })
-              .filter(Boolean)
-          : [];
-
-        entries.sort((a, b) => {
-          const aTime = new Date(a.createdAt || 0).getTime();
-          const bTime = new Date(b.createdAt || 0).getTime();
-          return bTime - aTime;
-        });
-
-        return {
-          store: { storeNo, storeName },
-          entries,
-        };
-      })
-      .filter(Boolean)
-      .sort((a, b) => a.store.storeNo - b.store.storeNo);
-  } catch (error) {
-    console.warn('[entryController] Failed to load static entry data:', error.message);
-    return [];
-  }
+      return {
+        store: { storeNo, storeName },
+        entries: Array.isArray(store.entries) ? store.entries : [],
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.store.storeNo - b.store.storeNo);
 }
 
 function chunkArray(items, size) {
