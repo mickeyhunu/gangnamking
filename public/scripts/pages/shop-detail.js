@@ -429,34 +429,17 @@
       }
     }
 
-    function buildStaticMapUrl() {
-      const params = new URLSearchParams();
-      if (hasCoordinates()) {
-        params.set('lat', String(lat));
-        params.set('lng', String(lng));
-      }
-      params.set('w', String(Math.max(320, Math.round(mapContainer?.clientWidth || 960))));
-      params.set('h', String(Math.max(220, Math.round(mapContainer?.clientHeight || 360))));
-      return `/shops/${encodeURIComponent(mapHost.dataset.shopId || '')}/map/static?${params.toString()}`;
-    }
-
-    function createStaticMapImage() {
-      const image = document.createElement('img');
-      image.className = 'business-profile-mini-map__image';
-      image.src = buildStaticMapUrl();
-      image.alt = `${venueName || address || '위치'} 지도`;
-      image.loading = 'lazy';
-      image.decoding = 'async';
-      return image;
-    }
-
-    function renderAddressMap() {
+    function renderMapFallback() {
       if (!mapContainer) {
         return;
       }
 
+      const fallback = document.createElement('div');
+      fallback.className = 'business-profile-mini-map__fallback';
+      fallback.textContent = address || district || region || '지도를 불러올 수 없습니다.';
+
       mapContainer.innerHTML = '';
-      mapContainer.appendChild(createStaticMapImage());
+      mapContainer.appendChild(fallback);
       setMapState('fallback');
     }
 
@@ -469,41 +452,32 @@
       const position = new kakaoMaps.LatLng(lat, lng);
       mapContainer.innerHTML = '';
 
-      if (typeof kakaoMaps.StaticMap === 'function') {
-        const staticMarker = new kakaoMaps.Marker({ position });
-        new kakaoMaps.StaticMap(mapContainer, {
-          center: position,
-          level: 3,
-          marker: staticMarker,
-        });
-      } else {
-        const map = new kakaoMaps.Map(mapContainer, {
-          center: position,
-          level: 3,
-          draggable: false,
-          scrollwheel: false,
-          disableDoubleClick: true,
-          disableDoubleClickZoom: true,
-        });
+      const map = new kakaoMaps.Map(mapContainer, {
+        center: position,
+        level: 3,
+        draggable: true,
+        scrollwheel: true,
+        disableDoubleClick: false,
+        disableDoubleClickZoom: false,
+      });
 
-        const mapMarker = new kakaoMaps.Marker({
-          map,
-          position,
-        });
+      const mapMarker = new kakaoMaps.Marker({
+        map,
+        position,
+      });
 
-        if (typeof map.setZoomable === 'function') {
-          map.setZoomable(false);
-        }
-
-        if (venueName || address) {
-          mapMarker.setTitle(venueName || address);
-        }
-
-        window.setTimeout(() => {
-          map.relayout();
-          map.setCenter(position);
-        }, 0);
+      if (venueName || address) {
+        mapMarker.setTitle(venueName || address);
       }
+
+      if (typeof kakaoMaps.ZoomControl === 'function') {
+        map.addControl(new kakaoMaps.ZoomControl(), kakaoMaps.ControlPosition.RIGHT);
+      }
+
+      window.setTimeout(() => {
+        map.relayout();
+        map.setCenter(position);
+      }, 0);
 
       setMapState('ready');
       return true;
@@ -534,7 +508,7 @@
     function initializeKakaoMiniMap() {
       resolveCoordinatesWithKakaoMaps(() => {
         if (!renderKakaoMap()) {
-          renderAddressMap();
+          renderMapFallback();
         }
       });
     }
