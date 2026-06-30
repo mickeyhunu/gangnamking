@@ -424,6 +424,9 @@
       typeof lngValue === 'string' && lngValue.trim() !== '' ? Number.parseFloat(lngValue) : NaN;
     const hasPresetCoordinates = Number.isFinite(presetLat) && Number.isFinite(presetLng);
     const hasLeaflet = Boolean(window.L && typeof window.L.map === 'function');
+    const hasKakaoSdkScript = Boolean(
+      document.querySelector('script[src^="https://dapi.kakao.com/v2/maps/sdk.js"]'),
+    );
     let mapInitialized = false;
     let kakaoRetryHandle = null;
     let kakaoRetryCount = 0;
@@ -923,19 +926,17 @@
           return;
         }
 
+        if (scheduleKakaoRetry()) {
+          setMapState('loading');
+          return;
+        }
+
         const renderedStaticFallback =
           hasPresetCoordinates &&
           renderStaticFallbackMap(presetLat, presetLng, {
             attemptId,
             markReady: false,
           });
-
-        if (scheduleKakaoRetry()) {
-          if (!renderedStaticFallback) {
-            setMapState('loading');
-          }
-          return;
-        }
 
         if (renderedStaticFallback) {
           return;
@@ -1094,6 +1095,7 @@
     }
 
     const hasInitialStaticMap =
+      !hasKakaoSdkScript &&
       hasPresetCoordinates &&
       renderStaticFallbackMap(presetLat, presetLng, {
         attemptId: currentMapAttempt,
