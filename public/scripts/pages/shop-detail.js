@@ -462,6 +462,27 @@
       return `https://map.kakao.com/link/search/${encodeURIComponent(query)}`;
     }
 
+    function buildStaticMapUrl() {
+      const params = new URLSearchParams();
+      if (hasCoordinates) {
+        params.set('lat', String(lat));
+        params.set('lng', String(lng));
+      }
+      params.set('w', String(Math.max(320, Math.round(mapContainer?.clientWidth || 960))));
+      params.set('h', String(Math.max(220, Math.round(mapContainer?.clientHeight || 360))));
+      return `/shops/${encodeURIComponent(mapHost.dataset.shopId || '')}/map/static?${params.toString()}`;
+    }
+
+    function createStaticMapImage() {
+      const image = document.createElement('img');
+      image.className = 'business-profile-mini-map__image';
+      image.src = buildStaticMapUrl();
+      image.alt = `${venueName || address || '위치'} 지도`;
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      return image;
+    }
+
     function createKakaoMiniMapFallback(message) {
       const link = document.createElement('a');
       link.className = 'business-profile-mini-map-fallback';
@@ -491,6 +512,7 @@
       }
 
       mapContainer.innerHTML = '';
+      mapContainer.appendChild(createStaticMapImage());
       mapContainer.appendChild(createKakaoMiniMapFallback('카카오맵에서 위치를 확인하세요.'));
 
       const panel = document.createElement('div');

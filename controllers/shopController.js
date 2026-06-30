@@ -144,6 +144,82 @@ function buildSeoKeywords(shops, options = {}) {
   return [...keywords];
 }
 
+
+function escapeXml(value = '') {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function renderShopStaticMap(req, res, next) {
+  try {
+    const shops = getShops();
+    const { shop } = findShopByIdentifier(shops, req.params.id);
+
+    if (!shop) {
+      return next();
+    }
+
+    const lang = res.locals.lang || DEFAULT_LANGUAGE;
+    const localizedShop = localizeShop(shop, lang);
+    const width = Math.min(Math.max(Number.parseInt(req.query.w, 10) || 960, 320), 1600);
+    const height = Math.min(Math.max(Number.parseInt(req.query.h, 10) || 360, 220), 900);
+    const name = localizedShop.name || shop.name || '위치 정보';
+    const address = localizedShop.address || shop.address || '';
+    const region = [localizedShop.region, localizedShop.district].filter(Boolean).join(' · ');
+    const lat = Number.parseFloat(req.query.lat);
+    const lng = Number.parseFloat(req.query.lng);
+    const coordinates = Number.isFinite(lat) && Number.isFinite(lng)
+      ? `${lat.toFixed(6)}, ${lng.toFixed(6)}`
+      : '';
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const pinY = centerY - 34;
+
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
+  <title id="title">${escapeXml(name)} 위치 지도</title>
+  <desc id="desc">${escapeXml(address || region || coordinates || name)}</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#dfeeff"/>
+    </linearGradient>
+    <pattern id="minorGrid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#c8d8ea" stroke-width="1" opacity="0.55"/>
+    </pattern>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#1f2937" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+  <rect width="100%" height="100%" fill="url(#minorGrid)"/>
+  <path d="M ${width * 0.08} ${height * 0.22} C ${width * 0.28} ${height * 0.16}, ${width * 0.36} ${height * 0.72}, ${width * 0.62} ${height * 0.58} S ${width * 0.86} ${height * 0.36}, ${width * 0.96} ${height * 0.44}" fill="none" stroke="#ffffff" stroke-width="34" stroke-linecap="round" opacity="0.82"/>
+  <path d="M ${width * 0.08} ${height * 0.22} C ${width * 0.28} ${height * 0.16}, ${width * 0.36} ${height * 0.72}, ${width * 0.62} ${height * 0.58} S ${width * 0.86} ${height * 0.36}, ${width * 0.96} ${height * 0.44}" fill="none" stroke="#f6c453" stroke-width="10" stroke-linecap="round" opacity="0.92"/>
+  <path d="M ${width * 0.18} ${height * 0.92} L ${width * 0.42} ${height * 0.12} M ${width * 0.58} ${height * 0.94} L ${width * 0.78} ${height * 0.1}" stroke="#ffffff" stroke-width="24" stroke-linecap="round" opacity="0.72"/>
+  <path d="M ${width * 0.18} ${height * 0.92} L ${width * 0.42} ${height * 0.12} M ${width * 0.58} ${height * 0.94} L ${width * 0.78} ${height * 0.1}" stroke="#b7c7d9" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
+  <g filter="url(#shadow)">
+    <path d="M ${centerX} ${pinY + 92} C ${centerX - 48} ${pinY + 30}, ${centerX - 38} ${pinY - 34}, ${centerX} ${pinY - 34} C ${centerX + 38} ${pinY - 34}, ${centerX + 48} ${pinY + 30}, ${centerX} ${pinY + 92} Z" fill="#ef4444"/>
+    <circle cx="${centerX}" cy="${pinY + 18}" r="20" fill="#ffffff"/>
+  </g>
+  <g transform="translate(${Math.max(24, centerX - 230)} ${Math.min(height - 122, pinY + 110)})">
+    <rect width="460" height="96" rx="18" fill="#111827" opacity="0.9"/>
+    <text x="24" y="34" font-family="'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="22" font-weight="800" fill="#ffffff">${escapeXml(name)}</text>
+    <text x="24" y="62" font-family="'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="15" font-weight="600" fill="#d1d5db">${escapeXml(address || region || '카카오맵에서 자세한 위치 확인')}</text>
+    <text x="24" y="83" font-family="'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="13" fill="#9ca3af">${escapeXml(coordinates)}</text>
+  </g>
+</svg>`;
+
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.type('image/svg+xml').send(svg);
+  } catch (error) {
+    next(error);
+  }
+}
+
 function renderIndex(req, res) {
   const lang = res.locals.lang || DEFAULT_LANGUAGE;
   const localizedShops = getLocalizedShops(lang);
@@ -345,6 +421,7 @@ function renderSitemap(req, res) {
 module.exports = {
   renderIndex,
   renderShopDetail,
+  renderShopStaticMap,
   renderSitemap,
   renderShopEntrySummary,
 };
