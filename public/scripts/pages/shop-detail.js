@@ -425,15 +425,15 @@
     const hasPresetCoordinates = Number.isFinite(presetLat) && Number.isFinite(presetLng);
     const hasLeaflet = Boolean(window.L && typeof window.L.map === 'function');
     let mapInitialized = false;
-    let naverRetryHandle = null;
-    let naverRetryCount = 0;
-    let naverReadyListenerAttached = false;
+    let kakaoRetryHandle = null;
+    let kakaoRetryCount = 0;
+    let kakaoLoadRequested = false;
     let mapRequestStartTime = null;
     let geocodeRequestStartTime = null;
     let currentMapAttempt = 0;
-    const maxNaverRetries = 30;
+    const maxKakaoRetries = 30;
     const staleAttemptErrorMessage = 'Map load cancelled due to a newer request.';
-    let activeNaverMap = null;
+    let activeKakaoMap = null;
     let activeLeafletMap = null;
 
     function now() {
@@ -531,9 +531,9 @@
       initializeInteractiveMap(reason, { attemptId: currentMapAttempt, newAttempt: true });
     }
 
-    function getNaverMaps() {
-      const maps = window.naver && window.naver.maps;
-      if (!maps || !maps.Service || !maps.LatLng) {
+    function getKakaoMaps() {
+      const maps = window.kakao && window.kakao.maps;
+      if (!maps || !maps.Map || !maps.LatLng || !maps.services || !maps.services.Geocoder) {
         return null;
       }
 
@@ -592,10 +592,10 @@
       });
     }
 
-    function clearNaverRetry() {
-      if (naverRetryHandle !== null) {
-        window.clearTimeout(naverRetryHandle);
-        naverRetryHandle = null;
+    function clearKakaoRetry() {
+      if (kakaoRetryHandle !== null) {
+        window.clearTimeout(kakaoRetryHandle);
+        kakaoRetryHandle = null;
       }
     }
 
@@ -609,22 +609,7 @@
       }
       activeLeafletMap = null;
 
-      if (activeNaverMap) {
-        if (typeof activeNaverMap.destroy === 'function') {
-          try {
-            activeNaverMap.destroy();
-          } catch (error) {
-            warn('Failed to destroy existing Naver map instance.', error);
-          }
-        } else if (typeof activeNaverMap.setMap === 'function') {
-          try {
-            activeNaverMap.setMap(null);
-          } catch (error) {
-            warn('Failed to detach existing Naver map instance.', error);
-          }
-        }
-      }
-      activeNaverMap = null;
+      activeKakaoMap = null;
     }
 
     function resetMapContainer() {
@@ -643,52 +628,36 @@
       }
     }
 
-    function scheduleNaverRetry() {
-      if (mapInitialized || naverRetryHandle !== null || naverRetryCount >= maxNaverRetries) {
+    function scheduleKakaoRetry() {
+      if (mapInitialized || kakaoRetryHandle !== null || kakaoRetryCount >= maxKakaoRetries) {
         return false;
       }
 
       const attemptId = currentMapAttempt;
 
-      naverRetryHandle = window.setTimeout(() => {
-        naverRetryHandle = null;
-        naverRetryCount += 1;
-        initializeInteractiveMap('naver retry', { attemptId });
+      kakaoRetryHandle = window.setTimeout(() => {
+        kakaoRetryHandle = null;
+        kakaoRetryCount += 1;
+        initializeInteractiveMap('kakao retry', { attemptId });
       }, 200);
 
-      logTiming(`Waiting for Naver Maps to become available (attempt ${naverRetryCount + 1} of ${maxNaverRetries}).`);
+      logTiming(`Waiting for Kakao Maps to become available (attempt ${kakaoRetryCount + 1} of ${maxKakaoRetries}).`);
       return true;
     }
 
-    function attachNaverReadyListener() {
-      if (naverReadyListenerAttached) {
+    function requestKakaoLoad() {
+      const maps = window.kakao && window.kakao.maps;
+
+      if (kakaoLoadRequested || !maps || typeof maps.load !== 'function') {
         return;
       }
 
-      const naverGlobal = window.naver && window.naver.maps;
-
-      if (!naverGlobal || typeof naverGlobal !== 'object') {
-        return;
-      }
-
-      const existingHandler =
-        typeof naverGlobal.onJSContentLoaded === 'function' ? naverGlobal.onJSContentLoaded : null;
-
-      naverGlobal.onJSContentLoaded = function onJSContentLoadedWrapper() {
-        if (typeof existingHandler === 'function') {
-          try {
-            existingHandler();
-          } catch (error) {
-            warn('Existing onJSContentLoaded handler failed.', error);
-          }
-        }
-
+      kakaoLoadRequested = true;
+      maps.load(() => {
         if (!mapInitialized) {
-          initializeInteractiveMap('naver script ready');
+          initializeInteractiveMap('kakao script ready');
         }
-      };
-
-      naverReadyListenerAttached = true;
+      });
     }
 
     function handleError(message) {
@@ -856,42 +825,36 @@
 
       activeLeafletMap = map;
       mapInitialized = true;
-      clearNaverRetry();
+      clearKakaoRetry();
       setMapState('ready');
       finalizeMapReady('Leaflet');
       return true;
     }
 
-    function renderNaverMap(lat, lng, attemptId) {
-      const naverMaps = getNaverMaps();
-      if (!naverMaps || !mapContainer || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+    function renderKakaoMap(lat, lng, attemptId) {
+      const kakaoMaps = getKakaoMaps();
+      if (!kakaoMaps || !mapContainer || !Number.isFinite(lat) || !Number.isFinite(lng)) {
         return false;
       }
 
       if (isStaleAttempt(attemptId)) {
-        logTiming('Ignoring Naver map render request for a stale attempt.');
+        logTiming('Ignoring Kakao map render request for a stale attempt.');
         return false;
       }
 
       clearStaticMapArtifacts();
       mapContainer.innerHTML = '';
 
-      const center = new naverMaps.LatLng(lat, lng);
-      const map = new naverMaps.Map(mapContainer, {
+      const center = new kakaoMaps.LatLng(lat, lng);
+      const map = new kakaoMaps.Map(mapContainer, {
         center,
-        zoom: 16,
-        scaleControl: false,
-        mapDataControl: false,
-        logoControlOptions: {
-          position: naverMaps.Position.BOTTOM_RIGHT,
-        },
-        zoomControl: true,
-        zoomControlOptions: {
-          position: naverMaps.Position.TOP_RIGHT,
-        },
+        level: 3,
       });
 
-      const marker = new naverMaps.Marker({
+      const zoomControl = new kakaoMaps.ZoomControl();
+      map.addControl(zoomControl, kakaoMaps.ControlPosition.RIGHT);
+
+      const marker = new kakaoMaps.Marker({
         position: center,
         map,
         title: venueName || undefined,
@@ -902,22 +865,18 @@
         infoContent.className = 'shop-map__info-window';
         infoContent.textContent = venueName;
 
-        const infoWindow = new naverMaps.InfoWindow({
+        const infoWindow = new kakaoMaps.InfoWindow({
           content: infoContent,
-          backgroundColor: 'transparent',
-          borderColor: 'transparent',
-          borderWidth: 0,
-          disableAnchor: true,
         });
 
         infoWindow.open(map, marker);
       }
 
-      activeNaverMap = map;
+      activeKakaoMap = map;
       mapInitialized = true;
-      clearNaverRetry();
+      clearKakaoRetry();
       setMapState('ready');
-      finalizeMapReady('Naver Maps');
+      finalizeMapReady('Kakao Maps');
       return true;
     }
 
@@ -954,11 +913,11 @@
       }
 
       beginMapRequest(triggerReason || 'initial load');
-      attachNaverReadyListener();
+      requestKakaoLoad();
 
-      const naverMaps = getNaverMaps();
+      const kakaoMaps = getKakaoMaps();
 
-      if (!naverMaps) {
+      if (!kakaoMaps) {
         if (hasLeaflet && hasPresetCoordinates) {
           renderLeafletMap(presetLat, presetLng, attemptId);
           return;
@@ -971,7 +930,7 @@
             markReady: false,
           });
 
-        if (scheduleNaverRetry()) {
+        if (scheduleKakaoRetry()) {
           if (!renderedStaticFallback) {
             setMapState('loading');
           }
@@ -987,7 +946,7 @@
       }
 
       if (hasPresetCoordinates) {
-        if (!renderNaverMap(presetLat, presetLng, attemptId)) {
+        if (!renderKakaoMap(presetLat, presetLng, attemptId)) {
           if (hasLeaflet && renderLeafletMap(presetLat, presetLng, attemptId)) {
             return;
           }
@@ -1043,18 +1002,14 @@
 
       function geocode(query) {
         return new Promise((resolve, reject) => {
-          naverMaps.Service.geocode({ query }, (serviceStatus, response) => {
-            if (serviceStatus !== naverMaps.Service.Status.OK) {
+          const geocoder = new kakaoMaps.services.Geocoder();
+          geocoder.addressSearch(query, (addresses, serviceStatus) => {
+            if (serviceStatus !== kakaoMaps.services.Status.OK) {
               reject(new Error(`Geocoding failed with status ${serviceStatus}`));
               return;
             }
 
-            const addresses =
-              response && response.v2 && Array.isArray(response.v2.addresses)
-                ? response.v2.addresses
-                : [];
-
-            if (!addresses.length) {
+            if (!Array.isArray(addresses) || !addresses.length) {
               reject(new Error('No geocoding results found.'));
               return;
             }
@@ -1109,7 +1064,7 @@
 
       geocodeNext(geocodeQueue)
         .then((result) => {
-          if (!renderNaverMap(result.lat, result.lng, attemptId)) {
+          if (!renderKakaoMap(result.lat, result.lng, attemptId)) {
             if (hasLeaflet && renderLeafletMap(result.lat, result.lng, attemptId)) {
               return;
             }
@@ -1149,7 +1104,7 @@
     if (!hasInitialStaticMap) {
       setMapState('loading');
     }
-    attachNaverReadyListener();
+    requestKakaoLoad();
     startMapInitialization('initial load');
   }
 

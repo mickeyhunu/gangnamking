@@ -10,6 +10,7 @@ const entryRoutes = require('./routes/entry');
 const protectedEntryRoutes = require('./routes/protectedEntries');
 const { initializeDataStore } = require('./services/dataStore');
 const { getNaverMapCredentials } = require('./config/naver');
+const { getKakaoMapAppKey } = require('./config/kakao');
 
 initializeDataStore();
 
@@ -43,6 +44,7 @@ app.use(languageMiddleware);
 app.use((req, res, next) => {
   const { clientId } = getNaverMapCredentials();
   res.locals.naverMapClientId = clientId || '';
+  res.locals.kakaoMapAppKey = getKakaoMapAppKey();
   next();
 });
 app.use('/shops', protectedEntryRoutes);
