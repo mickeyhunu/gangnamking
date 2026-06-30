@@ -43,8 +43,8 @@
 
   const primaryImage = highlightGallery.length ? highlightGallery[0] : null;
   const mapText = (t.shop && t.shop.map) || {};
-  const resolvedClientId = typeof naverMapClientId === 'string' ? naverMapClientId.trim() : '';
-  const extraMapStyles = resolvedClientId
+  const resolvedKakaoMapAppKey = typeof kakaoMapAppKey === 'string' ? kakaoMapAppKey.trim() : '';
+  const extraMapStyles = resolvedKakaoMapAppKey
     ? []
     : ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'];
   const pricingHighlight = (t.shop && t.shop.pricingHighlight) || {};
@@ -1025,9 +1025,9 @@
   const locationLng = resolvedLocation && Number.isFinite(resolvedLocation.lng) ? resolvedLocation.lng : null;
   const resolvedMapAuthErrorCode = typeof mapAuthErrorCode === 'string' ? mapAuthErrorCode : '';
   const mapAuthErrorMessage =
-    resolvedMapAuthErrorCode === 'NAVER_MAP_AUTH'
+    !resolvedKakaoMapAppKey && resolvedMapAuthErrorCode === 'NAVER_MAP_AUTH'
       ? mapText.authError ||
-        'Naver Maps authentication failed. Please enable the API subscription in your Naver Cloud project.'
+        'Kakao Maps app key is missing. Please configure a Kakao JavaScript map app key.'
       : '';
   const locationInfoItems = [
     shop.name
@@ -1108,9 +1108,9 @@
   </div>
 <%
   const mapScripts = [];
-  if (resolvedClientId) {
-    const encodedClientId = encodeURIComponent(resolvedClientId);
-    mapScripts.push(`https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${encodedClientId}&submodules=geocoder`);
+  if (resolvedKakaoMapAppKey) {
+    const encodedKakaoAppKey = encodeURIComponent(resolvedKakaoMapAppKey);
+    mapScripts.push(`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodedKakaoAppKey}&libraries=services&autoload=false`);
   } else {
     mapScripts.push('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js');
   }
