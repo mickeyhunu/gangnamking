@@ -9,6 +9,7 @@ const shopRoutes = require('./routes/index');
 const entryRoutes = require('./routes/entry');
 const protectedEntryRoutes = require('./routes/protectedEntries');
 const { initializeDataStore } = require('./services/dataStore');
+const { trackAdplusVisit } = require('./services/adplusTracker');
 
 initializeDataStore();
 
@@ -38,6 +39,19 @@ app.use((req, _res, next) => {
 });
 app.use(requestLoggingMiddleware);
 app.use(cloudflareBotGuard);
+app.get('/track/adplus', (req, res) => {
+  const adCode = typeof req.query.adCode === 'string' ? req.query.adCode : '';
+
+  trackAdplusVisit(adCode);
+
+  res
+    .status(204)
+    .set({
+      'Cache-Control': 'no-store, max-age=0',
+      'Content-Length': '0',
+    })
+    .end();
+});
 app.use(languageMiddleware);
 app.use('/shops', protectedEntryRoutes);
 app.use('/entry', entryRoutes);
