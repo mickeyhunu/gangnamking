@@ -1021,6 +1021,7 @@
   const locationLat = resolvedLocation && Number.isFinite(resolvedLocation.lat) ? resolvedLocation.lat : null;
   const locationLng = resolvedLocation && Number.isFinite(resolvedLocation.lng) ? resolvedLocation.lng : null;
 
+
   const locationInfoItems = [
     shop.name
       ? {
@@ -1079,6 +1080,7 @@
             data-shop-district="<%= shop.district %>"
             data-shop-region="<%= shop.region %>"
             data-map-locale="<%= lang || 'ko' %>"
+            data-map-provider="kakao"
             <% if (locationLat !== null && locationLng !== null) { %>
               data-shop-lat="<%= locationLat %>"
               data-shop-lng="<%= locationLng %>"
@@ -1096,7 +1098,11 @@
     </section>
   </div>
 <%
-  const mapScripts = ['/scripts/pages/shop-detail.js'];
+  const mapScripts = [];
+  if (typeof kakaoMapAppKey === 'string' && kakaoMapAppKey.trim()) {
+    mapScripts.push(`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(kakaoMapAppKey.trim())}&autoload=false`);
+  }
+  mapScripts.push('/scripts/pages/shop-detail.js');
   const trackingPixelByShopId = {
     '강남-달리는토끼-하이퍼블릭': 'au_4_1',
     '강남-엘리트(사라있네)-하이퍼블릭': 'au_4_2',

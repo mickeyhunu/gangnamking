@@ -893,6 +893,30 @@
   filter: saturate(1);
 }
 
+
+.shop-map__kakao-info {
+  min-width: 10rem;
+  padding: 0.65rem 0.85rem;
+  color: #1f2933;
+  line-height: 1.45;
+}
+
+.shop-map__kakao-info strong,
+.shop-map__kakao-info span {
+  display: block;
+}
+
+.shop-map__kakao-info strong {
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.shop-map__kakao-info span {
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+  color: #52606d;
+}
+
 .shop-map__address-panel {
   position: absolute;
   inset: 0;

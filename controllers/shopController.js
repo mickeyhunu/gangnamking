@@ -262,6 +262,7 @@ async function renderShopDetail(req, res, next) {
       seoKeywords: Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : [],
       pageTitle: `${localizedShop.name}${(res.locals.t.meta && res.locals.t.meta.shopTitleSuffix) || ''}`,
       metaDescription: localizedShop.description || '',
+      kakaoMapAppKey: process.env.KAKAO_MAP_APP_KEY || '',
     });
   } catch (error) {
     next(error);
