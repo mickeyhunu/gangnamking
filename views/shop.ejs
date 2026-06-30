@@ -1021,20 +1021,6 @@
   const locationLat = resolvedLocation && Number.isFinite(resolvedLocation.lat) ? resolvedLocation.lat : null;
   const locationLng = resolvedLocation && Number.isFinite(resolvedLocation.lng) ? resolvedLocation.lng : null;
 
-  const kakaoMapTitle = mapText.kakaoTitle || '카카오맵 위치안내';
-  const kakaoMapSearchLabel = mapText.kakaoSearch || '카카오맵에서 보기';
-  const kakaoMapDirectionsLabel = mapText.kakaoDirections || '길찾기';
-  const kakaoMapQuery = [shop.name, shop.address].filter(Boolean).join(' ');
-  const kakaoMapSearchUrl = kakaoMapQuery
-    ? `https://map.kakao.com/?q=${encodeURIComponent(kakaoMapQuery)}`
-    : 'https://map.kakao.com/';
-  const kakaoMapTargetName = encodeURIComponent(shop.name || shop.address || '위치');
-  const kakaoMapPlaceUrl = (locationLat !== null && locationLng !== null)
-    ? `https://map.kakao.com/link/map/${kakaoMapTargetName},${locationLat},${locationLng}`
-    : kakaoMapSearchUrl;
-  const kakaoMapDirectionsUrl = (locationLat !== null && locationLng !== null)
-    ? `https://map.kakao.com/link/to/${kakaoMapTargetName},${locationLat},${locationLng}`
-    : kakaoMapSearchUrl;
 
   const locationInfoItems = [
     shop.name
@@ -1112,6 +1098,7 @@
             data-shop-district="<%= shop.district %>"
             data-shop-region="<%= shop.region %>"
             data-map-locale="<%= lang || 'ko' %>"
+            data-map-provider="kakao"
             <% if (locationLat !== null && locationLng !== null) { %>
               data-shop-lat="<%= locationLat %>"
               data-shop-lng="<%= locationLng %>"
@@ -1129,7 +1116,11 @@
     </section>
   </div>
 <%
-  const mapScripts = ['/scripts/pages/shop-detail.js'];
+  const mapScripts = [];
+  if (typeof kakaoMapAppKey === 'string' && kakaoMapAppKey.trim()) {
+    mapScripts.push(`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(kakaoMapAppKey.trim())}&autoload=false`);
+  }
+  mapScripts.push('/scripts/pages/shop-detail.js');
   const trackingPixelByShopId = {
     '강남-달리는토끼-하이퍼블릭': 'au_4_1',
     '강남-엘리트(사라있네)-하이퍼블릭': 'au_4_2',

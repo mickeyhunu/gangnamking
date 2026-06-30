@@ -442,6 +442,16 @@
       return element;
     }
 
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     function renderAddressMap() {
       if (!mapContainer) {
         return;
@@ -487,7 +497,66 @@
       setMapState('ready');
     }
 
-    renderAddressMap();
+    function renderKakaoMap() {
+      if (!mapContainer || !hasCoordinates || !window.kakao || !window.kakao.maps) {
+        return false;
+      }
+
+      function initializeMap() {
+        const kakaoMaps = window.kakao.maps;
+        const position = new kakaoMaps.LatLng(lat, lng);
+
+        mapContainer.innerHTML = '';
+
+        const map = new kakaoMaps.Map(mapContainer, {
+          center: position,
+          level: 3,
+        });
+
+        const marker = new kakaoMaps.Marker({
+          map,
+          position,
+        });
+
+        if (venueName || address) {
+          const infoContent = [
+            '<div class="shop-map__kakao-info">',
+            venueName ? `<strong>${escapeHtml(venueName)}</strong>` : '',
+            address ? `<span>${escapeHtml(address)}</span>` : '',
+            '</div>',
+          ].join('');
+
+          const infoWindow = new kakaoMaps.InfoWindow({
+            content: infoContent,
+            removable: false,
+          });
+
+          infoWindow.open(map, marker);
+        }
+
+        map.addControl(new kakaoMaps.ZoomControl(), kakaoMaps.ControlPosition.RIGHT);
+        map.addControl(new kakaoMaps.MapTypeControl(), kakaoMaps.ControlPosition.TOPRIGHT);
+
+        setMapState('ready');
+
+        window.setTimeout(() => {
+          map.relayout();
+          map.setCenter(position);
+        }, 0);
+      }
+
+      if (typeof window.kakao.maps.load === 'function') {
+        window.kakao.maps.load(initializeMap);
+      } else {
+        initializeMap();
+      }
+
+      return true;
+    }
+
+    if (!renderKakaoMap()) {
+      renderAddressMap();
+    }
   }
 
   const sectionNav = document.querySelector('[data-section-nav]');
