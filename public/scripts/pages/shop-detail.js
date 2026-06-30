@@ -429,33 +429,6 @@
       }
     }
 
-    function formatCoordinate(value, positiveSuffix, negativeSuffix) {
-      if (!Number.isFinite(value)) {
-        return '';
-      }
-
-      const suffix = value >= 0 ? positiveSuffix : negativeSuffix;
-      return `${Math.abs(value).toFixed(6)}° ${suffix}`;
-    }
-
-    function createTextElement(tagName, className, text) {
-      const element = document.createElement(tagName);
-      element.className = className;
-      element.textContent = text;
-      return element;
-    }
-
-
-    function buildKakaoMapUrl() {
-      const query = address || venueName;
-
-      if (!query) {
-        return 'https://map.kakao.com/';
-      }
-
-      return `https://map.kakao.com/link/search/${encodeURIComponent(query)}`;
-    }
-
     function buildStaticMapUrl() {
       const params = new URLSearchParams();
       if (hasCoordinates()) {
@@ -477,29 +450,6 @@
       return image;
     }
 
-    function createKakaoMiniMapFallback(message) {
-      const link = document.createElement('a');
-      link.className = 'business-profile-mini-map-fallback';
-      link.href = buildKakaoMapUrl();
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-
-      const badge = document.createElement('span');
-      badge.className = 'business-profile-mini-map-fallback__badge';
-      badge.textContent = 'KakaoMap';
-      link.appendChild(badge);
-
-      const title = document.createElement('strong');
-      title.textContent = address || venueName || '위치 정보';
-      link.appendChild(title);
-
-      const description = document.createElement('span');
-      description.textContent = message || '카카오맵 미니맵을 불러오는 중입니다.';
-      link.appendChild(description);
-
-      return link;
-    }
-
     function renderAddressMap() {
       if (!mapContainer) {
         return;
@@ -507,43 +457,6 @@
 
       mapContainer.innerHTML = '';
       mapContainer.appendChild(createStaticMapImage());
-      mapContainer.appendChild(createKakaoMiniMapFallback('카카오맵에서 위치를 확인하세요.'));
-
-      const panel = document.createElement('div');
-      panel.className = 'shop-map__address-panel';
-
-      const pin = document.createElement('span');
-      pin.className = 'shop-map__address-pin';
-      pin.setAttribute('aria-hidden', 'true');
-      panel.appendChild(pin);
-
-      const content = document.createElement('div');
-      content.className = 'shop-map__address-content';
-
-      if (venueName) {
-        content.appendChild(createTextElement('strong', 'shop-map__address-title', venueName));
-      }
-
-      if (address) {
-        content.appendChild(createTextElement('p', 'shop-map__address-line', address));
-      }
-
-      const area = [region, district].filter(Boolean).join(' · ');
-      if (area) {
-        content.appendChild(createTextElement('p', 'shop-map__address-meta', area));
-      }
-
-      if (hasCoordinates()) {
-        const coordinates = `${formatCoordinate(lat, 'N', 'S')} / ${formatCoordinate(lng, 'E', 'W')}`;
-        content.appendChild(createTextElement('p', 'shop-map__address-coordinates', coordinates));
-      }
-
-      if (!venueName && !address && !area && !hasCoordinates()) {
-        content.appendChild(createTextElement('p', 'shop-map__address-line', '위치 정보가 준비 중입니다.'));
-      }
-
-      panel.appendChild(content);
-      mapContainer.appendChild(panel);
       setMapState('fallback');
     }
 
