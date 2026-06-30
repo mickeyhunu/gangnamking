@@ -1021,6 +1021,21 @@
   const locationLat = resolvedLocation && Number.isFinite(resolvedLocation.lat) ? resolvedLocation.lat : null;
   const locationLng = resolvedLocation && Number.isFinite(resolvedLocation.lng) ? resolvedLocation.lng : null;
 
+  const kakaoMapTitle = mapText.kakaoTitle || '카카오맵 위치안내';
+  const kakaoMapSearchLabel = mapText.kakaoSearch || '카카오맵에서 보기';
+  const kakaoMapDirectionsLabel = mapText.kakaoDirections || '길찾기';
+  const kakaoMapQuery = [shop.name, shop.address].filter(Boolean).join(' ');
+  const kakaoMapSearchUrl = kakaoMapQuery
+    ? `https://map.kakao.com/?q=${encodeURIComponent(kakaoMapQuery)}`
+    : 'https://map.kakao.com/';
+  const kakaoMapTargetName = encodeURIComponent(shop.name || shop.address || '위치');
+  const kakaoMapPlaceUrl = (locationLat !== null && locationLng !== null)
+    ? `https://map.kakao.com/link/map/${kakaoMapTargetName},${locationLat},${locationLng}`
+    : kakaoMapSearchUrl;
+  const kakaoMapDirectionsUrl = (locationLat !== null && locationLng !== null)
+    ? `https://map.kakao.com/link/to/${kakaoMapTargetName},${locationLat},${locationLng}`
+    : kakaoMapSearchUrl;
+
   const locationInfoItems = [
     shop.name
       ? {
@@ -1070,6 +1085,24 @@
               <% }); %>
             </dl>
           <% } %>
+          <div class="shop-map__actions" aria-label="<%= kakaoMapTitle %>">
+            <a
+              class="shop-map__action shop-map__action--primary"
+              href="<%= kakaoMapPlaceUrl %>"
+              target="_blank"
+              rel="noopener"
+            >
+              <%= kakaoMapSearchLabel %>
+            </a>
+            <a
+              class="shop-map__action"
+              href="<%= kakaoMapDirectionsUrl %>"
+              target="_blank"
+              rel="noopener"
+            >
+              <%= kakaoMapDirectionsLabel %>
+            </a>
+          </div>
           <div
             class="shop-map"
             data-shop-map
