@@ -1115,11 +1115,25 @@
             <% } %>
           >
             <div
-              class="shop-map__map"
+              class="shop-map__map business-profile-mini-map"
               data-map-region
+              data-kakao-map-address="<%= shop.address %>"
+              data-kakao-map-chrome-hidden="true"
+              title="<%= shop.address %> 카카오맵 미니맵"
               role="img"
               aria-label="<%= formatMapLabel(mapText.ariaLabel || 'Map showing location of {{shopName}}') %>"
-            ></div>
+            >
+              <a
+                class="business-profile-mini-map-fallback"
+                href="<%= kakaoMapPlaceUrl %>"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="business-profile-mini-map-fallback__badge">KakaoMap</span>
+                <strong><%= shop.address || shop.name %></strong>
+                <span>카카오맵 미니맵을 불러오는 중입니다.</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
