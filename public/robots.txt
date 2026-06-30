@@ -8,5 +8,8 @@ Disallow: /entry/roommap/
 Disallow: /entry/roommap/*
 Disallow: /entry/roommap/*/data.json
 Disallow: /entry/roommap/*/roomImage
+Allow: /community
+Allow: /play/live
+Allow: /business-info
 Allow: /
-Sitemap: https://roombbang1st.com/sitemap.xml
+Sitemap: https://nightmens.com/sitemap.xml

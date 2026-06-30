@@ -1,0 +1,40 @@
+<%- include('partials/head', { title: pageTitle, description: metaDescription, seoKeywords, canonicalUrl, extraStyles: ['/styles/components/seo-landing.css'] }) %>
+  <main class="seo-landing">
+    <section class="seo-hero">
+      <div class="container seo-hero__inner">
+        <p class="seo-hero__eyebrow"><%= eyebrow %></p>
+        <h1 class="seo-hero__title"><%= heading %></h1>
+        <p class="seo-hero__description"><%= intro %></p>
+        <div class="seo-hero__actions">
+          <% actions.forEach(function(action) { %>
+            <a class="seo-button <%= action.secondary ? 'seo-button--secondary' : '' %>" href="<%= action.href %>"><%= action.label %></a>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+
+    <section class="section seo-content" aria-labelledby="seo-primary-heading">
+      <div class="container seo-content__grid">
+        <article class="seo-card seo-card--wide">
+          <h2 id="seo-primary-heading"><%= primaryTitle %></h2>
+          <p><%= primaryBody %></p>
+        </article>
+        <% keywordGroups.forEach(function(group) { %>
+          <article class="seo-card">
+            <h2><%= group.title %></h2>
+            <p><%= group.body %></p>
+            <ul class="seo-keyword-list">
+              <% group.keywords.forEach(function(keyword) { %>
+                <li><%= keyword %></li>
+              <% }) %>
+            </ul>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+
+    <script type="application/ld+json">
+      <%- JSON.stringify(structuredData) %>
+    </script>
+  </main>
+<%- include('partials/footer') %>
