@@ -467,34 +467,45 @@
 
       const kakaoMaps = window.kakao.maps;
       const position = new kakaoMaps.LatLng(lat, lng);
-
       mapContainer.innerHTML = '';
 
-      const map = new kakaoMaps.Map(mapContainer, {
-        center: position,
-        level: 3,
-      });
+      if (typeof kakaoMaps.StaticMap === 'function') {
+        const staticMarker = new kakaoMaps.Marker({ position });
+        new kakaoMaps.StaticMap(mapContainer, {
+          center: position,
+          level: 3,
+          marker: staticMarker,
+        });
+      } else {
+        const map = new kakaoMaps.Map(mapContainer, {
+          center: position,
+          level: 3,
+          draggable: false,
+          scrollwheel: false,
+          disableDoubleClick: true,
+          disableDoubleClickZoom: true,
+        });
 
-      const marker = new kakaoMaps.Marker({
-        map,
-        position,
-      });
+        const mapMarker = new kakaoMaps.Marker({
+          map,
+          position,
+        });
 
-      if (typeof map.setZoomable === 'function') {
-        map.setZoomable(false);
-      }
+        if (typeof map.setZoomable === 'function') {
+          map.setZoomable(false);
+        }
 
-      if (venueName || address) {
-        marker.setTitle(venueName || address);
+        if (venueName || address) {
+          mapMarker.setTitle(venueName || address);
+        }
+
+        window.setTimeout(() => {
+          map.relayout();
+          map.setCenter(position);
+        }, 0);
       }
 
       setMapState('ready');
-
-      window.setTimeout(() => {
-        map.relayout();
-        map.setCenter(position);
-      }, 0);
-
       return true;
     }
 
