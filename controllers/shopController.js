@@ -144,92 +144,6 @@ function buildSeoKeywords(shops, options = {}) {
   return [...keywords];
 }
 
-const SEO_LANDING_PAGES = {
-  '/community': {
-    pageTitle: '유흥 커뮤니티 · 룸 조각 · 룸 번개 정보 - 룸빵1번지',
-    metaDescription: '강남 유흥 커뮤니티에서 룸 조각, 룸 번개, 동행 모집, 실시간 후기와 업소 소식을 한 번에 확인하세요.',
-    seoKeywords: ['유흥 커뮤니티', '룸 조각', '룸 번개', '강남 유흥 커뮤니티', '룸 동행', '강남 룸 조각', '강남 룸 번개'],
-    eyebrow: 'Community',
-    heading: '유흥 커뮤니티와 룸 조각 정보를 빠르게 확인하세요',
-    intro: '룸빵1번지는 강남권 유흥 커뮤니티 이용자가 자주 찾는 룸 조각, 룸 번개, 동행 모집, 업소 후기 키워드를 중심으로 필요한 정보를 정리합니다.',
-    primaryTitle: '유흥 커뮤니티 검색자를 위한 안내',
-    primaryBody: '룸 조각과 룸 번개는 방문 인원, 지역, 시간대, 업소 컨디션을 빠르게 맞춰야 합니다. 커뮤니티 페이지에서는 강남권 룸 정보와 예약 상담으로 이어지는 핵심 동선을 제공합니다.',
-    actions: [
-      { label: '업소 목록 보기', href: '/' },
-      { label: '출근부 확인', href: '/play/live', secondary: true },
-    ],
-    keywordGroups: [
-      { title: '커뮤니티 핵심 키워드', body: '검색 노출 강화를 위해 실제 이용자가 찾는 대표 표현을 콘텐츠 안에 자연스럽게 배치했습니다.', keywords: ['유흥 커뮤니티', '룸 조각', '룸 번개'] },
-      { title: '강남권 모임 검색', body: '강남, 논현, 신사, 역삼 등 주요 상권의 모임 수요와 업소 탐색 흐름을 연결합니다.', keywords: ['강남 룸 조각', '논현 룸 번개', '룸 동행'] },
-    ],
-  },
-  '/play/live': {
-    pageTitle: '초이스톡 출근부 · 엔트리 실시간 확인 - 룸빵1번지',
-    metaDescription: '초이스톡 출근부, 엔트리, 실시간 출근 현황과 인기 멤버 정보를 빠르게 확인할 수 있는 라이브 페이지입니다.',
-    seoKeywords: ['초이스톡', '초이스톡 출근부', '출근부', '엔트리', '실시간 출근부', '강남 엔트리', '강남 출근부'],
-    eyebrow: 'Live Entry',
-    heading: '초이스톡 출근부와 엔트리 현황을 한눈에',
-    intro: '초이스톡 출근부, 엔트리, 실시간 출근 현황을 찾는 사용자가 빠르게 가게별 출근 정보를 확인하도록 라이브 안내 페이지를 구성했습니다.',
-    primaryTitle: '출근부·엔트리 검색 최적화',
-    primaryBody: '라이브 페이지는 초이스톡 출근부와 엔트리 키워드를 중심으로 오늘 출근 인원, 매장별 출근부, 인기 멤버 확인 동선을 제공합니다.',
-    actions: [
-      { label: '실시간 엔트리 보기', href: '/entry' },
-      { label: '업소 정보 보기', href: '/business-info', secondary: true },
-    ],
-    keywordGroups: [
-      { title: '출근부 키워드', body: '초이스톡을 통해 출근부와 엔트리를 찾는 검색 의도를 반영했습니다.', keywords: ['초이스톡 출근부', '실시간 출근부', '오늘 출근부'] },
-      { title: '엔트리 키워드', body: '가게별 엔트리와 멤버 현황으로 이어지는 내부 링크를 강화했습니다.', keywords: ['엔트리', '강남 엔트리', '업소 엔트리'] },
-    ],
-  },
-  '/business-info': {
-    pageTitle: '달토 · 달리는토끼 · 유앤미 · 도파민 업체 정보 - 룸빵1번지',
-    metaDescription: '달토, 달리는토끼, 유앤미, 도파민 등 강남 주요 업체명 검색자를 위한 업체 정보와 예약 상담 안내 페이지입니다.',
-    seoKeywords: ['달토', '달리는토끼', '유앤미', '도파민', '강남 달토', '강남 달리는토끼', '강남 유앤미', '강남 도파민'],
-    eyebrow: 'Business Info',
-    heading: '달토·달리는토끼·유앤미·도파민 업체 정보를 비교하세요',
-    intro: '업체명을 직접 검색하는 고객이 상호, 지역, 업종, 예약 상담 정보를 빠르게 찾을 수 있도록 업체 정보 페이지를 최적화했습니다.',
-    primaryTitle: '업체명 검색 상위 노출을 위한 구성',
-    primaryBody: '달토, 달리는토끼, 유앤미, 도파민 등 브랜드 검색어를 제목, 설명, 본문, 키워드 메타와 구조화 데이터에 자연스럽게 반영했습니다.',
-    actions: [
-      { label: '전체 업체 보기', href: '/' },
-      { label: '커뮤니티 보기', href: '/community', secondary: true },
-    ],
-    keywordGroups: [
-      { title: '대표 업체명', body: '브랜드 직접 검색 유입을 위해 사용자가 입력하는 축약명과 전체명을 함께 배치했습니다.', keywords: ['달토', '달리는토끼', '유앤미', '도파민'] },
-      { title: '지역 결합 검색', body: '강남권 상권명과 업체명을 조합한 롱테일 키워드도 함께 노출합니다.', keywords: ['강남 달토', '강남 유앤미', '강남 도파민'] },
-    ],
-  },
-};
-
-function buildAbsoluteUrl(req, pathname) {
-  const host = req.get('host') || 'nightmens.com';
-  const protocol = host.includes('nightmens.com') ? 'https' : req.protocol;
-  return `${protocol}://${host}${pathname}`;
-}
-
-function renderSeoLandingPage(req, res, next) {
-  const page = SEO_LANDING_PAGES[req.path];
-
-  if (!page) {
-    return next();
-  }
-
-  const canonicalUrl = buildAbsoluteUrl(req, req.path);
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: page.pageTitle,
-    description: page.metaDescription,
-    url: canonicalUrl,
-    keywords: page.seoKeywords.join(', '),
-  };
-
-  res.render('seo-landing', {
-    ...page,
-    canonicalUrl,
-    structuredData,
-  });
-}
 
 function escapeXml(value = '') {
   return String(value)
@@ -494,10 +408,8 @@ async function renderShopEntrySummary(req, res, next) {
 function renderSitemap(req, res) {
   const shops = getShops();
   const host = `${req.protocol}://${req.get('host')}`;
-  const seoPaths = Object.keys(SEO_LANDING_PAGES);
   const urls = [
     `${host}/`,
-    ...seoPaths.map((pathname) => `${host}${pathname}`),
     ...shops.map((shop) => `${host}/shops/${encodeURIComponent(shop.id)}`),
   ];
 
@@ -511,7 +423,6 @@ function renderSitemap(req, res) {
 
 module.exports = {
   renderIndex,
-  renderSeoLandingPage,
   renderShopDetail,
   renderShopStaticMap,
   renderSitemap,
