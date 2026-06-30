@@ -1020,10 +1020,6 @@
   const resolvedLocation = shopLocation && typeof shopLocation === 'object' ? shopLocation : null;
   const locationLat = resolvedLocation && Number.isFinite(resolvedLocation.lat) ? resolvedLocation.lat : null;
   const locationLng = resolvedLocation && Number.isFinite(resolvedLocation.lng) ? resolvedLocation.lng : null;
-  const kakaoMapQuery = (shop.address || shop.name || '').trim();
-  const kakaoMapPlaceUrl = kakaoMapQuery
-    ? `https://map.kakao.com/link/search/${encodeURIComponent(kakaoMapQuery)}`
-    : 'https://map.kakao.com/';
   const locationInfoItems = [
     shop.name
       ? {
@@ -1096,18 +1092,7 @@
               title="<%= shop.address %> 카카오맵 미니맵"
               role="img"
               aria-label="<%= formatMapLabel(mapText.ariaLabel || 'Map showing location of {{shopName}}') %>"
-            >
-              <a
-                class="business-profile-mini-map-fallback"
-                href="<%= kakaoMapPlaceUrl %>"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span class="business-profile-mini-map-fallback__badge">KakaoMap</span>
-                <strong><%= shop.address || shop.name %></strong>
-                <span>카카오맵 미니맵을 불러오는 중입니다.</span>
-              </a>
-            </div>
+            ></div>
           </div>
         </div>
       </div>
