@@ -43,10 +43,7 @@
 
   const primaryImage = highlightGallery.length ? highlightGallery[0] : null;
   const mapText = (t.shop && t.shop.map) || {};
-  const resolvedKakaoMapAppKey = typeof kakaoMapAppKey === 'string' ? kakaoMapAppKey.trim() : '';
-  const extraMapStyles = resolvedKakaoMapAppKey
-    ? []
-    : ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'];
+  const extraMapStyles = [];
   const pricingHighlight = (t.shop && t.shop.pricingHighlight) || {};
   const managerText = (t.shop && t.shop.manager) || {};
   const managerTitleText = managerText.title || '담당자 정보';
@@ -1023,12 +1020,7 @@
   const resolvedLocation = shopLocation && typeof shopLocation === 'object' ? shopLocation : null;
   const locationLat = resolvedLocation && Number.isFinite(resolvedLocation.lat) ? resolvedLocation.lat : null;
   const locationLng = resolvedLocation && Number.isFinite(resolvedLocation.lng) ? resolvedLocation.lng : null;
-  const resolvedMapAuthErrorCode = typeof mapAuthErrorCode === 'string' ? mapAuthErrorCode : '';
-  const mapAuthErrorMessage =
-    !resolvedKakaoMapAppKey && resolvedMapAuthErrorCode === 'NAVER_MAP_AUTH'
-      ? mapText.authError ||
-        'Kakao Maps app key is missing. Please configure a Kakao JavaScript map app key.'
-      : '';
+
   const locationInfoItems = [
     shop.name
       ? {
@@ -1087,9 +1079,6 @@
             data-shop-district="<%= shop.district %>"
             data-shop-region="<%= shop.region %>"
             data-map-locale="<%= lang || 'ko' %>"
-            <% if (mapAuthErrorMessage) { %>
-              data-map-auth-error="<%= mapAuthErrorMessage %>"
-            <% } %>
             <% if (locationLat !== null && locationLng !== null) { %>
               data-shop-lat="<%= locationLat %>"
               data-shop-lng="<%= locationLng %>"
@@ -1107,14 +1096,7 @@
     </section>
   </div>
 <%
-  const mapScripts = [];
-  if (resolvedKakaoMapAppKey) {
-    const encodedKakaoAppKey = encodeURIComponent(resolvedKakaoMapAppKey);
-    mapScripts.push(`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodedKakaoAppKey}&libraries=services&autoload=false`);
-  } else {
-    mapScripts.push('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js');
-  }
-  mapScripts.push('/scripts/pages/shop-detail.js');
+  const mapScripts = ['/scripts/pages/shop-detail.js'];
   const trackingPixelByShopId = {
     '강남-달리는토끼-하이퍼블릭': 'au_4_1',
     '강남-엘리트(사라있네)-하이퍼블릭': 'au_4_2',

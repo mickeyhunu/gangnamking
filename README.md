@@ -15,9 +15,7 @@ npm run dev
 
 ## 지도 설정
 
-- 상세 페이지의 위치안내 지도는 카카오맵 JavaScript SDK를 우선 사용합니다. 카카오 개발자 콘솔에서 JavaScript 키를 발급받아 `KAKAO_MAP_APP_KEY` 환경 변수로 설정하세요.
-- 호환성을 위해 `KAKAO_MAP_API_KEY`, `KAKAO_JAVASCRIPT_KEY` 이름도 지원합니다. 키가 없으면 기존 Leaflet 지도로 대체됩니다.
-- 좌표가 없는 업소의 서버 측 주소 보정 및 정적 지도 미리보기에는 기존 네이버 지도 환경 변수(`NAVER_MAP_API_KEY_ID`, `NAVER_MAP_API_KEY`)가 계속 사용될 수 있습니다.
+- 상세 페이지의 위치안내 영역은 외부 지도 SDK나 지도 API 없이 등록된 주소와 좌표를 사이트 자체 카드로 표시합니다. 별도의 카카오/네이버 지도 환경 변수 설정은 필요하지 않습니다.
 
 ## 로깅
 

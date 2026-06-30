@@ -2,7 +2,6 @@ const { DEFAULT_LANGUAGE } = require('../lib/constants');
 const { localizeShop, findShopByIdentifier } = require('../lib/shopUtils');
 const { getShops } = require('../services/dataStore');
 const { fetchEntriesForStore, fetchEntryWorkerNames } = require('../services/entryService');
-const { fetchShopLocation } = require('../services/naverMapService');
 
 function toFiniteNumber(value) {
   const numeric = Number(value);
@@ -204,7 +203,6 @@ async function renderShopDetail(req, res, next) {
     };
 
     let shopLocation = null;
-    let mapAuthErrorCode = '';
 
     const candidateLocations = [localizedShop.location, shop.location];
     const fallbackAddress = localizedShop.address || shop.address || '';
@@ -246,32 +244,6 @@ async function renderShopDetail(req, res, next) {
       break;
     }
 
-    if (!shopLocation) {
-      try {
-        const locationResult = await fetchShopLocation({
-          address: localizedShop.address || shop.address,
-          district: localizedShop.district || shop.district,
-          region: localizedShop.region || shop.region,
-        });
-
-        if (locationResult && typeof locationResult === 'object') {
-          if (locationResult.location && typeof locationResult.location === 'object') {
-            shopLocation = locationResult.location;
-          } else if (Number.isFinite(locationResult.lat) && Number.isFinite(locationResult.lng)) {
-            shopLocation = locationResult;
-          }
-
-          if (locationResult.authError && typeof locationResult.authError === 'object') {
-            mapAuthErrorCode = locationResult.authError.code || '';
-          }
-        } else {
-          shopLocation = locationResult;
-        }
-      } catch (error) {
-        // Intentionally ignore location lookup errors so the page can render without map data.
-      }
-    }
-
     if (hasStoreNo) {
       try {
         entrySummary = await fetchShopEntrySummary(localizedShop);
@@ -287,7 +259,6 @@ async function renderShopDetail(req, res, next) {
       shop: localizedShop,
       entrySummary,
       shopLocation,
-      mapAuthErrorCode,
       seoKeywords: Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : [],
       pageTitle: `${localizedShop.name}${(res.locals.t.meta && res.locals.t.meta.shopTitleSuffix) || ''}`,
       metaDescription: localizedShop.description || '',
