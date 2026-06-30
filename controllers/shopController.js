@@ -177,39 +177,42 @@ function renderShopStaticMap(req, res, next) {
       : '';
     const centerX = width / 2;
     const centerY = height / 2;
-    const pinY = centerY - 34;
-
+    const labelX = Math.min(width - 150, Math.max(16, centerX + 22));
+    const labelY = Math.min(height - 24, Math.max(42, centerY - 8));
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
-  <title id="title">${escapeXml(name)} 위치 지도</title>
+  <title id="title">${escapeXml(name)} 카카오맵 위치</title>
   <desc id="desc">${escapeXml(address || region || coordinates || name)}</desc>
   <defs>
-    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#f8fbff"/>
-      <stop offset="1" stop-color="#dfeeff"/>
-    </linearGradient>
-    <pattern id="minorGrid" width="48" height="48" patternUnits="userSpaceOnUse">
-      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#c8d8ea" stroke-width="1" opacity="0.55"/>
+    <pattern id="blocks" width="74" height="54" patternUnits="userSpaceOnUse">
+      <path d="M0 0H74V54H0Z" fill="#f6f7f4"/>
+      <path d="M74 0H0V54" fill="none" stroke="#d8dcd5" stroke-width="1"/>
+      <path d="M14 0V54M38 0V54M0 18H74M0 37H74" stroke="#e6e8e2" stroke-width="1"/>
     </pattern>
-    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
-      <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#1f2937" flood-opacity="0.28"/>
+    <filter id="pinShadow" x="-45%" y="-25%" width="190%" height="180%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1f2937" flood-opacity="0.24"/>
     </filter>
   </defs>
-  <rect width="100%" height="100%" fill="url(#bg)"/>
-  <rect width="100%" height="100%" fill="url(#minorGrid)"/>
-  <path d="M ${width * 0.08} ${height * 0.22} C ${width * 0.28} ${height * 0.16}, ${width * 0.36} ${height * 0.72}, ${width * 0.62} ${height * 0.58} S ${width * 0.86} ${height * 0.36}, ${width * 0.96} ${height * 0.44}" fill="none" stroke="#ffffff" stroke-width="34" stroke-linecap="round" opacity="0.82"/>
-  <path d="M ${width * 0.08} ${height * 0.22} C ${width * 0.28} ${height * 0.16}, ${width * 0.36} ${height * 0.72}, ${width * 0.62} ${height * 0.58} S ${width * 0.86} ${height * 0.36}, ${width * 0.96} ${height * 0.44}" fill="none" stroke="#f6c453" stroke-width="10" stroke-linecap="round" opacity="0.92"/>
-  <path d="M ${width * 0.18} ${height * 0.92} L ${width * 0.42} ${height * 0.12} M ${width * 0.58} ${height * 0.94} L ${width * 0.78} ${height * 0.1}" stroke="#ffffff" stroke-width="24" stroke-linecap="round" opacity="0.72"/>
-  <path d="M ${width * 0.18} ${height * 0.92} L ${width * 0.42} ${height * 0.12} M ${width * 0.58} ${height * 0.94} L ${width * 0.78} ${height * 0.1}" stroke="#b7c7d9" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
-  <g filter="url(#shadow)">
-    <path d="M ${centerX} ${pinY + 92} C ${centerX - 48} ${pinY + 30}, ${centerX - 38} ${pinY - 34}, ${centerX} ${pinY - 34} C ${centerX + 38} ${pinY - 34}, ${centerX + 48} ${pinY + 30}, ${centerX} ${pinY + 92} Z" fill="#ef4444"/>
-    <circle cx="${centerX}" cy="${pinY + 18}" r="20" fill="#ffffff"/>
+  <rect width="100%" height="100%" fill="url(#blocks)"/>
+  <path d="M ${-width * 0.04} ${height * 0.82} C ${width * 0.2} ${height * 0.72}, ${width * 0.34} ${height * 0.46}, ${width * 0.54} ${height * 0.5} S ${width * 0.83} ${height * 0.32}, ${width * 1.04} ${height * 0.22}" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round"/>
+  <path d="M ${-width * 0.04} ${height * 0.82} C ${width * 0.2} ${height * 0.72}, ${width * 0.34} ${height * 0.46}, ${width * 0.54} ${height * 0.5} S ${width * 0.83} ${height * 0.32}, ${width * 1.04} ${height * 0.22}" fill="none" stroke="#f0c94b" stroke-width="5" stroke-linecap="round"/>
+  <path d="M ${width * 0.15} ${-height * 0.06} L ${width * 0.28} ${height * 1.08} M ${width * 0.72} ${-height * 0.06} L ${width * 0.62} ${height * 1.08}" stroke="#ffffff" stroke-width="18" stroke-linecap="round"/>
+  <path d="M ${width * 0.15} ${-height * 0.06} L ${width * 0.28} ${height * 1.08} M ${width * 0.72} ${-height * 0.06} L ${width * 0.62} ${height * 1.08}" stroke="#b8c0c8" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 0 ${height * 0.22} H ${width * 0.33} M ${width * 0.42} 0 V ${height}" stroke="#ffffff" stroke-width="12" opacity="0.9"/>
+  <path d="M 0 ${height * 0.22} H ${width * 0.33} M ${width * 0.42} 0 V ${height}" stroke="#d4d9d0" stroke-width="2" opacity="0.9"/>
+  <g font-family="'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="700">
+    <text x="${width * 0.12}" y="${height * 0.18}" fill="#e87817">${escapeXml(region || '강남구')}</text>
+    <text x="${width * 0.48}" y="${height * 0.34}" fill="#4f62c5">${escapeXml(name)}</text>
+    <text x="${width * 0.70}" y="${height * 0.64}" fill="#6b7280">${escapeXml(address || '카카오맵 위치안내')}</text>
   </g>
-  <g transform="translate(${Math.max(24, centerX - 230)} ${Math.min(height - 122, pinY + 110)})">
-    <rect width="460" height="96" rx="18" fill="#111827" opacity="0.9"/>
-    <text x="24" y="34" font-family="'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="22" font-weight="800" fill="#ffffff">${escapeXml(name)}</text>
-    <text x="24" y="62" font-family="'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="15" font-weight="600" fill="#d1d5db">${escapeXml(address || region || '카카오맵에서 자세한 위치 확인')}</text>
-    <text x="24" y="83" font-family="'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="13" fill="#9ca3af">${escapeXml(coordinates)}</text>
+  <g filter="url(#pinShadow)" transform="translate(${centerX} ${centerY - 12})">
+    <path d="M0 38C-24 8-18-22 0-22S24 8 0 38Z" fill="#2f8dfb"/>
+    <circle cx="0" cy="0" r="10" fill="#ffffff"/>
+    <circle cx="0" cy="0" r="4" fill="#2f8dfb"/>
+  </g>
+  <g transform="translate(${labelX} ${labelY})">
+    <rect x="0" y="0" width="${Math.min(310, width - labelX - 12)}" height="32" rx="16" fill="#ffffff" opacity="0.94"/>
+    <text x="14" y="21" font-family="'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="800" fill="#2563eb">${escapeXml(name)}</text>
   </g>
 </svg>`;
 
