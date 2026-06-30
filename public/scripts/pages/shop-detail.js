@@ -414,9 +414,12 @@
     const venueName = (mapHost.dataset.shopName || '').trim();
     const latValue = mapHost.dataset.shopLat;
     const lngValue = mapHost.dataset.shopLng;
-    const lat = typeof latValue === 'string' && latValue.trim() !== '' ? Number.parseFloat(latValue) : NaN;
-    const lng = typeof lngValue === 'string' && lngValue.trim() !== '' ? Number.parseFloat(lngValue) : NaN;
-    const hasCoordinates = Number.isFinite(lat) && Number.isFinite(lng);
+    let lat = typeof latValue === 'string' && latValue.trim() !== '' ? Number.parseFloat(latValue) : NaN;
+    let lng = typeof lngValue === 'string' && lngValue.trim() !== '' ? Number.parseFloat(lngValue) : NaN;
+
+    function hasCoordinates() {
+      return Number.isFinite(lat) && Number.isFinite(lng);
+    }
 
     function setMapState(state) {
       if (state) {
@@ -443,15 +446,6 @@
     }
 
 
-    function escapeHtml(value) {
-      return String(value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
     function buildKakaoMapUrl() {
       const query = address || venueName;
 
@@ -464,7 +458,7 @@
 
     function buildStaticMapUrl() {
       const params = new URLSearchParams();
-      if (hasCoordinates) {
+      if (hasCoordinates()) {
         params.set('lat', String(lat));
         params.set('lng', String(lng));
       }
@@ -539,12 +533,12 @@
         content.appendChild(createTextElement('p', 'shop-map__address-meta', area));
       }
 
-      if (hasCoordinates) {
+      if (hasCoordinates()) {
         const coordinates = `${formatCoordinate(lat, 'N', 'S')} / ${formatCoordinate(lng, 'E', 'W')}`;
         content.appendChild(createTextElement('p', 'shop-map__address-coordinates', coordinates));
       }
 
-      if (!venueName && !address && !area && !hasCoordinates) {
+      if (!venueName && !address && !area && !hasCoordinates()) {
         content.appendChild(createTextElement('p', 'shop-map__address-line', '위치 정보가 준비 중입니다.'));
       }
 
@@ -554,61 +548,77 @@
     }
 
     function renderKakaoMap() {
-      if (!mapContainer || !hasCoordinates || !window.kakao || !window.kakao.maps) {
+      if (!mapContainer || !hasCoordinates() || !window.kakao || !window.kakao.maps) {
         return false;
       }
 
-      function initializeMap() {
-        const kakaoMaps = window.kakao.maps;
-        const position = new kakaoMaps.LatLng(lat, lng);
+      const kakaoMaps = window.kakao.maps;
+      const position = new kakaoMaps.LatLng(lat, lng);
 
-        mapContainer.innerHTML = '';
+      mapContainer.innerHTML = '';
 
-        const map = new kakaoMaps.Map(mapContainer, {
-          center: position,
-          level: 3,
-        });
+      const map = new kakaoMaps.Map(mapContainer, {
+        center: position,
+        level: 3,
+      });
 
-        const marker = new kakaoMaps.Marker({
-          map,
-          position,
-        });
+      const marker = new kakaoMaps.Marker({
+        map,
+        position,
+      });
 
-        if (venueName || address) {
-          const infoContent = [
-            '<div class="shop-map__kakao-info">',
-            venueName ? `<strong>${escapeHtml(venueName)}</strong>` : '',
-            address ? `<span>${escapeHtml(address)}</span>` : '',
-            '</div>',
-          ].join('');
-
-          const infoWindow = new kakaoMaps.InfoWindow({
-            content: infoContent,
-            removable: false,
-          });
-
-          infoWindow.open(map, marker);
-        }
-
-        setMapState('ready');
-
-        window.setTimeout(() => {
-          map.relayout();
-          map.setCenter(position);
-        }, 0);
+      if (typeof map.setZoomable === 'function') {
+        map.setZoomable(false);
       }
 
-      if (typeof window.kakao.maps.load === 'function') {
-        window.kakao.maps.load(initializeMap);
-      } else {
-        initializeMap();
+      if (venueName || address) {
+        marker.setTitle(venueName || address);
       }
+
+      setMapState('ready');
+
+      window.setTimeout(() => {
+        map.relayout();
+        map.setCenter(position);
+      }, 0);
 
       return true;
     }
 
-    if (!renderKakaoMap()) {
-      renderAddressMap();
+    function resolveCoordinatesWithKakaoMaps(callback) {
+      if (hasCoordinates() || !address || !window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
+        callback();
+        return;
+      }
+
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      geocoder.addressSearch(address, (results, status) => {
+        if (status === window.kakao.maps.services.Status.OK && Array.isArray(results) && results[0]) {
+          const resolvedLat = Number.parseFloat(results[0].y);
+          const resolvedLng = Number.parseFloat(results[0].x);
+
+          if (Number.isFinite(resolvedLat) && Number.isFinite(resolvedLng)) {
+            lat = resolvedLat;
+            lng = resolvedLng;
+          }
+        }
+
+        callback();
+      });
+    }
+
+    function initializeKakaoMiniMap() {
+      resolveCoordinatesWithKakaoMaps(() => {
+        if (!renderKakaoMap()) {
+          renderAddressMap();
+        }
+      });
+    }
+
+    if (window.kakao && window.kakao.maps && typeof window.kakao.maps.load === 'function') {
+      window.kakao.maps.load(initializeKakaoMiniMap);
+    } else {
+      initializeKakaoMiniMap();
     }
   }
 

@@ -1116,7 +1116,7 @@
 <%
   const mapScripts = [];
   if (typeof kakaoMapAppKey === 'string' && kakaoMapAppKey.trim()) {
-    mapScripts.push(`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(kakaoMapAppKey.trim())}&autoload=false`);
+    mapScripts.push(`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(kakaoMapAppKey.trim())}&autoload=false&libraries=services`);
   }
   mapScripts.push('/scripts/pages/shop-detail.js');
   const trackingPixelByShopId = {
