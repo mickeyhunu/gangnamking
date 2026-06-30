@@ -1071,6 +1071,24 @@
               <% }); %>
             </dl>
           <% } %>
+          <div class="shop-map__actions" aria-label="<%= kakaoMapTitle %>">
+            <a
+              class="shop-map__action shop-map__action--primary"
+              href="<%= kakaoMapPlaceUrl %>"
+              target="_blank"
+              rel="noopener"
+            >
+              <%= kakaoMapSearchLabel %>
+            </a>
+            <a
+              class="shop-map__action"
+              href="<%= kakaoMapDirectionsUrl %>"
+              target="_blank"
+              rel="noopener"
+            >
+              <%= kakaoMapDirectionsLabel %>
+            </a>
+          </div>
           <div
             class="shop-map"
             data-shop-map
