@@ -452,12 +452,46 @@
         .replace(/'/g, '&#39;');
     }
 
+    function buildKakaoMapUrl() {
+      const query = address || venueName;
+
+      if (!query) {
+        return 'https://map.kakao.com/';
+      }
+
+      return `https://map.kakao.com/link/search/${encodeURIComponent(query)}`;
+    }
+
+    function createKakaoMiniMapFallback(message) {
+      const link = document.createElement('a');
+      link.className = 'business-profile-mini-map-fallback';
+      link.href = buildKakaoMapUrl();
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+
+      const badge = document.createElement('span');
+      badge.className = 'business-profile-mini-map-fallback__badge';
+      badge.textContent = 'KakaoMap';
+      link.appendChild(badge);
+
+      const title = document.createElement('strong');
+      title.textContent = address || venueName || '위치 정보';
+      link.appendChild(title);
+
+      const description = document.createElement('span');
+      description.textContent = message || '카카오맵 미니맵을 불러오는 중입니다.';
+      link.appendChild(description);
+
+      return link;
+    }
+
     function renderAddressMap() {
       if (!mapContainer) {
         return;
       }
 
       mapContainer.innerHTML = '';
+      mapContainer.appendChild(createKakaoMiniMapFallback('카카오맵에서 위치를 확인하세요.'));
 
       const panel = document.createElement('div');
       panel.className = 'shop-map__address-panel';
@@ -494,7 +528,7 @@
 
       panel.appendChild(content);
       mapContainer.appendChild(panel);
-      setMapState('ready');
+      setMapState('fallback');
     }
 
     function renderKakaoMap() {
@@ -533,9 +567,6 @@
 
           infoWindow.open(map, marker);
         }
-
-        map.addControl(new kakaoMaps.ZoomControl(), kakaoMaps.ControlPosition.RIGHT);
-        map.addControl(new kakaoMaps.MapTypeControl(), kakaoMaps.ControlPosition.TOPRIGHT);
 
         setMapState('ready');
 

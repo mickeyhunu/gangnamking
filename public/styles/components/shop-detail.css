@@ -936,6 +936,66 @@
   filter: saturate(1);
 }
 
+.business-profile-mini-map {
+  background:
+    linear-gradient(rgba(18, 15, 38, 0.35), rgba(18, 15, 38, 0.35)),
+    url('http://t1.daumcdn.net/mapjsapi/images/bg_tile.png');
+}
+
+.business-profile-mini-map-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  color: #1f2933;
+  text-align: center;
+  text-decoration: none;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(254, 229, 0, 0.24), transparent 7rem),
+    rgba(255, 255, 255, 0.72);
+}
+
+.business-profile-mini-map-fallback__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: #fee500;
+  color: #181600;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.business-profile-mini-map-fallback strong,
+.business-profile-mini-map-fallback span:not(.business-profile-mini-map-fallback__badge) {
+  display: block;
+}
+
+.business-profile-mini-map-fallback strong {
+  color: #111827;
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  font-weight: 900;
+  line-height: 1.45;
+}
+
+.business-profile-mini-map-fallback span:not(.business-profile-mini-map-fallback__badge) {
+  color: #4b5563;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.shop-map[data-map-state='fallback'] .shop-map__address-panel {
+  z-index: 1;
+  pointer-events: none;
+  background: transparent;
+}
 
 .shop-map__kakao-info {
   min-width: 10rem;
@@ -1043,4 +1103,3 @@
     text-align: center;
   }
 }
-
