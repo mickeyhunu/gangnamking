@@ -1020,14 +1020,6 @@
   const resolvedLocation = shopLocation && typeof shopLocation === 'object' ? shopLocation : null;
   const locationLat = resolvedLocation && Number.isFinite(resolvedLocation.lat) ? resolvedLocation.lat : null;
   const locationLng = resolvedLocation && Number.isFinite(resolvedLocation.lng) ? resolvedLocation.lng : null;
-  const staticMapParams = new URLSearchParams();
-  if (locationLat !== null && locationLng !== null) {
-    staticMapParams.set('lat', String(locationLat));
-    staticMapParams.set('lng', String(locationLng));
-  }
-  staticMapParams.set('w', '960');
-  staticMapParams.set('h', '360');
-  const staticMapSrc = `/shops/${encodeURIComponent(shop.id || '')}/map/static?${staticMapParams.toString()}`;
   const locationInfoItems = [
     shop.name
       ? {
@@ -1100,15 +1092,7 @@
               title="<%= shop.address %> 카카오맵 미니맵"
               role="img"
               aria-label="<%= formatMapLabel(mapText.ariaLabel || 'Map showing location of {{shopName}}') %>"
-            >
-              <img
-                class="business-profile-mini-map__image"
-                src="<%= staticMapSrc %>"
-                alt="<%= shop.name || shop.address || '위치' %> 지도"
-                loading="eager"
-                decoding="async"
-              />
-            </div>
+            ></div>
           </div>
         </div>
       </div>
