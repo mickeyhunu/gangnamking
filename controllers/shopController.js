@@ -529,16 +529,47 @@ async function renderShopEntrySummary(req, res, next) {
   }
 }
 
+function escapeXml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function getCanonicalBaseUrl(req) {
+  const configuredUrl = process.env.SITE_URL || 'https://roombbang1st.com';
+
+  return configuredUrl.replace(/\/+$/, '') || `${req.protocol}://${req.get('host')}`;
+}
+
+function buildSitemapUrl({ loc, changefreq, priority }) {
+  return [
+    '  <url>',
+    `    <loc>${escapeXml(loc)}</loc>`,
+    changefreq ? `    <changefreq>${escapeXml(changefreq)}</changefreq>` : null,
+    priority ? `    <priority>${escapeXml(priority)}</priority>` : null,
+    '  </url>',
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
 function renderSitemap(req, res) {
   const shops = getShops();
-  const host = `${req.protocol}://${req.get('host')}`;
+  const baseUrl = getCanonicalBaseUrl(req);
   const urls = [
-    `${host}/`,
-    ...shops.map((shop) => `${host}/shops/${encodeURIComponent(shop.id)}`),
+    { loc: `${baseUrl}/`, changefreq: 'daily', priority: '1.0' },
+    ...shops.map((shop) => ({
+      loc: `${baseUrl}/shops/${encodeURIComponent(shop.id)}`,
+      changefreq: 'weekly',
+      priority: '0.8',
+    })),
   ];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
-    .map((url) => `  <url><loc>${url}</loc></url>`)
+    .map(buildSitemapUrl)
     .join('\n')}\n</urlset>`;
 
   res.type('application/xml');

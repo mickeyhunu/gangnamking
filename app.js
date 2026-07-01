@@ -9,6 +9,7 @@ const shopRoutes = require('./routes/index');
 const entryRoutes = require('./routes/entry');
 const protectedEntryRoutes = require('./routes/protectedEntries');
 const { initializeDataStore } = require('./services/dataStore');
+const { renderSitemap } = require('./controllers/shopController');
 
 initializeDataStore();
 
@@ -18,6 +19,7 @@ const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+app.get('/sitemap.xml', renderSitemap);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
