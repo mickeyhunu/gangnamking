@@ -69,6 +69,8 @@ function buildEntryTopList(entries, limit = 5) {
 }
 
 const ENTRY_ROW_SIZE = 5;
+const ENTRY_WORKER_PREVIEW_LIMIT = 15;
+const ENTRY_MORE_LINK = 'https://nightmens.com/play/live';
 
 function buildEntrySummary(entries, workerNames) {
   const normalizedWorkerNames = Array.isArray(workerNames)
@@ -77,13 +79,17 @@ function buildEntrySummary(entries, workerNames) {
         .filter(Boolean)
     : [];
 
-  const workerRows = chunkArray(normalizedWorkerNames, ENTRY_ROW_SIZE);
+  const previewWorkerNames = normalizedWorkerNames.slice(0, ENTRY_WORKER_PREVIEW_LIMIT);
+  const workerRows = chunkArray(previewWorkerNames, ENTRY_ROW_SIZE);
+  const hiddenWorkerCount = Math.max(normalizedWorkerNames.length - previewWorkerNames.length, 0);
 
   return {
     enabled: false,
     totalCount: Array.isArray(entries) ? entries.length : 0,
     workerRows,
     hasWorkerRows: workerRows.some((row) => Array.isArray(row) && row.length),
+    hiddenWorkerCount,
+    moreLink: hiddenWorkerCount > 0 ? ENTRY_MORE_LINK : '',
     topEntries: buildEntryTopList(entries),
   };
 }

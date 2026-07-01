@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const { getContentProtectionMarkup, getSvgContentProtectionElements } = require('./contentProtection');
-const { fetchEntriesForStore, readStaticEntryStores: readEntryStoreMetadata } = require('../../services/entryService');
+const { fetchEntriesForStore } = require('../../services/entryService');
+const { getShops } = require('../../services/dataStore');
 
 const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
 const COMMUNITY_CONTACT_TEXT = '강남 하퍼 010-5733-8710';
@@ -195,8 +196,8 @@ function buildTodaySvg(text) {
 }
 
 async function fetchSingleStoreEntries(storeNo, storeRow = null) {
-  const stores = readStaticEntryStores();
-  const store = storeRow || stores.find((entry) => entry.store.storeNo === Number(storeNo))?.store;
+  const stores = readEntryStores();
+  const store = storeRow || stores.find((entry) => entry.storeNo === Number(storeNo));
 
   if (!store) {
     return null;
@@ -215,7 +216,7 @@ async function fetchSingleStoreEntries(storeNo, storeRow = null) {
 }
 
 async function fetchAllStoreEntries() {
-  const stores = readStaticEntryStores().map((entry) => entry.store);
+  const stores = readEntryStores();
 
   const results = [];
 
@@ -232,29 +233,26 @@ async function fetchAllStoreEntries() {
 const ENTRY_ROW_SIZE = 5;
 
 async function fetchStoreMetadata(storeNo) {
-  const stores = readStaticEntryStores();
-  const store = stores.find((entry) => entry.store.storeNo === Number(storeNo))?.store;
+  const stores = readEntryStores();
+  const store = stores.find((entry) => entry.storeNo === Number(storeNo));
 
   return store || null;
 }
 
-function readStaticEntryStores() {
-  return readEntryStoreMetadata()
-    .map((store) => {
-      const storeNo = Number(store.storeNo);
-      const storeName = typeof store.storeName === 'string' ? store.storeName.trim() : '';
+function readEntryStores() {
+  return getShops()
+    .map((shop) => {
+      const storeNo = Number(shop.storeNo);
+      const storeName = typeof shop.name === 'string' ? shop.name.trim() : '';
 
       if (!Number.isFinite(storeNo) || !storeName) {
         return null;
       }
 
-      return {
-        store: { storeNo, storeName },
-        entries: Array.isArray(store.entries) ? store.entries : [],
-      };
+      return { storeNo, storeName };
     })
     .filter(Boolean)
-    .sort((a, b) => a.store.storeNo - b.store.storeNo);
+    .sort((a, b) => a.storeNo - b.storeNo);
 }
 
 function chunkArray(items, size) {
