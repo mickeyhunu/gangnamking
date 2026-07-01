@@ -129,8 +129,26 @@
   seoKeywords,
   subheaderNavItems,
   areaFilterConfig: null,
-  extraStyles: extraMapStyles
+  extraStyles: extraMapStyles,
+  jsonLd
 }) %>
+  <% if (seoContent) { %>
+    <section class="section seo-overview seo-overview--detail" aria-labelledby="shop-seo-title">
+      <div class="container seo-overview__container">
+        <p class="seo-overview__eyebrow"><%= shop.region %> · <%= shop.district %> · <%= shop.category %></p>
+        <h1 class="seo-overview__title" id="shop-seo-title"><%= seoContent.heading %></h1>
+        <p class="seo-overview__summary"><%= seoContent.summary %></p>
+        <% if (seoContent.keywordHighlights && seoContent.keywordHighlights.length) { %>
+          <ul class="seo-overview__keywords" aria-label="상세 검색 키워드">
+            <% seoContent.keywordHighlights.forEach(function(keyword) { %>
+              <li><%= keyword %></li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </div>
+    </section>
+  <% } %>
+
   <section class="section detail-section detail-hero">
     <div class="container">
       <div class="detail-section__grid detail-hero__grid">
@@ -148,7 +166,7 @@
           </div>
           <div class="detail-hero__info">
             <p class="detail-hero__meta"><%= shop.region %> · <%= shop.district %> · <%= shop.category %></p>
-            <h1><%= shop.name %></h1>
+            <h2><%= shop.name %></h2>
             <dl class="detail-hero__list">
               <div>
                 <dt><%= t.shop && t.shop.address ? t.shop.address : 'Address' %></dt>

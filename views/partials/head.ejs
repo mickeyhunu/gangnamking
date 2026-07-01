@@ -46,8 +46,13 @@
       .filter(Boolean);
     %>
     <% if (resolvedSeoKeywords.length) { %>
-      <meta name="keywords" content="<%= resolvedSeoKeywords.join(', ') %>" />
+      <meta name="keywords" content="<%= resolvedSeoKeywords.slice(0, 40).join(', ') %>" />
     <% } %>
+    <% const resolvedJsonLd =
+      typeof viewLocals.jsonLd === 'object' && viewLocals.jsonLd !== null
+        ? viewLocals.jsonLd
+        : null;
+    %>
     <meta property="og:type" content="website" />
     <meta property="og:title" content="<%= title || (t.meta && t.meta.defaultTitle) || 'Gangnam King' %>" />
     <meta
@@ -55,6 +60,12 @@
       content="<%= (typeof description === 'string' && description.length) ? description : ((t.meta && t.meta.description) || '') %>"
     />
     <meta property="og:site_name" content="<%= (t.meta && t.meta.siteName) || 'Gangnam King' %>" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="<%= title || (t.meta && t.meta.defaultTitle) || 'Gangnam King' %>" />
+    <meta
+      name="twitter:description"
+      content="<%= (typeof description === 'string' && description.length) ? description : ((t.meta && t.meta.description) || '') %>"
+    />
     <% const resolvedCanonicalUrl =
       typeof viewLocals.canonicalUrl === 'string' && viewLocals.canonicalUrl.trim()
         ? viewLocals.canonicalUrl
@@ -80,6 +91,9 @@
     <% } %>
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-roompang.png" />
     <link rel="apple-touch-icon" href="/images/favicon-roompang.png" />
+    <% if (resolvedJsonLd) { %>
+      <script type="application/ld+json"><%- JSON.stringify(resolvedJsonLd) %></script>
+    <% } %>
     <link rel="stylesheet" href="/styles/main.css" />
     <% const rawExtraStyles =
       Object.prototype.hasOwnProperty.call(viewLocals, 'extraStyles')
