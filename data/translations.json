@@ -5,9 +5,11 @@
     "meta": {
       "siteName": "룸빵1번지",
       "defaultTitle": "룸빵1번지",
-      "indexTitle": "룸빵1번지 - 전국 최저가 유흥 플랫폼",
-      "description": "전국 핵심 업소만 선별해 최저가로 연결해드립니다. 예약부터 혜택까지 검증된 컨시어지가 책임집니다.",
-      "shopTitleSuffix": " - 룸빵1번지"
+      "indexTitle": "룸빵1번지 - 강남 룸빵·하이퍼블릭·셔츠룸 최저가 예약",
+      "description": "강남, 논현, 역삼 중심 룸빵·하이퍼블릭·셔츠룸·가라오케 업소를 지역별로 비교하고 최저가 예약 혜택과 담당자 상담을 확인하세요.",
+      "shopTitleSuffix": " - 룸빵1번지",
+      "shopTitleTemplate": "{{shopName}} - {{district}} {{category}} 가격·예약 | 룸빵1번지",
+      "shopDescriptionTemplate": "{{region}} {{shopName}} {{category}} 업소의 가격표, 위치, 영업시간, 담당자 예약 상담 정보를 룸빵1번지에서 확인하세요."
     },
     "header": {
       "languageLabel": "언어",
@@ -203,7 +205,21 @@
         "광진구",
         "도봉구",
         "양천구"
-      ]
+      ],
+      "priorityKeywords": [
+        "강남 룸빵",
+        "강남 하이퍼블릭",
+        "강남 셔츠룸",
+        "강남 가라오케",
+        "논현 룸빵",
+        "역삼 하이퍼블릭",
+        "룸빵 최저가",
+        "룸빵 예약"
+      ],
+      "homeHeading": "강남 룸빵·하이퍼블릭·셔츠룸 최저가 예약 가이드",
+      "homeSummary": "룸빵1번지는 강남, 논현, 역삼 등 핵심 상권의 룸빵·하이퍼블릭·셔츠룸·가라오케 업소를 지역과 카테고리별로 정리해 가격 비교와 빠른 예약 상담을 돕습니다.",
+      "shopHeading": "{{district}} {{category}} {{shopName}} 가격·예약 정보",
+      "shopSummary": "{{region}}에 위치한 {{shopName}}의 가격표, 위치, 영업시간, 담당자 정보를 한 번에 확인하고 룸빵1번지에서 예약 상담을 진행하세요."
     }
   },
   "en": {
@@ -212,9 +228,11 @@
     "meta": {
       "siteName": "Roombbang First",
       "defaultTitle": "Roombbang First",
-      "indexTitle": "Roombbang First – Nationwide lowest-price nightlife platform",
-      "description": "We handpick only the most sought-after venues nationwide and connect you at the lowest rates. Our vetted concierge handles everything from booking to benefits.",
-      "shopTitleSuffix": " – Roombbang First"
+      "indexTitle": "Roombbang 1st - Gangnam Karaoke Lounge & Hyperpublic Reservations",
+      "description": "Compare Gangnam, Nonhyeon, and Yeoksam karaoke lounges, hyperpublic venues, shirt rooms, pricing, location details, and concierge reservation benefits.",
+      "shopTitleSuffix": " – Roombbang First",
+      "shopTitleTemplate": "{{shopName}} - {{district}} {{category}} Pricing & Reservations | Roombbang 1st",
+      "shopDescriptionTemplate": "Check {{region}} {{shopName}} {{category}} pricing, location, hours, and concierge reservation details on Roombbang 1st."
     },
     "header": {
       "languageLabel": "Language",
@@ -430,7 +448,19 @@
         "Gwangjin-gu",
         "Dobong-gu",
         "Yangcheon-gu"
-      ]
+      ],
+      "priorityKeywords": [
+        "Gangnam karaoke lounge",
+        "Gangnam hyperpublic",
+        "Gangnam shirt room",
+        "Nonhyeon lounge",
+        "Yeoksam hyperpublic",
+        "Korea nightlife concierge"
+      ],
+      "homeHeading": "Gangnam Karaoke Lounge, Hyperpublic & Shirt Room Reservation Guide",
+      "homeSummary": "Roombbang 1st organizes vetted Gangnam, Nonhyeon, and Yeoksam nightlife venues by area and category so visitors can compare pricing, locations, and concierge reservation options quickly.",
+      "shopHeading": "{{district}} {{category}} {{shopName}} Pricing & Reservation Details",
+      "shopSummary": "Review pricing, location, hours, and concierge contact details for {{shopName}} in {{region}} before booking through Roombbang 1st."
     }
   },
   "zh": {
@@ -439,9 +469,11 @@
     "meta": {
       "siteName": "房房一番地",
       "defaultTitle": "房房一番地",
-      "indexTitle": "房房一番地 - 全韓最低價夜生活平台",
-      "description": "嚴選全國核心商圈的頂級店家，以最低價格為您媒合。從預約到優惠皆由專業管家全程負責。",
-      "shopTitleSuffix": " – 房房一番地"
+      "indexTitle": "룸빵1번지 - 江南卡拉OK会所与超級公關预约",
+      "description": "比较江南、论岘、驿三核心会所、超級公關、襯衫房与卡拉OK信息，查看价格、位置和预约礼宾优惠。",
+      "shopTitleSuffix": " – 房房一番地",
+      "shopTitleTemplate": "{{shopName}} - {{district}} {{category}} 价格预约 | 룸빵1번지",
+      "shopDescriptionTemplate": "在룸빵1번지查看{{region}}{{shopName}}{{category}}的价格、位置、营业时间与预约礼宾信息。"
     },
     "header": {
       "languageLabel": "語言",
@@ -647,7 +679,19 @@
         "广津区",
         "道峰区",
         "阳川区"
-      ]
+      ],
+      "priorityKeywords": [
+        "江南卡拉OK",
+        "江南超級公關",
+        "江南襯衫房",
+        "论岘会所",
+        "驿三会所",
+        "首尔夜生活预约"
+      ],
+      "homeHeading": "江南卡拉OK会所、超級公關、襯衫房预约指南",
+      "homeSummary": "룸빵1번지按地区与类别整理江南、论岘、驿三核心夜生活会所，帮助用户快速比较价格、位置与礼宾预约信息。",
+      "shopHeading": "{{district}} {{category}} {{shopName}} 价格预约信息",
+      "shopSummary": "查看位于{{region}}的{{shopName}}价格、位置、营业时间和负责人信息，并通过룸빵1번지进行预约咨询。"
     }
   },
   "ja": {
@@ -656,9 +700,11 @@
     "meta": {
       "siteName": "ルンパン一番地",
       "defaultTitle": "ルンパン一番地",
-      "indexTitle": "ルンパン一番地 - 全国最安値ナイトライフプラットフォーム",
-      "description": "全国の主要店舗だけを厳選し、最安値でご案内します。予約から特典まで、検証済みのコンシェルジュが責任を持って対応します。",
-      "shopTitleSuffix": " – ルンパン一番地"
+      "indexTitle": "룸빵1번지 - 江南カラオケラウンジ・ハイパーパブリック予約",
+      "description": "江南、論峴、駅三エリアのカラオケラウンジ、ハイパーパブリック、シャツルーム情報を比較し、料金・場所・予約特典を確認できます。",
+      "shopTitleSuffix": " – ルンパン一番地",
+      "shopTitleTemplate": "{{shopName}} - {{district}} {{category}} 料金・予約 | 룸빵1번지",
+      "shopDescriptionTemplate": "룸빵1번지で{{region}}の{{shopName}} {{category}}の料金、場所、営業時間、予約相談情報を確認できます。"
     },
     "header": {
       "languageLabel": "言語",
@@ -864,7 +910,19 @@
         "広津区",
         "道峰区",
         "陽川区"
-      ]
+      ],
+      "priorityKeywords": [
+        "江南 カラオケラウンジ",
+        "江南 ハイパーパブリック",
+        "江南 シャツルーム",
+        "論峴 ラウンジ",
+        "駅三 ハイパーパブリック",
+        "韓国 ナイトライフ予約"
+      ],
+      "homeHeading": "江南カラオケラウンジ・ハイパーパブリック・シャツルーム予約ガイド",
+      "homeSummary": "룸빵1번지は江南、論峴、駅三の主要ナイトライフ店舗をエリアとカテゴリー別に整理し、料金、場所、予約相談情報を素早く比較できるようサポートします。",
+      "shopHeading": "{{district}} {{category}} {{shopName}} 料金・予約情報",
+      "shopSummary": "{{region}}にある{{shopName}}の料金、場所、営業時間、担当者情報を確認し、룸빵1번지で予約相談を進められます。"
     }
   }
 }

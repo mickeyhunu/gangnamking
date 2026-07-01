@@ -144,6 +144,109 @@ function buildSeoKeywords(shops, options = {}) {
   return [...keywords];
 }
 
+function normalizeKeywords(keywords) {
+  if (!Array.isArray(keywords)) {
+    return [];
+  }
+
+  return keywords
+    .map((keyword) => (typeof keyword === 'string' ? keyword.trim() : ''))
+    .filter(Boolean);
+}
+
+function uniqueKeywords(keywords, limit = 80) {
+  return [...new Set(normalizeKeywords(keywords))].slice(0, limit);
+}
+
+function pickKeywords(keywords, limit = 8) {
+  return uniqueKeywords(keywords, limit);
+}
+
+function buildHomeSeoContent(shops, t = {}) {
+  const meta = t.meta || {};
+  const seo = t.seo || {};
+  const regions = uniqueKeywords(shops.map((shop) => shop.district || shop.region), 6);
+  const categories = uniqueKeywords(shops.map((shop) => shop.category), 4);
+  const featuredShops = uniqueKeywords(shops.map((shop) => shop.name), 6);
+  const keywordHighlights = pickKeywords([
+    ...(Array.isArray(seo.priorityKeywords) ? seo.priorityKeywords : []),
+    ...regions,
+    ...categories,
+    ...featuredShops,
+  ], 12);
+
+  return {
+    title: meta.indexTitle || '룸빵1번지 - 강남 룸빵·하이퍼블릭 최저가 예약',
+    description: meta.description || '강남·논현·역삼 중심 룸빵, 하이퍼블릭, 셔츠룸, 가라오케 정보를 비교하고 예약 혜택을 확인하세요.',
+    heading: seo.homeHeading || '강남 룸빵·하이퍼블릭 최저가 업소 비교',
+    summary: seo.homeSummary || '룸빵1번지는 강남, 논현, 역삼 등 핵심 상권의 검증 업소 정보를 지역·카테고리별로 정리해 빠른 비교와 예약 상담을 돕습니다.',
+    keywordHighlights,
+  };
+}
+
+function buildShopSeoContent(shop, t = {}) {
+  const meta = t.meta || {};
+  const seo = t.seo || {};
+  const regionText = [shop.region, shop.district].filter(Boolean).join(' ');
+  const priorityKeywords = pickKeywords([
+    `${shop.district || shop.region || ''} ${shop.category || ''}`.trim(),
+    `${shop.district || shop.region || ''} ${shop.name || ''}`.trim(),
+    shop.name,
+    shop.category,
+    ...(Array.isArray(shop.seoKeywords) ? shop.seoKeywords : []),
+  ], 10);
+  const titleTemplate = meta.shopTitleTemplate || '{{shopName}} - {{district}} {{category}} 예약 | 룸빵1번지';
+  const descriptionTemplate = meta.shopDescriptionTemplate || '{{region}} {{shopName}} {{category}} 업소 정보, 가격, 위치, 영업시간과 예약 상담을 룸빵1번지에서 확인하세요.';
+  const replacements = {
+    shopName: shop.name || '',
+    district: shop.district || shop.region || '',
+    category: shop.category || '',
+    region: regionText || shop.region || '',
+  };
+  const applyTemplate = (template) => Object.entries(replacements).reduce(
+    (result, [key, value]) => result.replace(new RegExp(`{{\\s*${key}\\s*}}`, 'g'), value),
+    template
+  );
+
+  return {
+    title: applyTemplate(titleTemplate),
+    description: shop.description || applyTemplate(descriptionTemplate),
+    heading: applyTemplate(seo.shopHeading || '{{district}} {{category}} {{shopName}} 상세 정보'),
+    summary: applyTemplate(seo.shopSummary || '{{region}}에 위치한 {{shopName}}의 가격, 위치, 영업시간, 담당자 정보를 한 번에 확인하고 예약 상담을 진행할 수 있습니다.'),
+    keywordHighlights: priorityKeywords,
+  };
+}
+
+function buildOrganizationJsonLd(req, t = {}) {
+  const host = `${req.protocol}://${req.get('host')}`;
+  const meta = t.meta || {};
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: meta.siteName || '룸빵1번지',
+    url: `${host}/`,
+    logo: `${host}/images/logo-roompang.png`,
+  };
+}
+
+function buildShopJsonLd(req, shop) {
+  const host = `${req.protocol}://${req.get('host')}`;
+  const url = `${host}/shops/${encodeURIComponent(shop.id)}`;
+  const imageUrl = typeof shop.image === 'string' && shop.image.startsWith('/') ? `${host}${shop.image}` : shop.image;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: shop.name,
+    description: shop.description,
+    url,
+    image: imageUrl || undefined,
+    address: shop.address,
+    areaServed: [shop.region, shop.district].filter(Boolean).join(' '),
+    openingHours: shop.hours,
+  };
+}
 
 function escapeXml(value = '') {
   return String(value)
@@ -242,8 +345,12 @@ function renderIndex(req, res) {
       ? res.locals.t.seo.areaKeywords
       : [];
 
+  const homeSeo = buildHomeSeoContent(localizedShops, res.locals.t);
   const seoKeywords = buildSeoKeywords(localizedShops, {
-    extraKeywords: translationSeoKeywords,
+    extraKeywords: [
+      ...translationSeoKeywords,
+      ...homeSeo.keywordHighlights,
+    ],
   });
 
   res.render('index', {
@@ -253,8 +360,10 @@ function renderIndex(req, res) {
     categories: shopsByCategory.map((group) => group.category),
     districtMap,
     seoKeywords,
-    pageTitle: (res.locals.t.meta && res.locals.t.meta.indexTitle) || 'Gangnam King',
-    metaDescription: (res.locals.t.meta && res.locals.t.meta.description) || '',
+    seoContent: homeSeo,
+    pageTitle: homeSeo.title,
+    metaDescription: homeSeo.description,
+    jsonLd: buildOrganizationJsonLd(req, res.locals.t),
   });
 }
 
@@ -334,13 +443,21 @@ async function renderShopDetail(req, res, next) {
       }
     }
 
+    const shopSeo = buildShopSeoContent(localizedShop, res.locals.t);
+    const shopSeoKeywords = uniqueKeywords([
+      ...shopSeo.keywordHighlights,
+      ...(Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : []),
+    ]);
+
     res.render('shop', {
       shop: localizedShop,
       entrySummary,
       shopLocation,
-      seoKeywords: Array.isArray(localizedShop.seoKeywords) ? localizedShop.seoKeywords : [],
-      pageTitle: `${localizedShop.name}${(res.locals.t.meta && res.locals.t.meta.shopTitleSuffix) || ''}`,
-      metaDescription: localizedShop.description || '',
+      seoKeywords: shopSeoKeywords,
+      seoContent: shopSeo,
+      pageTitle: shopSeo.title,
+      metaDescription: shopSeo.description,
+      jsonLd: buildShopJsonLd(req, localizedShop),
       kakaoMapAppKey: process.env.KAKAO_MAP_APP_KEY || '',
     });
   } catch (error) {
