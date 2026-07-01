@@ -397,17 +397,17 @@
 
       "윈", "윈가라오케", "잠실", "잠실가라오케", "잠실노래방"
     ],
-    "image": "/images/shops/1.1.3perfect/main.png",
+    "image": "/images/shops/1.1.3desert/main.png",
     "translations": {
       "en": {
-        "id": "gangnam-perfect-karaoke-hyperpublic",
-        "name": "Perfect Hyperpublic",
+        "id": "gangnam-desert-karaoke-hyperpublic",
+        "name": "Desert Hyperpublic",
         "region": "Seoul",
         "district": "Gangnam-gu",
         "category": "Hyperpublic",
         "address": "645 Nonhyeon-ro, Gangnam-gu, Seoul",
         "hours": "Open 24 hours",
-        "description": "Perfect is a Nonhyeon-based hyperpublic house known for dynamic shows and flexible late-night courses.",
+        "description": "Desert is a Nonhyeon-based hyperpublic house known for dynamic shows and flexible late-night courses.",
         "highlights": [
           "Main stage on Nonhyeon-ro",
           "Dynamic performance-style lineup",
@@ -419,15 +419,15 @@
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
-          "Gangnam Perfect",
-          "Perfect hyperpublic",
+          "Gangnam Desert",
+          "Desert hyperpublic",
           "Nonhyeon shirt room",
           "Gangnam karaoke"
         ]
       },
       "zh": {
-        "id": "江南-PERFECT-卡拉OK-超級公關",
-        "name": "PERFECT 超級公關",
+        "id": "江南-DESERT-卡拉OK-超級公關",
+        "name": "DESERT 超級公關",
         "region": "首尔",
         "district": "江南区",
         "category": "超級公關",
@@ -445,21 +445,21 @@
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
-          "江南PERFECT",
+          "江南DESERT",
           "PERFECT超級公關",
           "論峴襯衫房",
           "江南卡拉OK"
         ]
       },
       "ja": {
-        "id": "江南-パーフェクト-カラオケ-ハイパーパブリック",
-        "name": "パーフェクト ハイパーパブリック",
+        "id": "江南-デザート-カラオケ-ハイパーパブリック",
+        "name": "デザート ハイパーパブリック",
         "region": "ソウル",
         "district": "江南区",
         "category": "ハイパーパブリック",
         "address": "ソウル特別市 江南区 論峴路 645",
         "hours": "24時間営業",
-        "description": "論峴路に位置するパーフェクトは、ダイナミックなショーと深夜コースで知られるハイパーパブリック店舗です。",
+        "description": "論峴路に位置するデザートは、ダイナミックなショーと深夜コースで知られるハイパーパブリック店舗です。",
         "highlights": [
           "論峴路のメインステージ",
           "躍動感あるパフォーマンス陣容",
@@ -471,8 +471,8 @@
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
-          "江南 パーフェクト",
-          "パーフェクト ハイパーパブリック",
+          "江南 デザート",
+          "デザート ハイパーパブリック",
           "論峴 シャツルーム",
           "江南 カラオケ"
         ]
