@@ -6,6 +6,9 @@ const { getShops } = require('../../services/dataStore');
 
 const COMMUNITY_CHAT_LINK = 'https://open.kakao.com/o/gALpMlRg';
 const COMMUNITY_CONTACT_TEXT = '강남 하퍼 010-5733-8710';
+const ENTRY_DISPLAY_LIMIT = 15;
+const MORE_ENTRIES_URL = 'https://nightmens.com/play/live';
+
 const ENTRY_PAGE_TEXT = {
   loading: '출근부 정보를 불러오는 중입니다...',
   error: '출근부 정보를 가져오지 못했습니다. 잠시 후 다시 시도해주세요.',
@@ -263,10 +266,11 @@ function chunkArray(items, size) {
   return chunks;
 }
 
-function buildWorkerRows(entries) {
+function buildWorkerRows(entries, limit = ENTRY_DISPLAY_LIMIT) {
   const workerNames = entries
     .map((entry) => (typeof entry.workerName === 'string' ? entry.workerName.trim() : ''))
-    .filter(Boolean);
+    .filter(Boolean)
+    .slice(0, limit);
 
   return chunkArray(workerNames, ENTRY_ROW_SIZE);
 }
@@ -283,6 +287,9 @@ function buildStoreEntryPayload(store, entries, top5) {
     storeNo: store.storeNo,
     storeName: store.storeName,
     totalWorkers: entries.length,
+    visibleWorkerLimit: ENTRY_DISPLAY_LIMIT,
+    remainingWorkers: Math.max(0, entries.length - ENTRY_DISPLAY_LIMIT),
+    moreEntriesUrl: MORE_ENTRIES_URL,
     workerRows: buildWorkerRows(entries),
     topEntries: buildTopEntriesPayload(top5),
   };
@@ -555,7 +562,9 @@ function buildStoreEntryLines(store, entries, top5) {
   if (entries.length) {
     lines.push({ text: '엔트리 목록', fontSize: 30, fontWeight: '700', gapBefore: 28 });
 
-    const entryRows = chunkArray(entries, ENTRY_ROW_SIZE);
+    const visibleEntries = entries.slice(0, ENTRY_DISPLAY_LIMIT);
+    const remainingCount = Math.max(0, entries.length - ENTRY_DISPLAY_LIMIT);
+    const entryRows = chunkArray(visibleEntries, ENTRY_ROW_SIZE);
     entryRows.forEach((row, index) => {
       const chunkText = row
         .map((entry) => entry.workerName ?? '')
@@ -568,6 +577,16 @@ function buildStoreEntryLines(store, entries, top5) {
         gapBefore: index === 0 ? 12 : 8,
       });
     });
+
+    if (remainingCount > 0) {
+      lines.push({
+        text: `출근자 ${remainingCount}명 더 보기... ${MORE_ENTRIES_URL}`,
+        fontSize: 24,
+        fontWeight: '700',
+        lineHeight: 34,
+        gapBefore: 14,
+      });
+    }
 
     if (top5.length) {
       lines.push({ text: '오늘의 인기 멤버 TOP 5', fontSize: 30, fontWeight: '700', gapBefore: 32 });
@@ -617,7 +636,9 @@ function buildAllStoreEntryLines(storeDataList) {
     });
 
     if (data.entries.length) {
-      const entryRows = chunkArray(data.entries, ENTRY_ROW_SIZE);
+      const visibleEntries = data.entries.slice(0, ENTRY_DISPLAY_LIMIT);
+      const remainingCount = Math.max(0, data.entries.length - ENTRY_DISPLAY_LIMIT);
+      const entryRows = chunkArray(visibleEntries, ENTRY_ROW_SIZE);
       entryRows.forEach((row, index) => {
         lines.push({
           text: row.map((entry) => entry.workerName ?? '').join(' '),
@@ -626,6 +647,16 @@ function buildAllStoreEntryLines(storeDataList) {
           gapBefore: index === 0 ? 12 : 8,
         });
       });
+
+      if (remainingCount > 0) {
+        lines.push({
+          text: `출근자 ${remainingCount}명 더 보기... ${MORE_ENTRIES_URL}`,
+          fontSize: 24,
+          fontWeight: '700',
+          lineHeight: 34,
+          gapBefore: 14,
+        });
+      }
 
       if (data.top5.length) {
         lines.push({

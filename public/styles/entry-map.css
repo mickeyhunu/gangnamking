@@ -180,6 +180,27 @@ body {
   color: var(--entry-muted);
 }
 
+.entry-more-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  margin-top: 10px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--entry-accent), #7c3aed);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 18px rgba(75, 107, 251, 0.24);
+}
+
+.entry-more-link:hover,
+.entry-more-link:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(75, 107, 251, 0.3);
+}
+
 .top-list {
   list-style: none;
   padding: 0;

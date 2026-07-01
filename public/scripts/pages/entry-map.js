@@ -72,7 +72,7 @@
     setVisibility(storesHost, true);
   }
 
-  function createWorkerRows(rows) {
+  function createWorkerRows(rows, remainingCount, moreUrl) {
     const container = document.createElement('div');
     container.className = 'entry-rows';
 
@@ -109,6 +109,17 @@
       empty.className = 'entry-empty';
       empty.textContent = workerEmptyText;
       container.appendChild(empty);
+    }
+
+    const normalizedRemaining = Number.isFinite(remainingCount) ? remainingCount : 0;
+    if (normalizedRemaining > 0 && typeof moreUrl === 'string' && moreUrl.trim()) {
+      const moreLink = document.createElement('a');
+      moreLink.className = 'entry-more-link';
+      moreLink.href = moreUrl.trim();
+      moreLink.target = '_blank';
+      moreLink.rel = 'noopener noreferrer';
+      moreLink.textContent = `출근자 ${numberFormatter.format(normalizedRemaining)}명 더 보기...`;
+      container.appendChild(moreLink);
     }
 
     return container;
@@ -173,7 +184,7 @@
     const workersTitle = document.createElement('h3');
     workersTitle.textContent = '출근부 목록';
     workersSection.appendChild(workersTitle);
-    workersSection.appendChild(createWorkerRows(store.workerRows));
+    workersSection.appendChild(createWorkerRows(store.workerRows, store.remainingWorkers, store.moreEntriesUrl));
 
     const topSection = document.createElement('div');
     topSection.className = 'top-section';
