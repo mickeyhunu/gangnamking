@@ -1,5 +1,5 @@
 cd Documents/aws
-ssh -i .\room1stKey.pem ubuntu@3.39.194.110 --- cmd에서 우분투 접속
+ssh -i .\room1stKey.pem ubuntu@3.34.215.203 --- cmd에서 우분투 접속
 
 sudo nano /etc/nginx/sites-available/roombbang1st
 
