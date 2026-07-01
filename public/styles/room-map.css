@@ -14,24 +14,24 @@ body {
   color: var(--room-text);
 }
 
-.room-map-hero {
-  background: radial-gradient(circle at top, rgba(75, 107, 251, 0.2), rgba(75, 107, 251, 0.05));
-  border-bottom: 1px solid var(--room-border);
+.entry-map-hero {
+  background: radial-gradient(circle at top, rgba(75, 107, 251, 0.3), rgba(75, 107, 251, 0.05));
+  border-bottom: 1px solid #e4e5f0;
 }
 
-.room-map-hero__content {
+.entry-map-hero__content {
   max-width: 960px;
   margin: 0 auto;
   padding: 24px 16px;
 }
 
-.room-map-hero__lead {
+.entry-map-hero__lead {
   margin: 0 0 6px;
   font-weight: 600;
-  color: var(--room-muted);
+  color: #6b6f80;
 }
 
-.room-map-hero__link {
+.entry-map-hero__link {
   color: var(--room-accent);
   font-weight: 700;
   text-decoration: none;
