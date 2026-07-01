@@ -1130,7 +1130,7 @@
   const trackingAdCode = trackingPixelByShopId[shop.id];
 %>
 <% if (trackingAdCode) { %>
-  <img src="https://www.adplus.store/api/track?adCode=<%= trackingAdCode %>" alt="" style="width:1px;height:1px;border:0;display:none;" />
+  <img src="/track/adplus?adCode=<%= encodeURIComponent(trackingAdCode) %>" alt="" style="width:1px;height:1px;border:0;display:none;" />
 <% } %>
 <%- include('partials/footer', {
   scripts: mapScripts
