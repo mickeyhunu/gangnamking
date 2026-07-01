@@ -127,6 +127,8 @@
       const workerEmpty = section.querySelector('[data-entry-empty-message]');
       const topList = section.querySelector('[data-entry-top-list]');
       const topEmpty = section.querySelector('[data-entry-top-empty]');
+      const moreLink = section.querySelector('[data-entry-more-link]');
+      const moreCount = section.querySelector('[data-entry-more-count]');
       const errorText = section.dataset.entryErrorText || '';
       const scoreLabel = section.dataset.entryTopScoreLabel || '';
       const locale = section.dataset.entryLocale || 'ko';
@@ -205,6 +207,29 @@
         return true;
       }
 
+      function renderMoreLink(summary) {
+        if (!moreLink) {
+          return;
+        }
+
+        const hiddenCount = Number(summary && summary.hiddenWorkerCount);
+        const href = summary && typeof summary.moreLink === 'string' ? summary.moreLink.trim() : '';
+
+        if (!Number.isFinite(hiddenCount) || hiddenCount <= 0 || !href) {
+          moreLink.hidden = true;
+          if (moreCount) {
+            moreCount.textContent = '0';
+          }
+          return;
+        }
+
+        moreLink.href = href;
+        if (moreCount) {
+          moreCount.textContent = numberFormatter.format(hiddenCount);
+        }
+        moreLink.hidden = false;
+      }
+
       function renderTopEntries(entries) {
         if (!topList) {
           return false;
@@ -278,6 +303,7 @@
           if (totalNode) {
             totalNode.textContent = '0';
           }
+          renderMoreLink(null);
           return;
         }
 
@@ -295,6 +321,8 @@
             workerEmpty.textContent = workerEmptyDefault;
           }
         }
+
+        renderMoreLink(summary);
 
         const hasTopEntries = renderTopEntries(summary.topEntries);
         if (topEmpty) {
@@ -316,6 +344,7 @@
         }
         setWorkerMessage(workerEmptyDefault);
         setTopMessage(topEmptyDefault);
+        renderMoreLink(null);
       }
 
       async function fetchEntries() {

@@ -456,6 +456,34 @@
   color: var(--color-text);
 }
 
+
+.store-entry-workers__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 155, 209, 0.45);
+  background: rgba(255, 155, 209, 0.12);
+  color: #ff9bd1;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.store-entry-workers__more:hover,
+.store-entry-workers__more:focus {
+  transform: translateY(-1px);
+  border-color: rgba(255, 155, 209, 0.75);
+  background: rgba(255, 155, 209, 0.2);
+}
+
+.store-entry-workers__more[hidden] {
+  display: none;
+}
+
 .store-entry-top {
   display: flex;
   flex-direction: column;

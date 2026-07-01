@@ -920,6 +920,8 @@
             totalCount: entrySnapshot ? entrySnapshot.totalCount : null,
             workerRows: entrySnapshotWorkers,
             topEntries: entrySnapshotTop,
+            hiddenWorkerCount: entrySnapshot ? entrySnapshot.hiddenWorkerCount : 0,
+            moreLink: entrySnapshot ? entrySnapshot.moreLink : '',
           }
         : null; %>
     <section
@@ -978,6 +980,28 @@
               >
                 <%= workerEmptyMessage %>
               </p>
+              <% if (entrySnapshot && entrySnapshot.hiddenWorkerCount > 0 && entrySnapshot.moreLink) { %>
+                <a
+                  class="store-entry-workers__more"
+                  href="<%= entrySnapshot.moreLink %>"
+                  data-entry-more-link
+                  target="_blank"
+                  rel="noopener"
+                >
+                  외 <span data-entry-more-count><%= entrySnapshot.hiddenWorkerCount %></span>명 더 보기
+                </a>
+              <% } else { %>
+                <a
+                  class="store-entry-workers__more"
+                  href="https://nightmens.com/play/live"
+                  data-entry-more-link
+                  target="_blank"
+                  rel="noopener"
+                  hidden
+                >
+                  외 <span data-entry-more-count>0</span>명 더 보기
+                </a>
+              <% } %>
             </div>
             <div class="store-entry-top" data-entry-top>
               <h3 class="store-entry-top__title"><%= entriesTopListTitle %></h3>
