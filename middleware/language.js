@@ -9,20 +9,37 @@ const {
 const { buildAreaFilterConfig } = require('../lib/shopUtils');
 const { getTranslations } = require('../services/dataStore');
 
+function getCanonicalOrigin(req) {
+  const host = typeof req.get === 'function' ? req.get('host') : '';
+  const hostname = host.split(':')[0].toLowerCase();
+  const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(hostname);
+  const forwardedProto = typeof req.get === 'function' ? req.get('x-forwarded-proto') : null;
+  const firstForwardedProto = typeof forwardedProto === 'string'
+    ? forwardedProto.split(',')[0].trim().toLowerCase()
+    : '';
+  const requestProtocol = typeof req.protocol === 'string' ? req.protocol : 'http';
+  const protocol = isLocalHost
+    ? firstForwardedProto || requestProtocol
+    : 'https';
+
+  return `${protocol}://${host}`;
+}
+
 function buildLanguageOptions(req, activeLang, translations) {
+  const canonicalOrigin = getCanonicalOrigin(req);
   return SUPPORTED_LANGUAGES.map((code) => {
     const params = new URLSearchParams(req.query);
     params.set('lang', code);
     const queryString = params.toString();
     const relativeUrl = `${req.path}${queryString ? `?${queryString}` : ''}`;
-    let absoluteUrl = `${req.protocol}://${req.get('host')}${relativeUrl}`;
+    let absoluteUrl = `${canonicalOrigin}${relativeUrl}`;
 
     if (code === DEFAULT_LANGUAGE) {
       const defaultParams = new URLSearchParams(req.query);
       defaultParams.delete('lang');
       const defaultQuery = defaultParams.toString();
       const defaultRelativeUrl = `${req.path}${defaultQuery ? `?${defaultQuery}` : ''}`;
-      absoluteUrl = `${req.protocol}://${req.get('host')}${defaultRelativeUrl}`;
+      absoluteUrl = `${canonicalOrigin}${defaultRelativeUrl}`;
     }
 
     const flag = LANGUAGE_FLAGS[code] || {};
@@ -80,7 +97,7 @@ function languageMiddleware(req, res, next) {
   res.locals.areaFilterConfig = buildAreaFilterConfig(translation, activeLang);
   res.locals.canonicalUrl = currentLanguageOption
     ? currentLanguageOption.absoluteUrl
-    : `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+    : `${getCanonicalOrigin(req)}${req.originalUrl}`;
 
   next();
 }
