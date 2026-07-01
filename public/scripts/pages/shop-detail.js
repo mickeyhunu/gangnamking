@@ -132,6 +132,8 @@
       const errorText = section.dataset.entryErrorText || '';
       const scoreLabel = section.dataset.entryTopScoreLabel || '';
       const locale = section.dataset.entryLocale || 'ko';
+      const visibleWorkerLimit = Math.max(0, Number(section.dataset.entryVisibleLimit) || 15);
+      const workerRowSize = 5;
       const workerEmptyDefault = workerEmpty
         ? workerEmpty.dataset.entryEmptyDefault || workerEmpty.textContent || ''
         : '';
@@ -158,6 +160,41 @@
           topEmpty.textContent = message || '';
           topEmpty.hidden = !message;
         }
+      }
+
+      function getVisibleWorkerSummary(summary) {
+        const names = [];
+        const rows = summary && Array.isArray(summary.workerRows) ? summary.workerRows : [];
+
+        rows.forEach((row) => {
+          if (!Array.isArray(row)) {
+            return;
+          }
+
+          row.forEach((name) => {
+            if (typeof name === 'string' && name.trim()) {
+              names.push(name.trim());
+            }
+          });
+        });
+
+        const visibleNames = names.slice(0, visibleWorkerLimit);
+        const visibleRows = [];
+
+        for (let index = 0; index < visibleNames.length; index += workerRowSize) {
+          visibleRows.push(visibleNames.slice(index, index + workerRowSize));
+        }
+
+        const hiddenFromRows = Math.max(0, names.length - visibleNames.length);
+        const hiddenFromSummary = Number(summary && summary.hiddenWorkerCount);
+
+        return {
+          rows: visibleRows,
+          hiddenWorkerCount: Math.max(
+            Number.isFinite(hiddenFromSummary) ? hiddenFromSummary : 0,
+            hiddenFromRows
+          ),
+        };
       }
 
       function renderWorkerRows(rows) {
@@ -213,7 +250,10 @@
         }
 
         const hiddenCount = Number(summary && summary.hiddenWorkerCount);
-        const href = summary && typeof summary.moreLink === 'string' ? summary.moreLink.trim() : '';
+        const summaryHref = summary && typeof summary.moreLink === 'string'
+          ? summary.moreLink.trim()
+          : '';
+        const href = summaryHref || moreLink.getAttribute('href') || '';
 
         if (!Number.isFinite(hiddenCount) || hiddenCount <= 0 || !href) {
           moreLink.hidden = true;
@@ -314,7 +354,8 @@
           );
         }
 
-        const hasWorkers = renderWorkerRows(summary.workerRows);
+        const visibleWorkerSummary = getVisibleWorkerSummary(summary);
+        const hasWorkers = renderWorkerRows(visibleWorkerSummary.rows);
         if (workerEmpty) {
           workerEmpty.hidden = hasWorkers;
           if (!hasWorkers) {
@@ -322,7 +363,10 @@
           }
         }
 
-        renderMoreLink(summary);
+        renderMoreLink({
+          ...summary,
+          hiddenWorkerCount: visibleWorkerSummary.hiddenWorkerCount,
+        });
 
         const hasTopEntries = renderTopEntries(summary.topEntries);
         if (topEmpty) {

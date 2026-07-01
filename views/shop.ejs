@@ -73,9 +73,29 @@
   const showEntrySection = true;
   //const showEntrySection = Boolean(entryOverview.enabled);
   const entrySnapshot = showEntrySection ? entryOverview : null;
-  const entrySnapshotWorkers = entrySnapshot && Array.isArray(entrySnapshot.workerRows)
+  const entryWorkerDisplayLimit = 15;
+  const entryWorkerRowSize = 5;
+  const entrySnapshotWorkerNames = entrySnapshot && Array.isArray(entrySnapshot.workerRows)
     ? entrySnapshot.workerRows
+        .flatMap(function(row) { return Array.isArray(row) ? row : []; })
+        .map(function(name) { return typeof name === 'string' ? name.trim() : ''; })
+        .filter(Boolean)
     : [];
+  const entryVisibleWorkerNames = entrySnapshotWorkerNames.slice(0, entryWorkerDisplayLimit);
+  const entrySnapshotWorkers = [];
+  for (let index = 0; index < entryVisibleWorkerNames.length; index += entryWorkerRowSize) {
+    entrySnapshotWorkers.push(entryVisibleWorkerNames.slice(index, index + entryWorkerRowSize));
+  }
+  const entryExtraHiddenWorkerCount = Math.max(
+    0,
+    entrySnapshotWorkerNames.length - entryVisibleWorkerNames.length
+  );
+  const entryHiddenWorkerCount = entrySnapshot
+    ? Math.max(Number(entrySnapshot.hiddenWorkerCount) || 0, entryExtraHiddenWorkerCount)
+    : 0;
+  const entryMoreLink = entrySnapshot && typeof entrySnapshot.moreLink === 'string' && entrySnapshot.moreLink.trim()
+    ? entrySnapshot.moreLink.trim()
+    : 'https://nightmens.com/play/live';
   const entrySnapshotTop = entrySnapshot && Array.isArray(entrySnapshot.topEntries)
     ? entrySnapshot.topEntries
     : [];
@@ -901,8 +921,8 @@
             totalCount: entrySnapshot ? entrySnapshot.totalCount : null,
             workerRows: entrySnapshotWorkers,
             topEntries: entrySnapshotTop,
-            hiddenWorkerCount: entrySnapshot ? entrySnapshot.hiddenWorkerCount : 0,
-            moreLink: entrySnapshot ? entrySnapshot.moreLink : '',
+            hiddenWorkerCount: entryHiddenWorkerCount,
+            moreLink: entryMoreLink,
           }
         : null; %>
     <section
@@ -913,6 +933,7 @@
       data-entry-locale="<%= entryLocale %>"
       data-entry-top-score-label="<%= entriesTopListScoreLabel %>"
       data-entry-prefilled="<%= entryHasPrefilledWorkers || entryHasPrefilledTop ? 'true' : 'false' %>"
+      data-entry-visible-limit="<%= entryWorkerDisplayLimit %>"
     >
       <div class="container detail-section__grid">
         <div class="detail-card detail-card--full">
@@ -961,15 +982,15 @@
               >
                 <%= workerEmptyMessage %>
               </p>
-              <% if (entrySnapshot && entrySnapshot.hiddenWorkerCount > 0 && entrySnapshot.moreLink) { %>
+              <% if (entrySnapshot && entryHiddenWorkerCount > 0) { %>
                 <a
                   class="store-entry-workers__more"
-                  href="<%= entrySnapshot.moreLink %>"
+                  href="<%= entryMoreLink %>"
                   data-entry-more-link
                   target="_blank"
                   rel="noopener"
                 >
-                  외 <span data-entry-more-count><%= entrySnapshot.hiddenWorkerCount %></span>명 더 보기
+                  외 <span data-entry-more-count><%= entryHiddenWorkerCount %></span>명 더 보기
                 </a>
               <% } else { %>
                 <a
