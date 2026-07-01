@@ -1,23 +1,4 @@
 <%- include('partials/head', { title: pageTitle, description: metaDescription, seoKeywords, jsonLd }) %>
-  <% if (seoContent) { %>
-    <section class="section seo-overview" aria-labelledby="seo-overview-title">
-      <div class="container">
-        <div class="seo-overview__container">
-          <p class="seo-overview__eyebrow"><%= (t.meta && t.meta.siteName) || '룸빵1번지' %></p>
-          <h1 class="seo-overview__title" id="seo-overview-title"><%= seoContent.heading %></h1>
-          <p class="seo-overview__summary"><%= seoContent.summary %></p>
-          <% if (seoContent.keywordHighlights && seoContent.keywordHighlights.length) { %>
-            <ul class="seo-overview__keywords" aria-label="추천 검색 키워드">
-              <% seoContent.keywordHighlights.forEach(function(keyword) { %>
-                <li><%= keyword %></li>
-              <% }) %>
-            </ul>
-          <% } %>
-        </div>
-      </div>
-    </section>
-  <% } %>
-
   <section class="section" id="areas">
     <div class="container">
       <div class="section__header">
@@ -67,6 +48,25 @@
       </div>
     </div>
   </section>
+
+  <% if (seoContent) { %>
+    <section class="section seo-overview" aria-labelledby="seo-overview-title">
+      <div class="container">
+        <div class="seo-overview__container">
+          <p class="seo-overview__eyebrow"><%= (t.meta && t.meta.siteName) || '룸빵1번지' %></p>
+          <h1 class="seo-overview__title" id="seo-overview-title"><%= seoContent.heading %></h1>
+          <p class="seo-overview__summary"><%= seoContent.summary %></p>
+          <% if (seoContent.keywordHighlights && seoContent.keywordHighlights.length) { %>
+            <ul class="seo-overview__keywords" aria-label="추천 검색 키워드">
+              <% seoContent.keywordHighlights.forEach(function(keyword) { %>
+                <li><%= keyword %></li>
+              <% }) %>
+            </ul>
+          <% } %>
+        </div>
+      </div>
+    </section>
+  <% } %>
 
   <script id="region-district-data" type="application/json">
     <%- JSON.stringify(districtMap) %>
