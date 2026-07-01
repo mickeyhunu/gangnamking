@@ -91,3 +91,30 @@
 .seo-overview__community-link:focus-visible {
   color: var(--color-text-strong, #fff);
 }
+
+.seo-overview__promo {
+  display: block;
+  overflow: hidden;
+  width: min(100%, 760px);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 1.25rem;
+  background: rgba(0, 0, 0, 0.24);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.24);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.seo-overview__promo:hover,
+.seo-overview__promo:focus-visible {
+  border-color: rgba(212, 175, 55, 0.52);
+  box-shadow: 0 22px 46px rgba(0, 0, 0, 0.32);
+  transform: translateY(-2px);
+}
+
+.seo-overview__promo-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
