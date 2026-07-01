@@ -77,3 +77,17 @@
   font-size: 0.88rem;
   font-weight: 600;
 }
+
+.seo-overview__community-link {
+  display: inline-flex;
+  width: fit-content;
+  color: var(--color-gold, #d4af37);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.seo-overview__community-link:hover,
+.seo-overview__community-link:focus-visible {
+  color: var(--color-text-strong, #fff);
+}
