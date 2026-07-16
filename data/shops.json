@@ -23,7 +23,7 @@
         {
           "id": "before-9pm",
           "label": "오후 9시 이전",
-          "base": 9,
+          "base": 10,
           "highlightLabel": {
             "ko": "9시 전 주대",
             "en": "Before 9 PM Base",
@@ -179,7 +179,7 @@
         {
           "id": "before-9pm",
           "label": "오후 9시 이전",
-          "base": 10,
+          "base": 11,
           "highlightLabel": {
             "ko": "9시 전 주대",
             "en": "Before 9 PM Base",
@@ -336,7 +336,7 @@
         {
           "id": "before-9pm",
           "label": "오후 9시 이전",
-          "base": 10,
+          "base": 11,
           "highlightLabel": {
             "ko": "9시 전 주대",
             "en": "Before 9 PM Base",
@@ -505,7 +505,7 @@
         {
           "id": "before-9pm",
           "label": "오후 9시 이전",
-          "base": 10,
+          "base": 11,
           "highlightLabel": {
             "ko": "9시 전 주대",
             "en": "Before 9 PM Base",
@@ -662,7 +662,7 @@
         {
           "id": "before-9pm",
           "label": "오후 9시 이전",
-          "base": 10,
+          "base": 11,
           "highlightLabel": {
             "ko": "9시 전 주대",
             "en": "Before 9 PM Base",
