@@ -175,6 +175,14 @@
                 <dt><%= t.shop && t.shop.address ? t.shop.address : 'Address' %></dt>
                 <dd><%= shop.address %></dd>
               </div>
+              <% if (shop.officialHomepage) { %>
+                <div>
+                  <dt><%= t.shop && t.shop.officialHomepage ? t.shop.officialHomepage : '공식 홈페이지' %></dt>
+                  <dd>
+                    <a href="<%= shop.officialHomepage %>" target="_blank" rel="noopener noreferrer"><%= shop.officialHomepage %></a>
+                  </dd>
+                </div>
+              <% } %>
               <div>
                 <dt><%= t.shop && t.shop.hours ? t.shop.hours : 'Hours' %></dt>
                 <dd><%= shop.hours %></dd>
