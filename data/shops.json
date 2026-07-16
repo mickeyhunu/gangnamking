@@ -15,7 +15,7 @@
     "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricingSchedule": {
       "unitSuffix": "만",
-      "tc": 12,
+      "tc": 13,
       "rt": 5,
       "guestCounts": [1, 2, 3, 4],
       "defaultSegmentId": "before-9pm",
@@ -90,7 +90,7 @@
         ],
         "pricing": {
           "base": "Before 9 PM Base: ₩90,000 · All-Time Base: ₩130,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -116,7 +116,7 @@
         ],
         "pricing": {
           "base": "9点前主台：₩90,000 · 全时段主台：₩130,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -142,7 +142,7 @@
         ],
         "pricing": {
           "base": "9時前 基本料金：₩90,000 · オールタイム 基本料金：₩130,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -171,7 +171,7 @@
     "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricingSchedule": {
       "unitSuffix": "만",
-      "tc": 12,
+      "tc": 13,
       "rt": 5,
       "guestCounts": [1, 2, 3, 4],
       "defaultSegmentId": "before-9pm",
@@ -247,7 +247,7 @@
         ],
         "pricing": {
           "base": "Before 9 PM Base: ₩100,000 · All-Time Base: ₩140,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -273,7 +273,7 @@
         ],
         "pricing": {
           "base": "9点前主台：₩100,000 · 全时段主台：₩140,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -299,7 +299,7 @@
         ],
         "pricing": {
           "base": "9時前 基本料金：₩100,000 · オールタイム 基本料金：₩140,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -328,7 +328,7 @@
     "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricingSchedule": {
       "unitSuffix": "만",
-      "tc": 12,
+      "tc": 13,
       "rt": 5,
       "guestCounts": [1, 2, 3, 4],
       "defaultSegmentId": "before-9pm",
@@ -416,7 +416,7 @@
         ],
         "pricing": {
           "base": "Before 9 PM Base: ₩100,000 · All-Time Base: ₩160,000 · After Midnight Base: ₩130,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -442,7 +442,7 @@
         ],
         "pricing": {
           "base": "9点前主台：₩100,000 · 全时段主台：₩160,000 · 午夜后主台：₩130,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -468,7 +468,7 @@
         ],
         "pricing": {
           "base": "9時前 基本料金：₩100,000 · オールタイム 基本料金：₩160,000 · 深夜0時以降 基本料金：₩130,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -497,7 +497,7 @@
     "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricingSchedule": {
       "unitSuffix": "만",
-      "tc": 12,
+      "tc": 13,
       "rt": 5,
       "guestCounts": [1, 2, 3, 4],
       "defaultSegmentId": "before-9pm",
@@ -573,7 +573,7 @@
         ],
         "pricing": {
           "base": "Before 9 PM Base: ₩100,000 · All-Time Base: ₩140,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -599,7 +599,7 @@
         ],
         "pricing": {
           "base": "9点前主台：₩100,000 · 全时段主台：₩140,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -625,7 +625,7 @@
         ],
         "pricing": {
           "base": "9時前 基本料金：₩100,000 · オールタイム 基本料金：₩140,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -654,7 +654,7 @@
     "description": "강남 No.1 1등 하이퍼블릭 셔츠룸 업소입니다. 최근 가장 핫한 업소로 떠오르고 있습니다",
     "pricingSchedule": {
       "unitSuffix": "만",
-      "tc": 12,
+      "tc": 13,
       "rt": 5,
       "guestCounts": [1, 2, 3, 4],
       "defaultSegmentId": "before-9pm",
@@ -730,7 +730,7 @@
         ],
         "pricing": {
           "base": "Before 9 PM Base: ₩100,000 · All-Time Base: ₩130,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -756,7 +756,7 @@
         ],
         "pricing": {
           "base": "9点前主台：₩100,000 · 全时段主台：₩130,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
@@ -782,7 +782,7 @@
         ],
         "pricing": {
           "base": "9時前 基本料金：₩100,000 · オールタイム 基本料金：₩130,000",
-          "tc": "TC ₩120,000",
+          "tc": "TC ₩130,000",
           "rt": "RT ₩50,000"
         },
         "seoKeywords": [
